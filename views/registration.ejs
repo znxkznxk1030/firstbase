@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+        <head>
+                <title>Registration</title>
+                <link rel='stylesheet' href='/stylesheets/style.css' />
+        </head>
+        <body>
+                <form action="/users/verify" method="post" enctype="application/json">
+                        <div>
+                                <label>Username:</label>
+                                <input type="text" name="username"/>
+                        </div>
+                        <div>
+                                <label>Email:</label>
+                                <input type="text" name="email"/>
+                        </div>
+                        <div>
+                                <label>type Password:</label>
+                                <input type="password" name="password1"/>
+                        </div>
+                        
+                        <div>
+                                <label>retype Password:</label>
+                                <input type="password" name="password2"/>
+                        </div>
+                        
+                        <div>
+                                <input type="submit" value="Registration"/>
+                        </div>
+                </form>
+        </body>
+</html>
