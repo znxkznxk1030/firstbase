@@ -12,7 +12,6 @@ var passwordCreate = function passwordCreate(password, cb){
                         config.crypto.workFactor, config.crypto.keylen, function(err, key){
                             cb(null, key.toString('base64'));
                         });
-
         });
 };
 

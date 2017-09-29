@@ -4,16 +4,35 @@ var passwordUtil = require('./password');
 
 
 var registrateUser = function registrateUser(data, cb){
-         passwordUtil.passwordCreate(data.password1, function(err, password){
-             if(err) throw err;
+    findByUsername(data.username, function(err, user){
+        if(user){
+            console.log('user is exist');
+            cb({message : 'error already exist'}, user);
+        }else{
+            console.log('registrate');
+            passwordUtil.passwordCreate(data.password1, function(err, password){
+                if(err) throw err;
 
-             var sql = 'INSERT INTO user (user_id, user_email, password) VALUES (?, ?, ?)';
-             connection.query(sql, [data.username, data.email, password], function(err, result){
-                     if(err) throw err;
-                     console.log('#debug registeUser result : ' + result);
-             });
-         });
-         cb(null, true);
+                var sql = 'INSERT INTO user (user_id, user_email, password) VALUES (?, ?, ?)';
+                connection.query(sql, [data.username, data.email, password], function(err, result){
+                    if(err) throw err;
+                    console.log('#debug registeUser result : ' + result);
+                });
+            });
+            cb(null, true);
+        }
+
+    });
+         // passwordUtil.passwordCreate(data.password1, function(err, password){
+         //     if(err) throw err;
+         //
+         //     var sql = 'INSERT INTO user (user_id, user_email, password) VALUES (?, ?, ?)';
+         //     connection.query(sql, [data.username, data.email, password], function(err, result){
+         //             if(err) throw err;
+         //             console.log('#debug registeUser result : ' + result);
+         //     });
+         // });
+         // cb(null, true);
 };
 
 var findByUsername = function findByUsername(username, cb){
@@ -24,7 +43,7 @@ var findByUsername = function findByUsername(username, cb){
 
                 var user = JSON.parse(JSON.stringify(result))[0];
                 console.log('findByUsername : ' + JSON.parse(JSON.stringify(result))[0]);
-                cb(null, user); 
+                cb(null, user);
 
         });
 };

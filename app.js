@@ -11,13 +11,14 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var footprint = require('./routes/footprint');
 //var login = require('./routes/login');
 
 var app = express();
 var http = require('http');
 var https = require('https');
 
-var passport = require('./passport');
+var passport = require('./passport_auth');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -37,6 +38,7 @@ app.use(passport.session());
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/footprint', footprint);
 
 
 // catch 404 and forward to error handler
@@ -59,7 +61,7 @@ app.use(function(err, req, res, next) {
 
 //app.listen(52273, function(){});
 
-http.createServer(app).listen(52273, function(){
+http.createServer(app).listen(52274, function(){
   console.log('server running port : ' + '52273');
 });
 
