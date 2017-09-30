@@ -91,9 +91,22 @@ var createFootprint = function(data, cb){
     });
 };
 
+var deleteFootprintByFootprintID = function(footprint_id, cb){
+    var sql = "DELETE FROM footprint WHERE footprint_id = ?";
+
+    connection.query(sql, [footprint_id], function(err, result){
+        if (err){
+            throw err;
+        }
+
+        cb(null, true);
+    })
+};
+
 module.exports = {
     getFootprintListByUser : getFootprintListByUser,
     getFootprintByFootprintID : getFootprintByFootprintID,
     getFootprintList: getFootprintList,
-    createFootprint : createFootprint
+    createFootprint : createFootprint,
+    deleteFootprintByFootprintID : deleteFootprintByFootprintID
 };

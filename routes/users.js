@@ -55,12 +55,13 @@ router.get('/login-failure', function(req, res){
 });
 
 router.get('/login-success', function(req, res){
-    res.json({ message : "seccess to login"});
+    res.json({ message : "success to login"});
 });
 
 router.get('/logout', function(req, res){
     req.session().destroy();
     res.clearCookie('sid');
+    res.json({ message : "success to logout"});
 });
 
 module.exports = router;

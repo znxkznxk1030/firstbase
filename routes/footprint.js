@@ -30,17 +30,31 @@ router.get('/detail/:footprint_id', function(req, res){
 
 router.get('/new', function(req, res){
     console.log('render new');
-    res.render('footprint/new');
+    console.log(req.isAuthenticated(), req.user);
+    if(req.isAuthenticated() == true)
+        res.render('footprint/new', {
+            user_id : req.user
+        });
+    else res.redirect('/');
 });
 
 router.post('/create', function(req, res, next){
     console.log('render create');
-    console.log(req.body);
+    console.log(req.body, req.isAuthenticated(), req.user);
     controller.createFootprint(req.body, function(err, result){
         if (err){
             throw err;
         }
     })
+});
+
+router.get('/delete/:footprint_id', function(req, res, next){
+    console.log(req.params.footprint_id);
+    controller.deleteFootprintByFootprintID(req.params.footprint_id, function(err, result){
+        if (err){
+            throw err;
+        }
+    });
 });
 
 

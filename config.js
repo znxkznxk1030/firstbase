@@ -1,5 +1,5 @@
 var config = {
-        port: 3000,
+        port: 8080,
         secret: 'secret',
         redisUrl: 'redis://localhost',
         salt: 'VeritasLuxMea(SNUMiManJob)',

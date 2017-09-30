@@ -33,12 +33,23 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // authentication
+app.use(session({ secret: 'SNU', resave: true, saveUninitialized: false })); // 세션 활성화
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', index);
 app.use('/users', users);
 app.use('/footprint', footprint);
+
+//swagger
+app.use('/swagger-ui', express.static(path.join('./node_modules/swagger-ui/dist')));
+app.use('/v1/swagger.json', function(req, res) {
+    res.json(require('./swagger.json'));
+});
+
+app.use('/swagger', function(req, res){
+  res.redirect('/swagger-ui?url=/v1/swagger.json');
+})
 
 
 // catch 404 and forward to error handler
@@ -61,7 +72,7 @@ app.use(function(err, req, res, next) {
 
 //app.listen(52273, function(){});
 
-http.createServer(app).listen(52274, function(){
+http.createServer(app).listen(8080, function(){
   console.log('server running port : ' + '52273');
 });
 

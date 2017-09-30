@@ -5,12 +5,15 @@ const passwordUtil = require('./password');
 
 passport.serializeUser(function(user, done){
     console.log('serialize');
-    done(null, user);
+    done(null, user.user_id);
 });
 
-passport.deserializeUser(function(user, done){
+passport.deserializeUser(function(userId, done){
     console.log('deserialize');
-    done(null, user);
+    console.log(userId);
+    user.findByUsername(userId, function(err, profile){
+        done(null, userId);
+    });
 });
 
 passport.use('local-login', new LocalStrategy({
@@ -19,6 +22,7 @@ passport.use('local-login', new LocalStrategy({
     session : true,
     passReqToCallback : true
 },function(req, username, password, done) {
+    console.log(req.body);
     user.findByUsername(username, function(err, profile){
         if(profile){
        passwordUtil.passwordCheck (password, profile.password, function(err, isAuth){
