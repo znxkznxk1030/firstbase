@@ -44,10 +44,17 @@ router.post('/verify', function(req, res, next){
 
 router.post('/login', passport.authenticate('local-login',
             {
-                successRedirect : '/',
-                failureRedirect : '/users/login-form',
+                successRedirect : '/users/login-failure',
+                failureRedirect : '/users/login-sucess',
                 //failureFlash : true
             })
-        ); 
+        );
 
+router.get('/login-failure', function(req, res){
+    res.json({ message : "failure to login"});
+});
+
+router.get('/login-success', function(req, res){
+    res.json({ message : "seccess to login"});
+});
 module.exports = router;
