@@ -33,9 +33,11 @@ router.post('/verify', function(req, res, next){
    //      }
    // });
 
+    console.log(req.body);
+
     user.registrateUser(req.body, function(err, result){
         console.log('isIn?');
-        res.redirect('../');
+        res.json({message : 'success register'});
     });
 
 });
