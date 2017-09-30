@@ -44,14 +44,14 @@ router.post('/verify', function(req, res, next){
 
 router.post('/login', passport.authenticate('local-login',
             {
-                //successRedirect : '/users/login-success',
-                //failureRedirect : '/users/login-failure',
+                successRedirect : '/users/login-success',
+                failureRedirect : '/users/login-failure',
                 //failureFlash : true
                 failWithError : true
             }),function(req, res){
-        res.json({ message : 'success to login'})
+        //res.json({ message : 'success to login'})
     }, function(err, req, res, next){
-        res.json({ message : 'failure to login'})
+        //res.json({ message : 'failure to login'})
     }
         );
 
