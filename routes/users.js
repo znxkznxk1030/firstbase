@@ -44,8 +44,8 @@ router.post('/verify', function(req, res, next){
 
 router.post('/login', passport.authenticate('local-login',
             {
-                successRedirect : '/users/login-failure',
-                failureRedirect : '/users/login-sucess',
+                successRedirect : '/users/login-success',
+                failureRedirect : '/users/login-failure',
                 //failureFlash : true
             })
         );
