@@ -19,7 +19,7 @@ router.get('/signup-form', function(req, res, next) {
     res.render('registration');
 });
 
-router.post('/verify', function(req, res, next){
+router.post('/registrate', function(req, res, next){
    // console.log(req.body);
    // user.findByUsername(req.body.username, function(err, isExist){
    //      if(isExist === undefined){
