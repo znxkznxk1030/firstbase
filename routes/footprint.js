@@ -19,6 +19,30 @@ router.get('/list/:user_id', function(req, res){
     });
 });
 
+router.get('/listbylocation/:startlng/:startlat/:endlng/:endlat', function(req, res, next){
+    console.log("listbylocation");
+    console.log(req.params.startlat);
+    controller.getFootprintListByLocation(req.params, function(err, result){
+        if (err) {
+            throw err;
+        }
+
+        res.json(result);
+    })
+
+});
+
+router.get('/list/:lat/:lng/:level', function(req, res, next){
+   console.log("list");
+   console.log(req.params);
+   controller.getFootprintListByCurrentLocationAndViewLevel(req.params, function(err, result){
+      if(err){
+          throw err;
+      }
+      res.json(result);
+   });
+});
+
 router.get('/detail/:footprint_id', function(req, res){
     console.log(req.params.footprint_id);
 
@@ -29,9 +53,9 @@ router.get('/detail/:footprint_id', function(req, res){
 });
 
 router.get('/new', function(req, res){
-    console.log('render new');
+    console.log(req.body);
     console.log(req.isAuthenticated(), req.user);
-    if(req.isAuthenticated() == true)
+    if(req.isAuthenticated() === true)
         res.render('footprint/new', {
             user_id : req.user
         });
@@ -56,6 +80,7 @@ router.get('/delete/:footprint_id', function(req, res, next){
         }
     });
 });
+
 
 
 module.exports = router;

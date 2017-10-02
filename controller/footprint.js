@@ -1,5 +1,7 @@
 var connection = require('../database/db');
 var user = require('../passport_auth/user');
+var locationUtil = require('../utils/locationUtil');
+var async = require('async');
 
 var getFootprintListByUser = function(userId, cb){
 
@@ -60,7 +62,49 @@ var getFootprintList = function(cb){
     });
 };
 
-var getFootprintListByLocation = function(lat, lng){
+var getFootprintListByCurrentLocationAndViewLevel = function(data, cb){
+    var sql = "SELECT * FROM footprint WHERE latitude <= ? AND longitude >= ? AND latitude >= ? AND longitude <= ?";
+    console.log("data : ", data);
+    locationUtil.getDistanceByViewLevel(data.level, function(err, distance){
+        locationUtil.distanceToLatitude(distance, function(err, diffLat){
+           locationUtil.distanceToLongitude(distance, function(err, diffLng){
+              console.log('diffLat : ' + diffLat);
+              console.log('diffLng : ' + diffLng);
+              var startLat = parseFloat(data.lat) + diffLat, startLng = parseFloat(data.lng) - diffLng;
+              var endLat = parseFloat(data.lat) - diffLat, endLng = parseFloat(data.lng) + diffLng;
+              console.log(startLat, startLng);
+              console.log(endLat, endLng);
+              connection.query(sql, [data.lat, startLng, endLat, endLng], function(err, footprintList){
+                   if(err){
+                       throw err;
+                   }
+
+                   var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
+                   //console.log(footprintList);
+                   //console.log(footprintListJSON);
+                   cb(null, footprintListJSON);
+               });
+           });
+        });
+    });
+};
+
+var getFootprintListByLocation = function(data, cb){
+    console.log("data ",data);
+    console.log(data.startlat, data.startlng, data.endlat, data.endlng);
+    var startLat = data.startlat, startLng = data.startlng, endLat = data.endlat, endLng = data.endlng;
+    var sql = "SELECT * FROM footprint WHERE latitude <= ? AND longitude >= ? AND latitude >= ? AND longitude <= ?";
+
+    connection.query(sql, [startLat, startLng, endLat, endLng], function(err, footprintList){
+       if(err){
+           throw err;
+       }
+
+       var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
+       console.log(footprintList);
+       console.log(footprintListJSON);
+       cb(null, footprintListJSON);
+    });
 
 };
 
@@ -104,9 +148,11 @@ var deleteFootprintByFootprintID = function(footprint_id, cb){
 };
 
 module.exports = {
+    getFootprintListByLocation : getFootprintListByLocation,
     getFootprintListByUser : getFootprintListByUser,
     getFootprintByFootprintID : getFootprintByFootprintID,
     getFootprintList: getFootprintList,
     createFootprint : createFootprint,
-    deleteFootprintByFootprintID : deleteFootprintByFootprintID
+    deleteFootprintByFootprintID : deleteFootprintByFootprintID,
+    getFootprintListByCurrentLocationAndViewLevel : getFootprintListByCurrentLocationAndViewLevel
 };

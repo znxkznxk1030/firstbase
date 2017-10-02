@@ -49,7 +49,7 @@ app.use('/v1/swagger.json', function(req, res) {
 
 app.use('/swagger', function(req, res){
   res.redirect('/swagger-ui?url=/v1/swagger.json');
-})
+});
 
 
 // catch 404 and forward to error handler
