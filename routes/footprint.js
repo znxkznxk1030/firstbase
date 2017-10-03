@@ -65,11 +65,19 @@ router.get('/new', function(req, res){
 router.post('/create', function(req, res, next){
     console.log('render create');
     console.log(req.body, req.isAuthenticated(), req.user);
-    controller.createFootprint(req.body, function(err, result){
-        if (err){
-            throw err;
-        }
-    })
+    if(req.isAuthenticated() !== true){
+        res.json({message: 'fail to create'});
+    }else {
+        controller.createFootprint(req.body, function (err, result) {
+            if (err) {
+                throw err;
+            }
+            console.log(result);
+            if(result)
+                res.json({message: 'success create footprint'});
+            else res.json({message:'fail to create'});
+        });
+    }
 });
 
 router.get('/delete/:footprint_id', function(req, res, next){
