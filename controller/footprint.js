@@ -110,29 +110,42 @@ var getFootprintListByLocation = function(data, cb){
 
 var createFootprint = function(data, cb){
     console.log(data);
-    user.findByUsername(data.user_id, function(err, user) {
-        if (err) {
-            throw err;
-        }
 
-        if(user){
-            var sql = "INSERT INTO footprint (user_id, title, icon_url, content, latitude, longitude)"
-                + " VALUES (?, ?, ?, ?, ?, ?)";
+    var sql = "INSERT INTO footprint (user_id, title, icon_url, content, latitude, longitude)"
+        + " VALUES (?, ?, ?, ?, ?, ?)";
 
-            connection.query(sql, [data.user_id, data.title, data.icon_url, data.content, data.latitude, data.longitude],
-                function(err, result){
-                    if(err){
-                        throw err;
-                    }
+    connection.query(sql, [data.user_id, data.title, data.icon_url, data.content, data.latitude, data.longitude],
+        function(err, result){
+            if(err){
+                throw err;
+            }
 
-                    cb(null, true);
-                });
-            cb(false, false);
-        }else{
-
-        }
-
-    });
+            cb(null, true);
+        });
+    //
+    // user.findByUsername(data.user_id, function(err, user) {
+    //     if (err) {
+    //         throw err;
+    //     }
+    //
+    //     if(user){
+    //         var sql = "INSERT INTO footprint (user_id, title, icon_url, content, latitude, longitude)"
+    //             + " VALUES (?, ?, ?, ?, ?, ?)";
+    //
+    //         connection.query(sql, [data.user_id, data.title, data.icon_url, data.content, data.latitude, data.longitude],
+    //             function(err, result){
+    //                 if(err){
+    //                     throw err;
+    //                 }
+    //
+    //                 cb(null, true);
+    //             });
+    //         cb(false, false);
+    //     }else{
+    //
+    //     }
+    //
+    // });
 };
 
 var deleteFootprintByFootprintID = function(footprint_id, cb){
