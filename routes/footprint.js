@@ -19,10 +19,10 @@ router.get('/list/:user_id', function(req, res){
     });
 });
 
-router.get('/listbylocation/:startlng/:startlat/:endlng/:endlat', function(req, res, next){
+router.get('/listbylocation/', function(req, res, next){
     console.log("listbylocation");
-    console.log(req.params.startlat);
-    controller.getFootprintListByLocation(req.params, function(err, result){
+    console.log(req.query.startlng);
+    controller.getFootprintListByLocation(req.query, function(err, result){
         if (err) {
             throw err;
         }
@@ -35,7 +35,7 @@ router.get('/listbylocation/:startlng/:startlat/:endlng/:endlat', function(req, 
 router.get('/list/:lat/:lng/:level', function(req, res, next){
    console.log("list");
    console.log(req.params);
-   controller.getFootprintListByCurrentLocationAndViewLevel(req.params, function(err, result){
+   controller.getFootprintListByCurrentLocationAndViewLevel(req.query, function(err, result){
       if(err){
           throw err;
       }
