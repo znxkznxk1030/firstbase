@@ -12,13 +12,13 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var footprint = require('./routes/footprint');
-//var login = require('./routes/login');
 
 var app = express();
 var http = require('http');
 var https = require('https');
 
-var passport = require('./passport_auth');
+var passport = require('./passport_auth/index');
+var config = require("./config");
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -33,9 +33,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // authentication
-app.use(session({ secret: 'SNU', resave: true, saveUninitialized: false })); // 세션 활성화
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(session({ secret: config.secret, resave: true, saveUninitialized: false })); // 세션 활성화
+app.use(passport.passport.initialize());
+app.use(passport.passport.session());
 
 app.use('/', index);
 app.use('/users', users);
@@ -51,6 +51,7 @@ app.use('/swagger', function(req, res){
   res.redirect('/swagger-ui?url=/v1/swagger.json');
 });
 
+passport.routes(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -72,8 +73,8 @@ app.use(function(err, req, res, next) {
 
 //app.listen(52273, function(){});
 
-http.createServer(app).listen(8080, function(){
-  console.log('server running port : ' + '52273');
+http.createServer(app).listen(config.port, function(){
+  console.log('server running port : ' + config.port);
 });
 
 

@@ -111,10 +111,10 @@ var getFootprintListByLocation = function(data, cb){
 var createFootprint = function(data, cb){
     console.log(data);
 
-    var sql = "INSERT INTO footprint (user_id, title, icon_url, content, latitude, longitude)"
+    var sql = "INSERT INTO footprint (id, title, icon_url, content, latitude, longitude)"
         + " VALUES (?, ?, ?, ?, ?, ?)";
 
-    connection.query(sql, [data.user_id, data.title, data.icon_url, data.content, data.latitude, data.longitude],
+    connection.query(sql, [data.id, data.title, data.icon_url, data.content, data.latitude, data.longitude],
         function(err, result){
             if(err){
                 throw err;

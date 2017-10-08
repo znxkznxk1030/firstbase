@@ -20,24 +20,11 @@ router.get('/signup-form', function(req, res, next) {
 });
 
 router.post('/registrate', function(req, res, next){
-   // console.log(req.body);
-   // user.findByUsername(req.body.username, function(err, isExist){
-   //      if(isExist === undefined){
-   //          user.registrateUser(req.body, function(err, result){
-   //              console.log('isIn?');
-   //              res.redirect('../');
-   //          });
-   //      }
-   //      else{
-   //          res.redirect('/users/signup-form');
-   //      }
-   // });
-
     console.log(req.body);
 
     user.registrateUser(req.body, function(err, result){
-        console.log('isIn?');
-        res.json({message : 'success register'});
+        if(err) res.json(err);
+        else res.json({message : 'success register'});
     });
 
 });
@@ -46,7 +33,7 @@ router.post('/login', passport.authenticate('local-login',
             {
                 successRedirect : '/users/login-success',
                 failureRedirect : '/users/login-failure',
-                //failureFlash : true
+                failureFlash : true,
                 failWithError : true
             }),function(req, res){
         res.json({ message : 'success to login'})
@@ -66,7 +53,7 @@ router.get('/login-success', function(req, res){
 });
 
 router.get('/logout', function(req, res){
-    req.session().destroy();
+    req.logout();
     res.clearCookie('sid');
     res.json({ message : "success to logout"});
 });

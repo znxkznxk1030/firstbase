@@ -18,8 +18,8 @@ var passwordCreate = function passwordCreate(password, cb){
 var passwordCheck = function passwordCheck(password, derivedPassword, cb){
         crypto.pbkdf2(password, config.salt.toString('base64'), config.crypto.workFactor, config.crypto.keylen,
                 function(err, key){
-                    console.log(key.toString('base64'));
-                    console.log(derivedPassword);
+                    // console.log(key.toString('base64'));
+                    // console.log(derivedPassword);
                         cb(null, key.toString('base64') === derivedPassword);
                 });
 };

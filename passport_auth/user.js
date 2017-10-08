@@ -3,36 +3,59 @@ var verify = require('./verify');
 var passwordUtil = require('./password');
 
 
+var registrateSocialUser = function registrateSocialLoginUser(data, cb){
+    var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
+    connection.query(sql, [data.id, data.displayName, data.provider], function(err, result){
+       if(err) throw err;
+        console.log('#debug registrateSocialUser result : ' + result);
+       cb(null, true);
+    });
+};
+
 var registrateUser = function registrateUser(data, cb){
-    findByUsername(data.username, function(err, user){
+    findOne(data.id, function(err, user){
         if(user){
-            console.log('user is exist');
+             console.log('user is exist');
             cb({message : 'error already exist'}, user);
         }else{
-            console.log('registrate');
+            // console.log('registrate');
             passwordUtil.passwordCreate(data.password1, function(err, password){
                 if(err) throw err;
 
-                var sql = 'INSERT INTO user (user_id, user_email, password) VALUES (?, ?, ?)';
-                connection.query(sql, [data.username, data.email, password], function(err, result){
+                var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
+                connection.query(sql, [data.id, data.displayName, 'Local'], function(err, result){
                     if(err) throw err;
-                    console.log('#debug registeUser result : ' + result);
+                    console.log('#debug registeUser result : ' + password);
+
+                    connection.query('INSERT INTO password (id, password) VALUES(?,?)', [data.id, password], function(err, result){
+                        if(err) throw err;
+                        console.log(result);
+                        if(result){
+                            cb(null, true);
+                        }else {
+                            connection.query('DELETE FROM user WHERE id=?', [data.id], function(err, result){
+                                if(err) throw err;
+                            });
+                        }
+                    });
                 });
             });
-            cb(null, true);
         }
 
     });
-         // passwordUtil.passwordCreate(data.password1, function(err, password){
-         //     if(err) throw err;
-         //
-         //     var sql = 'INSERT INTO user (user_id, user_email, password) VALUES (?, ?, ?)';
-         //     connection.query(sql, [data.username, data.email, password], function(err, result){
-         //             if(err) throw err;
-         //             console.log('#debug registeUser result : ' + result);
-         //     });
-         // });
-         // cb(null, true);
+};
+
+var findOne = function findOne(id, cb){
+    var sql = 'SELECT * FROM user WHERE id = ?';
+    connection.query(sql, [id], function(err, result){
+        if(err){
+            throw err;
+        }
+
+        var user = JSON.parse(JSON.stringify(result))[0];
+        console.log(user);
+        cb(null, user);
+    });
 };
 
 var findByUsername = function findByUsername(username, cb){
@@ -42,28 +65,40 @@ var findByUsername = function findByUsername(username, cb){
                 }
 
                 var user = JSON.parse(JSON.stringify(result))[0];
-                console.log('findByUsername : ' + JSON.parse(JSON.stringify(result))[0]);
+                // console.log('findByUsername : ' + JSON.parse(JSON.stringify(result))[0]);
                 cb(null, user);
 
         });
 };
 
-var comparePasswordByUsername = function comparePasswordByUsername(username, password){
-    return connection.query('SELECT * FROM user WHERE user_id=?', [username], function(err, result){
+var findPassword = function findPassword(id, cb){
+    connection.query('SELECT * FROM password WHERE id=?', [id], function(err, result) {
+        if(err) throw err;
+
+        var ret = JSON.parse(JSON.stringify(result));
+        console.log(ret);
+        if(typeof ret[0] !== 'undefined'){
+            cb(null, ret[0].password);
+        }else{
+            cb({error:"not found"}, false);
+        }
+    });
+};
+
+var comparePasswordByid = function comparePasswordByid(id, password){
+    return connection.query('SELECT * FROM password WHERE id=?', [id], function(err, result){
         if(err){
             throw err;
         }
 
         var ret = JSON.parse(JSON.stringify(result));
-        //console.log(ret[0].password);
-        //console.log(password);
-
-        if(typeof ret[0] !== 'undefined'  && password === ret[0].password){
-            console.log('success');
-                return ret[0];
+        console.log(password);
+        if(typeof ret[0] !== 'undefined' && password === ret[0].password){
+            // console.log('success');
+                return true;
         }else{
-            console.log('fail');
-                return null;
+            // console.log('fail');
+                return false;
         }
 
     });
@@ -76,9 +111,9 @@ var comparePasswordByEmail = function comparePasswordByEmail(email, password){
         if(err){
             throw err;
         }
-        console.log(result);
+        // console.log(result);
         var ret = JSON.parse(JSON.stringify(result));
-        console.log(ret[0].user_id);
+        // console.log(ret[0].user_id);
 
         if(password === ret[0].password){
                 return ret[0];
@@ -90,8 +125,11 @@ var comparePasswordByEmail = function comparePasswordByEmail(email, password){
 };
 
 module.exports = {
+    findOne: findOne,
+    findPassword : findPassword,
+    registrateSocialUser: registrateSocialUser,
     registrateUser : registrateUser,
     findByUsername : findByUsername,
-    comparePasswordByUsername : comparePasswordByUsername,
+    comparePasswordByid : comparePasswordByid,
     comparePasswordByEmail : comparePasswordByEmail
 };

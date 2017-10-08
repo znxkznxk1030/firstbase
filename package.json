@@ -17,6 +17,8 @@
     "morgan": "~1.8.1",
     "mysql": "^2.14.1",
     "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1",
+    "passport-google-oauth": "^1.0.0",
     "passport-local": "^1.0.0",
     "react": "^16.0.0",
     "safe-buffer": "^5.1.1",
