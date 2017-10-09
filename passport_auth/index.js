@@ -20,12 +20,12 @@ passport.deserializeUser(function(user, done){
 });
 
 passport.use('local-login', new LocalStrategy({
-    usernameField : 'username',
+    usernameField : 'id',
     passwordField : 'password',
     session : true,
     passReqToCallback : true
 },function(req, id, password, done) {
-    console.log("local-login : " + req.body);
+    // console.log("local-login : " + req.body);
     user.findOne(id, function(err, profile){
         if(profile){
             user.findPassword(id, function(err, retrievedPassword){
