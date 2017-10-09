@@ -95,8 +95,8 @@ var routes = function(app){
     app.get(config.routes.facebookAuth, passport.authenticate('facebook'));
     app.get(config.routes.facebookAuthCallback, passport.authenticate('facebook',
         {
-            successRedirect: '/',
-            failureRedirect: '/users/login',
+            successRedirect: '/users/login-success',
+            failureRedirect: '/users/login-failure',
             failureFlash: true
         }
     ));
@@ -109,8 +109,8 @@ var routes = function(app){
     ));
     app.get(config.routes.googleAuthCallback, passport.authenticate('google',
         {
-            successRedirect: '/',
-            failureRedirect: '/users/login',
+            successRedirect: '/users/login-success',
+            failureRedirect: '/users/login-failure',
             failureFlash: true
         }
     ));
