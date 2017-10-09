@@ -18,6 +18,7 @@ var http = require('http');
 var https = require('https');
 
 var passport = require('./passport_auth/index');
+var flash = require('connect-flash');
 var config = require("./config");
 
 // view engine setup
@@ -36,6 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: config.secret, resave: true, saveUninitialized: false })); // 세션 활성화
 app.use(passport.passport.initialize());
 app.use(passport.passport.session());
+app.use(flash());
 
 app.use('/', index);
 app.use('/users', users);

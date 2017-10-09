@@ -20,6 +20,9 @@ var passwordCheck = function passwordCheck(password, derivedPassword, cb){
                 function(err, key){
                     // console.log(key.toString('base64'));
                     // console.log(derivedPassword);
+                    // const bPassword = Buffer.from(key.toString('base64'), 'hex');
+                    // const bDerivedPassword = Buffer.from(derivedPassword, 'hex');
+                    // console.log(bDerivedPassword, bPassword);
                         cb(null, key.toString('base64') === derivedPassword);
                 });
 };
