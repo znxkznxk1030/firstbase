@@ -2,6 +2,7 @@ var config = {
         host: 'http://localhost:',
         port: 8080,
         secret: 'kingofjs',
+        token_secret: 'kingofjs',
         redisUrl: 'redis://localhost',
         salt: 'VeritasLuxMea(SNUMiManJob)',
         routes: {

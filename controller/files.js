@@ -32,7 +32,7 @@ var createMainBucket = function(cb){
 };
 
 var createItemObject = function(files, cb){
-    //console.log(files);
+    console.log(files.image.name);
     const params = {
         Bucket: bucketName,
         Key : files.image.name,
@@ -72,4 +72,15 @@ var upload = function(req, res, next){
     });
 };
 
+var retrieve = function(req, res){
+    const params = {
+        Bucket: bucketName,
+        Key : 'friends-fun.jpg'
+    };
+
+    var url = s3.getSignedUrl('getObject', params);
+    console.log(url);
+};
+
 exports.upload = upload;
+exports.retrieve = retrieve;

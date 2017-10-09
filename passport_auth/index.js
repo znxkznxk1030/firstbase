@@ -36,15 +36,15 @@ passport.use('local-login', new LocalStrategy({
                      console.log(isAuth);
                     if(isAuth){
                         // console.log('login success');
-                        done(null, profile);
+                        return done(null, profile);
                     }else{
                         // console.log('login fail');
-                        done(null, false, { message: 'Wrong Password'});
+                        return done(null, false, { message: 'Wrong Password'});
                     }
                 });
             });
         }else{
-            done(null, false, { message: 'Wrong Username' });
+            return done(null, false, { message: 'Wrong Username' });
         }
     });
 }));
