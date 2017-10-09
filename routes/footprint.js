@@ -65,7 +65,7 @@ router.get('/new', function(req, res){
 
 router.post('/create', function(req, res, next){
     // console.log('render create');
-    // console.log(req.body, req.isAuthenticated(), req.user);
+    console.log(req.body, req.isAuthenticated(), req.user);
     if(req.isAuthenticated() !== true){
         res.json({message: 'fail to create'});
     }else {
