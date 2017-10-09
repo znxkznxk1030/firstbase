@@ -3,10 +3,9 @@ var user = require('../passport_auth/user');
 var locationUtil = require('../utils/locationUtil');
 var async = require('async');
 
-var getFootprintListByUser = function(userId, cb){
-
-    console.log(userId);
-    user.findByUsername(userId, function(err, user){
+var getFootprintListByUser = function(req, res){
+    console.log(req.params.id);
+    user.findByUsername(req.params.id, function(err, user){
         if(err){
             throw err;
         }
@@ -24,29 +23,28 @@ var getFootprintListByUser = function(userId, cb){
                 console.log(footprintList);
                 console.log(footprintListJson);
 
-                cb(null, footprintListJson);
+                res.json(footprintListJson);
             });
         }else{
-
+            res.json({message : "user not found"});
         }
 
     });
 };
 
-var getFootprintByFootprintID = function(footprintId, cb){
+var getFootprintByFootprintID = function(req, res){
+    var footprintId = req.params.footprint_id;
     var sql = "SELECT * FROM footprint WHERE footprint_id = ?";
     connection.query(sql, [footprintId], function(err, footprint){
         if(err){
             throw err;
         }
 
-        var footprint = JSON.parse(JSON.stringify(footprint));
-
-        cb(null, footprint);
+        res.json(JSON.parse(JSON.stringify(footprint)));
     });
 };
 
-var getFootprintList = function(cb){
+var getFootprintList = function(req, res){
     var sql = "SELECT * FROM footprint";
     connection.query(sql, [], function(err, footprintList){
         if(err){
@@ -58,11 +56,12 @@ var getFootprintList = function(cb){
         console.log(footprintList);
         console.log(footprintListJSON);
 
-        cb(null, footprintListJSON);
+        res.json(footprintListJSON);
     });
 };
 
-var getFootprintListByCurrentLocationAndViewLevel = function(data, cb){
+var getFootprintListByCurrentLocationAndViewLevel = function(req, res){
+    var data = req.query;
     var sql = "SELECT * FROM footprint WHERE latitude <= ? AND longitude >= ? AND latitude >= ? AND longitude <= ?";
     console.log("data : ", data);
     locationUtil.getDistanceByViewLevel(data.level, function(err, distance){
@@ -89,7 +88,8 @@ var getFootprintListByCurrentLocationAndViewLevel = function(data, cb){
     });
 };
 
-var getFootprintListByLocation = function(data, cb){
+var getFootprintListByLocation = function(req, res){
+    var data = req.query;
     console.log("data ",data);
     console.log(data.startlat, data.startlng, data.endlat, data.endlng);
     var startLat = data.startlat, startLng = data.startlng, endLat = data.endlat, endLng = data.endlng;
@@ -101,62 +101,52 @@ var getFootprintListByLocation = function(data, cb){
        }
 
        var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
-       console.log(footprintList);
-       console.log(footprintListJSON);
-       cb(null, footprintListJSON);
+       res.json(footprintListJSON);
     });
 
 };
 
-var createFootprint = function(data, cb){
+var createFootprint = function(req, res){
+    var data = req.body;
     console.log(data);
+    console.log(req.body, req.isAuthenticated(), req.user);
+    if(req.isAuthenticated() !== true){
+        res.json({message: 'fail to create'});
+    }else {
 
-    var sql = "INSERT INTO footprint (id, title, icon_url, content, latitude, longitude)"
-        + " VALUES (?, ?, ?, ?, ?, ?)";
+        var sql = "INSERT INTO footprint (id, title, icon_url, content, latitude, longitude)"
+            + " VALUES (?, ?, ?, ?, ?, ?)";
 
-    connection.query(sql, [data.id, data.title, data.icon_url, data.content, data.latitude, data.longitude],
-        function(err, result){
-            if(err){
-                throw err;
-            }
-
-            cb(null, true);
-        });
-    //
-    // user.findByUsername(data.user_id, function(err, user) {
-    //     if (err) {
-    //         throw err;
-    //     }
-    //
-    //     if(user){
-    //         var sql = "INSERT INTO footprint (user_id, title, icon_url, content, latitude, longitude)"
-    //             + " VALUES (?, ?, ?, ?, ?, ?)";
-    //
-    //         connection.query(sql, [data.user_id, data.title, data.icon_url, data.content, data.latitude, data.longitude],
-    //             function(err, result){
-    //                 if(err){
-    //                     throw err;
-    //                 }
-    //
-    //                 cb(null, true);
-    //             });
-    //         cb(false, false);
-    //     }else{
-    //
-    //     }
-    //
-    // });
+        connection.query(sql, [data.id, data.title, data.icon_url, data.content, data.latitude, data.longitude],
+            function(err, result){
+                if(err){
+                    throw err;
+                }else{
+                    if(result){
+                        res.json({message: 'success to create footprint'});
+                    }else{
+                        res.json({message: 'fail to create'});
+                    }
+                }
+            });
+    }
 };
 
-var deleteFootprintByFootprintID = function(footprint_id, cb){
+var deleteFootprintByFootprintID = function(req, res){
+
+    var footprint_id = req.params.footprint_id;
     var sql = "DELETE FROM footprint WHERE footprint_id = ?";
 
     connection.query(sql, [footprint_id], function(err, result){
         if (err){
             throw err;
+        }else {
+            if (result) {
+                res.json({message: "success to delete"});
+            } else {
+                res.json({message: "fail to delete"});
+            }
         }
-
-        cb(null, true);
     })
 };
 
