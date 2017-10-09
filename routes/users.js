@@ -2,14 +2,13 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport');
 var user = require('../passport_auth/user');
+var auth = require("../passport_auth/auth");
 
 router.use(passport.initialize());
 router.use(passport.session());
 
 /* GET users listing. */
-router.get('/', function(req, res, next){
-
-});
+router.get('/', auth.clearCookieClear);
 
 router.get('/login-form', function(req, res, next){
         res.render('login');
@@ -32,18 +31,18 @@ router.post('/registrate', function(req, res, next){
 
 });
 
-router.post('/login', passport.authenticate('local-login',
-            {
-                successRedirect : '/users/login-success',
-                failureRedirect : '/users/login-failure',
-                failureFlash : true,
-                failWithError : true
-            }),function(req, res){
-        res.json({ message : 'success to login'})
-    }, function(err, req, res, next){
-        res.json({ message : 'failure to login'})
-    }
-        );
+router.post('/login', function(req, res, next){
+    passport.authenticate('local-login', function(err, user, info){
+    var error = err || info;
+    if(error) return res.json(401, error);
+    if(!user) return res.json(404, {message: 'user not found...'});
+    console.log(user);
+
+    var token = auth.signToken(user);
+    res.cookie('jwt', token).json({access_token: token});
+
+    })(req, res, next);
+});
 
 router.get('/login-failure', function(req, res){
     console.log('failure');
