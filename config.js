@@ -26,6 +26,5 @@ var config = {
                 randomSize: 256
         }
 };
-
 module.exports = config;
 

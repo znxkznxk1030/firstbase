@@ -12,6 +12,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var footprint = require('./routes/footprint');
+var files = require('./routes/files');
 
 var app = express();
 var http = require('http');
@@ -42,6 +43,7 @@ app.use(flash());
 app.use('/', index);
 app.use('/users', users);
 app.use('/footprint', footprint);
+app.use('/files', files);
 
 //swagger
 app.use('/swagger-ui', express.static(path.join('./node_modules/swagger-ui/dist')));
