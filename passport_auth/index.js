@@ -58,13 +58,14 @@ passport.use(new facebook({
         user.findOne(profile.id, function(err, one){
             if(one){
                 done(null, profile);
-            }
+            }else {
 
-            user.registrateSocialUser(profile, function(err, result){
-                if(err) throw err;
-                console.log("debug passport social user registration : " + result);
-                done(null, profile);
-            });
+                user.registrateSocialUser(profile, function (err, result) {
+                    if (err) throw err;
+                    console.log("debug passport social user registration : " + result);
+                    done(null, profile);
+                });
+            }
 
         });
     })
@@ -79,14 +80,13 @@ passport.use(new google({
        user.findOne(profile.id, function(err, one){
             if(one){
                 done(null, profile);
-          }
-
-            user.registrateSocialUser(profile, function(err, result){
-                if(err) throw err;
-                console.log("debug passport social user registration : " + result);
-               done(null, profile);
-             });
-
+          }else{
+                user.registrateSocialUser(profile, function(err, result){
+                    if(err) throw err;
+                    console.log("debug passport social user registration : " + result);
+                    done(null, profile);
+                });
+            }
        });
     })
 );
