@@ -25,7 +25,7 @@ passport.use('local-login', new LocalStrategy({
     session : true,
     passReqToCallback : true
 },function(req, id, password, done) {
-    console.log(req.body);
+    console.log("local-login : " + req.body);
     user.findOne(id, function(err, profile){
         if(profile){
             user.findPassword(id, function(err, retrievedPassword){
@@ -33,7 +33,7 @@ passport.use('local-login', new LocalStrategy({
 
                 console.log(retrievedPassword);
                 passwordUtil.passwordCheck (password, retrievedPassword, function(err, isAuth){
-                    // console.log(isAuth);
+                     console.log(isAuth);
                     if(isAuth){
                         // console.log('login success');
                         done(null, profile);
