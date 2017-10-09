@@ -21,11 +21,14 @@ router.get('/signup-form', function(req, res, next) {
 
 router.post('/registrate', function(req, res, next){
     console.log(req.body);
-
-    user.registrateUser(req.body, function(err, result){
-        if(err) res.json(err);
-        else res.json({message : 'success register'});
-    });
+    if(req.body.password1 === req.body.password2){
+        user.registrateUser(req.body, function(err, result){
+           if(err) res.json(err);
+            else res.json({message : 'success register'});
+        });
+    }else{
+        res.json({message: 'Two password fields are not matched!'})
+    }
 
 });
 
