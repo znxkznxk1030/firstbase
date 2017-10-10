@@ -27,7 +27,7 @@ var isAuthenticated = function isAuthenticated(){
 };
 
 var authMiddleware = function authMiddleware(req, res, next){
-    var token = req.cookies.jwt;
+    var token = req.cookies.jwt || req.query.jwt;
     console.log(req.cookies.jwt);
     if(!token){
         return res.json({message: 'not logged in'});
@@ -44,8 +44,9 @@ var authMiddleware = function authMiddleware(req, res, next){
 };
 
 var testAuthenticated = function(req, res){
-    console.log('#debug testAuthenticated : ' + req.cookies.jwt);
-    var decoded = jwt.verify(req.cookies.jwt, SECRET);
+    var token = req.cookies.jwt || req.query.jwt;
+    console.log('#debug testAuthenticated : ' + token);
+    var decoded = jwt.verify(token, SECRET);
     console.log(decoded);
     req.user = decoded;
     res.json(decoded);
