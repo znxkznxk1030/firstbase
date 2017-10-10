@@ -20,6 +20,6 @@ router.get('/new', auth.authMiddleware, function(req, res){
             user : req.user
         });
 });
-router.post('/create', controller.createFootprint);
+router.post('/create', auth.authMiddleware,controller.createFootprint);
 
 module.exports = router;
