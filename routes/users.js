@@ -8,7 +8,7 @@ router.use(passport.initialize());
 router.use(passport.session());
 
 /* GET users listing. */
-router.get('/', auth.clearCookieClear);
+router.get('/', auth.testAuthenticated);
 
 router.get('/login-form', function(req, res, next){
         res.render('login');
@@ -39,7 +39,7 @@ router.post('/login', function(req, res, next){
     console.log(user);
 
     var token = auth.signToken(user);
-    res.cookie('jwt', token).json({access_token: token});
+    res.cookie('jwt', token).json({message: 'success to login', accessToken: token});
 
     })(req, res, next);
 });
