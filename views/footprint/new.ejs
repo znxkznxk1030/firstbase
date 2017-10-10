@@ -6,10 +6,7 @@
 </head>
 <body>
 <form action="/footprint/create" method="post" enctype="application/json">
-    <div>
-        <label><%= user.displayName %></label>
-        <input type="hidden" name="id" value="<%= user.id %>"/>
-    </div>
+    <h2><%= user.displayName %></h2>
     <div>
         <label>title</label>
         <input type="text" name="title"/>

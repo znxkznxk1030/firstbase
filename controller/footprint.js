@@ -110,26 +110,22 @@ var createFootprint = function(req, res){
     var data = req.body;
     console.log(data);
     console.log(req.body, req.isAuthenticated(), req.user);
-    if(req.isAuthenticated() !== true){
-        res.json({message: 'fail to create'});
-    }else {
 
-        var sql = "INSERT INTO footprint (id, title, icon_url, content, latitude, longitude)"
-            + " VALUES (?, ?, ?, ?, ?, ?)";
+    var sql = "INSERT INTO footprint (id, title, icon_url, content, latitude, longitude)"
+        + " VALUES (?, ?, ?, ?, ?, ?)";
 
-        connection.query(sql, [data.id, data.title, data.icon_url, data.content, data.latitude, data.longitude],
-            function(err, result){
-                if(err){
-                    throw err;
+    connection.query(sql, [req.user.id ,data.title, data.icon_url, data.content, data.latitude, data.longitude],
+        function(err, result){
+            if(err){
+                throw err;
+            }else{
+                if(result){
+                    res.json({message: 'success to create footprint'});
                 }else{
-                    if(result){
-                        res.json({message: 'success to create footprint'});
-                    }else{
-                        res.json({message: 'fail to create'});
-                    }
+                    res.json({message: 'fail to create'});
                 }
-            });
-    }
+            }
+        });
 };
 
 var deleteFootprintByFootprintID = function(req, res){

@@ -22,7 +22,6 @@ passport.deserializeUser(function(user, done){
 passport.use('local-login', new LocalStrategy({
     usernameField : 'id',
     passwordField : 'password',
-    session : true,
     passReqToCallback : true
 },function(req, id, password, done) {
     // console.log("local-login : " + req.body);

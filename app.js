@@ -35,10 +35,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // authentication
-app.use(session({ secret: config.secret, resave: true, saveUninitialized: false })); // 세션 활성화
+//app.use(session({ secret: config.secret, resave: true, saveUninitialized: false })); // 세션 활성화
 app.use(passport.passport.initialize());
-app.use(passport.passport.session());
-app.use(flash());
+//app.use(passport.passport.session());
+//app.use(flash());
 
 app.use('/', index);
 app.use('/users', users);
