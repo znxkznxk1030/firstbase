@@ -109,7 +109,7 @@ var getFootprintListByLocation = function(req, res){
 var createFootprint = function(req, res){
     var data = req.body;
     console.log(data);
-    console.log(req.body, req.isAuthenticated(), req.user);
+    //console.log(req.body, req.isAuthenticated(), req.user);
 
     var sql = "INSERT INTO footprint (id, title, icon_url, content, latitude, longitude)"
         + " VALUES (?, ?, ?, ?, ?, ?)";

@@ -1,3 +1,6 @@
 /node_modules
 /database/dbconfig.js
+/s3config.json
 s3config.json
+config.json
+/config.json
