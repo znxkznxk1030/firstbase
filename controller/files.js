@@ -94,8 +94,9 @@ var retrieveIcon = function(req, res){
     };
 
     var icon_url = s3.getSignedUrl('getObject', params);
+
     console.log(icon_url);
-    res.json({icon_url: icon_url});
+    res.json({message:"success", icon_url: icon_url});
 };
 
 exports.upload = upload;
