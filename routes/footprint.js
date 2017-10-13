@@ -14,7 +14,6 @@ router.get('/detail/:footprint_id', controller.getFootprintByFootprintID);
 router.get('/delete/:footprint_id', controller.deleteFootprintByFootprintID);
 
 
-
 router.get('/new', auth.authMiddleware, function(req, res){
         res.render('footprint/new', {
             user : req.user

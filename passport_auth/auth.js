@@ -28,7 +28,7 @@ var isAuthenticated = function isAuthenticated(){
 
 var authMiddleware = function authMiddleware(req, res, next){
     var token = req.cookies.jwt || req.query.jwt;
-    console.log(req.cookies.jwt);
+    console.log("#debug authMiddleware\ntoken : " + req.cookies.jwt);
     if(!token){
         return res.json({message: 'not logged in'});
     }

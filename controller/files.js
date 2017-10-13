@@ -15,20 +15,20 @@ var createMainBucket = function(cb){
     };
 
     s3.headBucket(bucketParams, function (err, data) {
+if(err){
+    console.log("ErrorHeadBucket", err);
+    s3.createBucket(bucketParams, function(err, data){
         if(err){
-            console.log("ErrorHeadBucket", err);
-            s3.createBucket(bucketParams, function(err, data){
-                if(err){
-                    console.log("Error", err);
-                    throw err;
-                }else{
-                    cb(null, data);
-                }
-            });
+            console.log("Error", err);
+            throw err;
         }else{
             cb(null, data);
         }
     });
+}else{
+    cb(null, data);
+}
+});
 };
 
 var createItemObject = function(files, cb){
@@ -53,6 +53,7 @@ var createItemObject = function(files, cb){
 
 var upload = function(req, res, next){
     var form = new formidable.IncomingForm();
+
     form.parse(req, function(err, fields, files){
         if(err) res.json({ message : "form error"});
 
@@ -82,5 +83,21 @@ var retrieve = function(req, res){
     console.log(url);
 };
 
+var retrieveIcon = function(req, res){
+    var iconKey = req.query.iconKey;
+
+    console.log(iconKey);
+
+    const params = {
+        Bucket: bucketName,
+        Key : iconKey
+    };
+
+    var icon_url = s3.getSignedUrl('getObject', params);
+    console.log(icon_url);
+    res.json({icon_url: icon_url});
+};
+
 exports.upload = upload;
 exports.retrieve = retrieve;
+exports.retrieveIcon = retrieveIcon;
