@@ -34,18 +34,77 @@ var getFootprintListByUser = function(req, res){
 
 var getFootprintByFootprintID = function(req, res){
     var footprintId = req.params.footprint_id;
-    var sql = "SELECT * FROM footprint WHERE footprint_id = ?";
-    connection.query(sql, [footprintId], function(err, footprint){
-        if(err){
-            throw err;
-        }
+    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
+        "FROM footprint INNER JOIN view " +
+        "ON footprint.footprint_id = view.footprint_id " +
+        "WHERE footprint.footprint_id = ? " +
+        "GROUP BY footprint_id ";
 
-        res.json(JSON.parse(JSON.stringify(footprint)));
+    var find_sql = "SELECT * FROM view WHERE id = ? AND footprint_id = ?";
+    var view_insert_sql = "INSERT INTO view (id, footprint_id) VALUES (?, ?)";
+
+    var task = [
+        function(cb){
+            connection.query(sql, [footprintId], function(err, footprint){
+                if(err){
+                    //res.json( {message : "error to find footprint"} );
+                    return cb(err, {message : "error to find footprint"});
+                }
+                console.log(footprint);
+                if(footprint[0]) return cb(null, footprint);
+                else return cb(err, {message : "error to find footprint"});
+                //res.json(JSON.parse(JSON.stringify(footprint)));
+            });
+        },
+        function(cb){
+            if(req.user){
+
+                connection.query(find_sql, [req.user.id, footprintId], function(err, view_id){
+                    if(err){
+                        return cb(err, { message: "id not found"});
+                    }
+                    //console.log(view_id[0]);
+                    if(view_id[0]){
+                            return cb(null, { message: "already view"});
+                    }else{
+                        connection.query(view_insert_sql, [req.user.id, footprintId], function(err, result){
+                            if(err) {
+                                return cb(err, { message: "not found"});
+                            }
+                            return cb(null, { message : "insert"});
+                        });
+                    }
+
+                });
+            }
+        }
+    ];
+
+    async.series(task, function(err, result){
+            if(err) res.json({ message : err});
+            else{
+                console.log(result);
+                res.json(JSON.parse(JSON.stringify(result[0])));
+                //res.json(result.slice(1,3));
+            }
     });
+    //
+    // connection.query(sql, [footprintId], function(err, footprint){
+    //     if(err){
+    //         res.json( {message : "error to find footprint"} );
+    //     }
+    //
+    //     res.json(JSON.parse(JSON.stringify(footprint)));
+    // });
 };
 
 var getFootprintList = function(req, res){
-    var sql = "SELECT * FROM footprint";
+    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
+        "FROM footprint " +
+        "INNER JOIN view " +
+        "ON footprint.footprint_id = view.footprint_id " +
+        "GROUP BY footprint_id ";
+
     connection.query(sql, [], function(err, footprintList){
         if(err){
             throw err;
@@ -62,7 +121,9 @@ var getFootprintList = function(req, res){
 
 var getFootprintListByCurrentLocationAndViewLevel = function(req, res){
     var data = req.query;
-    var sql = "SELECT * FROM footprint WHERE latitude <= ? AND longitude >= ? AND latitude >= ? AND longitude <= ?";
+    var sql = "SELECT * " +
+        "FROM footprint WHERE latitude <= ? AND longitude >= ? AND latitude >= ? AND longitude <= ?";
+
     console.log("data : ", data);
     locationUtil.getDistanceByViewLevel(data.level, function(err, distance){
         locationUtil.distanceToLatitude(distance, function(err, diffLat){
@@ -108,15 +169,11 @@ var getFootprintListByLocation = function(req, res){
 
 var createFootprint = function(req, res){
     var data = req.body;
-    console.log("#debug createFootprint\ndata : " + data);
+    //console.log("#debug createFootprint\ndata : " + data);
     //console.log(req.body, req.isAuthenticated(), req.user);
 
     var sql = "INSERT INTO footprint (id, title, icon_url, content, latitude, longitude)"
         + " VALUES (?, ?, ?, ?, ?, ?)";
-
-    //todo : data.title -> utf8
-
-
 
     connection.query(sql, [req.user.id ,data.title, data.icon_url, data.content, data.latitude, data.longitude],
         function(err, result){

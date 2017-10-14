@@ -43,6 +43,18 @@ var authMiddleware = function authMiddleware(req, res, next){
     }
 };
 
+var passMiddleware = function passMiddleware(req, res, next){
+    var token = req.cookies.jwt;
+
+    jwt.verify(token, SECRET, function(err, decoded){
+            if(err) return res.json({message:'token is wrong'});
+
+            req.user = decoded;
+            next();
+    });
+
+};
+
 var testAuthenticated = function(req, res){
     var token = req.cookies.jwt || req.query.jwt;
     console.log('#debug testAuthenticated : ' + token);
@@ -62,3 +74,4 @@ exports.isAuthenticated = isAuthenticated;
 exports.testAuthenticated = testAuthenticated;
 exports.authMiddleware = authMiddleware;
 exports.clearCookieClear = clearCookieClear;
+exports.passMiddleware = passMiddleware;
