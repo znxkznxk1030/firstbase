@@ -88,14 +88,7 @@ var getFootprintByFootprintID = function(req, res){
                 //res.json(result.slice(1,3));
             }
     });
-    //
-    // connection.query(sql, [footprintId], function(err, footprint){
-    //     if(err){
-    //         res.json( {message : "error to find footprint"} );
-    //     }
-    //
-    //     res.json(JSON.parse(JSON.stringify(footprint)));
-    // });
+
 };
 
 var getFootprintList = function(req, res){
@@ -121,8 +114,11 @@ var getFootprintList = function(req, res){
 
 var getFootprintListByCurrentLocationAndViewLevel = function(req, res){
     var data = req.query;
-    var sql = "SELECT * " +
-        "FROM footprint WHERE latitude <= ? AND longitude >= ? AND latitude >= ? AND longitude <= ?";
+    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
+        "FROM footprint INNER JOIN view " +
+        "ON footprint.footprint_id = view.footprint_id " +
+        "WHERE footprint.latitude <= ? AND footprint.longitude >= ? AND footprint.latitude >= ? AND footprint.longitude <= ? " +
+        "GROUP BY footprint_id ";
 
     console.log("data : ", data);
     locationUtil.getDistanceByViewLevel(data.level, function(err, distance){
@@ -154,7 +150,11 @@ var getFootprintListByLocation = function(req, res){
     console.log("data ",data);
     console.log(data.startlat, data.startlng, data.endlat, data.endlng);
     var startLat = data.startlat, startLng = data.startlng, endLat = data.endlat, endLng = data.endlng;
-    var sql = "SELECT * FROM footprint WHERE latitude <= ? AND longitude >= ? AND latitude >= ? AND longitude <= ?";
+    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
+        "FROM footprint INNER JOIN view " +
+        "ON footprint.footprint_id = view.footprint_id " +
+        "WHERE footprint.latitude <= ? AND footprint.longitude >= ? AND footprint.latitude >= ? AND footprint.longitude <= ? " +
+        "GROUP BY footprint_id ";
 
     connection.query(sql, [startLat, startLng, endLat, endLng], function(err, footprintList){
        if(err){
