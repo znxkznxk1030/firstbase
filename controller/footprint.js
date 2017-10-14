@@ -35,7 +35,7 @@ var getFootprintListByUser = function(req, res){
 var getFootprintByFootprintID = function(req, res){
     var footprintId = req.params.footprint_id;
     var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
-        "FROM footprint INNER JOIN view " +
+        "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "WHERE footprint.footprint_id = ? " +
         "GROUP BY footprint_id ";
@@ -94,7 +94,7 @@ var getFootprintByFootprintID = function(req, res){
 var getFootprintList = function(req, res){
     var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
         "FROM footprint " +
-        "INNER JOIN view " +
+        "LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "GROUP BY footprint_id ";
 
@@ -115,7 +115,7 @@ var getFootprintList = function(req, res){
 var getFootprintListByCurrentLocationAndViewLevel = function(req, res){
     var data = req.query;
     var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
-        "FROM footprint INNER JOIN view " +
+        "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "WHERE footprint.latitude <= ? AND footprint.longitude >= ? AND footprint.latitude >= ? AND footprint.longitude <= ? " +
         "GROUP BY footprint_id ";
@@ -151,7 +151,7 @@ var getFootprintListByLocation = function(req, res){
     console.log(data.startlat, data.startlng, data.endlat, data.endlng);
     var startLat = data.startlat, startLng = data.startlng, endLat = data.endlat, endLng = data.endlng;
     var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
-        "FROM footprint INNER JOIN view " +
+        "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "WHERE footprint.latitude <= ? AND footprint.longitude >= ? AND footprint.latitude >= ? AND footprint.longitude <= ? " +
         "GROUP BY footprint_id ";
