@@ -3,6 +3,7 @@ var router = express.Router();
 var passport = require('passport');
 var user = require('../passport_auth/user');
 var auth = require("../passport_auth/auth");
+var nicknameCheck = require("../controller/users").nicknameCheck;
 
 router.use(passport.initialize());
 router.use(passport.session());
@@ -59,5 +60,7 @@ router.get('/logout', function(req, res){
     res.clearCookie('sid');
     res.json({ message : "success to logout"});
 });
+
+router.get('/nickname-check', nicknameCheck);
 
 module.exports = router;

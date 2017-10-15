@@ -172,7 +172,7 @@ var createFootprint = function(req, res){
     //console.log("#debug createFootprint\ndata : " + data);
     //console.log(req.body, req.isAuthenticated(), req.user);
 
-    var sql = "INSERT INTO footprint (id, title, icon_url, content, latitude, longitude)"
+    var sql = "INSERT INTO footprint (id, title, icon_key, content, latitude, longitude)"
         + " VALUES (?, ?, ?, ?, ?, ?)";
 
     connection.query(sql, [req.user.id ,data.title, data.icon_url, data.content, data.latitude, data.longitude],
