@@ -84,7 +84,7 @@ var getFootprintByFootprintID = function(req, res){
             if(err) res.json({ message : err});
             else{
                 console.log(result);
-                res.json(JSON.parse(JSON.stringify(result[0])));
+                res.json(JSON.parse(JSON.stringify(result[0]))[0]);
                 //res.json(result.slice(1,3));
             }
     });
