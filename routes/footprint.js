@@ -10,7 +10,7 @@ router.get('/list/:user_id', controller.getFootprintListByUser);
 router.get('/listbylocation/', controller.getFootprintListByLocation);
 router.get('/list/:lat/:lng/:level', controller.getFootprintListByCurrentLocationAndViewLevel);
 
-router.get('/detail/:footprint_id', auth.passMiddleware, controller.getFootprintByFootprintID);
+router.get('/detail', auth.passMiddleware, controller.getFootprintByFootprintID);
 router.get('/delete/:footprint_id', controller.deleteFootprintByFootprintID);
 
 
