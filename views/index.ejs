@@ -1,14 +1,250 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <a href="/users/login-form">login</a>
+  <title><%= title %></title>
 
-  </body>
+  <!-- stylesheet -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+
+  <!-- javascript -->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
+  <script type="text/javascript"
+  src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+  integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+  crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=N4U9SJyL2gHum0hz1FK4"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    <div id = "main">
+        <div id = "map-area">
+            <div id = "map">
+            </div>
+        </div>
+        <div id = "add-button" onclick="button1_click();">
+            <img src="/img/layout/write-button.png">
+        </div>
+        <div id = "contents-area">
+            <div id = "top-menu">
+                <div class = "space">
+                </div>
+                <div id = "logo-img">
+                    <img src="/img/layout/logo.png">
+                </div>
+                <div class = "space">
+                </div>
+                <div id = "chat-button">
+                    <div id = "chat-img">
+                        <img src="/img/layout/chat.png">
+                    </div>
+                </div>
+                <div class = "space">
+                </div>
+                <div id = "login-register-button">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">LOG IN</button>
+                </div>
+                <div class = "space">
+                </div>
+            </div>
+            <div id = "contents1">
+                <div class="content">
+                    <div class="title">
+                        제목
+                    </div>
+                    <div class="post">
+                        게시물 내용
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="title">
+                        제목
+                    </div>
+                    <div class="post">
+                        게시물 내용
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="title">
+                        제목
+                    </div>
+                    <div class="post">
+                        게시물 내용
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="title">
+                        제목
+                    </div>
+                    <div class="post">
+                        게시물 내용
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="title">
+                        제목
+                    </div>
+                    <div class="post">
+                        게시물 내용
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header" style="padding:35px 50px;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>Login</h4>
+            </div>
+            <div class="modal-body" style="padding:40px 50px;">
+                <div id = "login-form">
+                    <form action="/users/login" method="post" enctype="application/json">
+                        <div class="form-group">
+                            <label for="id">Email</label>
+                            <input type="text" class="form-control" id="id" placeholder="Enter Email"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Enter Password"/>
+                        </div>
+                        <div class="form-submit">
+                            <button type="submit" class="btn btn-success btn-block">Login</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="social-login">
+                    <a class="btn" href="/auth/facebook"><button type="button" class="btn btn-primary">Facebook으로 로그인</button></a>
+                </div>
+                <div class="social-login">
+                    <a class="btn" href="/auth/google"><button type="button" class="btn btn-danger">Google으로 로그인</button></a>
+                </div>
+                <div class="social-login">
+                    <a class="btn" href="/users/signup-form"><button type="button" class="btn btn-warning">Sign Up</button></a>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <p>Not a member? <a href="#">Sign Up</a></p>
+              <p>Forgot <a href="#">Password?</a></p>
+              <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal">Cancel</button>
+          </div>
+      </div>
+  </div>
+</div>
+</body>
+<script type="text/javascript" defer>
+    /*
+    $(".emoticon img").mousedown(function(){
+
+        x = event.pageX;
+        y = event.pageY;
+        alert(x+" "+y);
+    });
+    */
+    var point = false;
+
+    $(document).on('mousedown', '.emoticon img', function(){
+        crossMap();
+    });
+
+    function crossMap(){
+        $(document).on('mouseenter', '#map', function(){
+            $( ".emoticon img" ).draggable({
+                containment: "#map"
+            });
+        });
+    }
+
+    $(document).on('mouseup', '.emoticon img', function(event){
+        x = event.pageX;
+        y = event.pageY;
+        calMap(x,y);
+    });
+
+    function calMap(x,y){
+        a = $("#map").outerWidth();
+        b = $("#map").outerHeight();
+        if( (a>x) && (b>y) ){
+            $( ".emoticon img" ).draggable({
+                disabled: true
+            });
+        }
+        point = true;
+        $("#contents2").html("<div class='content'><form action = '#' accept-charset='utf-8' name = 'person_info' method = 'get'><div class='title'>제목</div><fieldset><legend>개인 정보 입력</legend>닉네임 : <input type = 'text' name = 'name'/><br><br>지역 : <input type = 'text' name = 'age'/><br><br></fieldset><div class='post'>게시물 내용</div><fieldset style = 'width:180; height:180'><legend>게시글 입력</legend>사진 : <input type = 'text' name = 'hobby'/><br><br>내용 : <input type = 'text' name = 'specialty'/><br><br><input type = 'submit' value = 'submit'/><input type = 'reset' value = 'reset'/><br><br></fieldset></form></div>");
+    }
+
+    var mapOptions = {
+        center: new naver.maps.LatLng(37.3595704, 127.105399),
+        zoom: 10
+    };
+
+    var map = new naver.maps.Map('map', mapOptions);
+
+    var marker1 = new naver.maps.Marker({
+        position: new naver.maps.LatLng(37.3595704, 127.105399),
+        map: map
+    });
+
+    var marker2 = new naver.maps.Marker({
+        position: new naver.maps.LatLng(37.3495704, 127.105399),
+        map: map
+    });
+
+    var marker3 = new naver.maps.Marker({
+        position: new naver.maps.LatLng(37.3695704, 127.105399),
+        map: map
+    });
+
+    var marker4 = new naver.maps.Marker({
+        position: new naver.maps.LatLng(37.3595704, 127.085399),
+        map: map
+    });
+
+    var marker5 = new naver.maps.Marker({
+        position: new naver.maps.LatLng(37.3595704, 127.125399),
+        map: map
+    });
+
+
+    var listener = naver.maps.Event.addListener(map, 'mousemove', function(e) {
+        if(point == true){
+            var here = e.coord;
+            checkHere(here);
+            /*naver.maps.Event.removeListener(listener);*/
+            point = false
+        }
+    });
+
+    function checkHere(here) {
+        var markerOptions = {
+            position:  new naver.maps.LatLng(here.y, here.x),
+            map: map,
+            icon: {
+                url: 'https://image.flaticon.com/icons/png/128/45/45873.png'
+            }
+        };
+
+        var marker11 = new naver.maps.Marker(markerOptions);
+    }
+
+    function button1_click() {
+        $("#contents-area").html("<div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div>");
+        $(".emoticon img").draggable({
+            containment: "body"
+        });
+    }
+
+</script>
 </html>
