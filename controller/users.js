@@ -14,7 +14,6 @@ var nicknameCheck = function(req, res){
         }
 
     })
-
 };
 
 exports.nicknameCheck = nicknameCheck;

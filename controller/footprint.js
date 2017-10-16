@@ -33,7 +33,7 @@ var getFootprintListByUser = function(req, res){
 };
 
 var getFootprintByFootprintID = function(req, res){
-    var footprintId = req.query.footprint_id;
+    var footprintId = req.query.footprintId;
     var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +

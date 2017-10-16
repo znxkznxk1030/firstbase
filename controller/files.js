@@ -4,6 +4,7 @@ const bucketName = 'firstbase-bucket';
 const path = require('path');
 const fs = require('fs');
 const formidable = require('formidable');
+var guid = require('guid');
 
 AWS.config.loadFromPath('s3config.json');
 
@@ -33,9 +34,11 @@ if(err){
 
 var createItemObject = function(files, cb){
     console.log(files.image.name);
+    var iconKey = guid.raw();
+
     const params = {
         Bucket: bucketName,
-        Key : files.image.name,
+        Key : iconKey,
         ACL : 'public-read',
         Body : fs.createReadStream(files.image.path)
     };
@@ -45,21 +48,22 @@ var createItemObject = function(files, cb){
             console.log("Error uploading image : ", err);
             throw err;
         }else{
-            console.log("Successfully uploaded image on S3", data);
-            cb(null, data);
+            console.log("Successfully uploaded image on S3", iconKey);
+            return cb(null, iconKey);
         }
     });
 };
 
 var upload = function(req, res, next){
     var form = new formidable.IncomingForm();
+    console.log(guid.raw());
 
     form.parse(req, function(err, fields, files){
         if(err) res.json({ message : "form error"});
 
         createItemObject(files, function(err, result){
             if(err) return res.send(err);
-            else return res.json({ message : "Successfully uploaded", data:result});
+            else return res.json({ message : "Successfully uploaded", iconKey:result});
         });
 
 
