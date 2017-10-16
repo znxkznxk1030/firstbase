@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+<form action="/comments/create" method="post" enctype="application/json" accept-charset="UTF-8">
+    <h2><%= user.displayName %></h2>
+    <div>
+        <label>footprintId</label>
+        <input type="text" name="footprintId"/>
+    </div>
+    <div>
+        <label>content</label>
+        <input type="text" name="content"/>
+    </div>
+    <div>
+        <input type="submit" value="create new footprint"/>
+    </div>
+</form>
+</body>
+</html>

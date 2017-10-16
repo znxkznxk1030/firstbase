@@ -34,9 +34,11 @@ var getFootprintListByUser = function(req, res){
 
 var getFootprintByFootprintID = function(req, res){
     var footprintId = req.query.footprintid;
-    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
+    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count(comment.comment_id) AS commentCount " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
+        "LEFT JOIN comment " +
+        "ON footprint.footprint_id = comment.footprint_id " +
         "WHERE footprint.footprint_id = ? " +
         "GROUP BY footprint_id ";
 
@@ -92,10 +94,12 @@ var getFootprintByFootprintID = function(req, res){
 };
 
 var getFootprintList = function(req, res){
-    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
+    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
         "FROM footprint " +
         "LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
+        "LEFT JOIN comment " +
+        "ON footprint.footprint_id = comment.footprint_id " +
         "GROUP BY footprint_id ";
 
     connection.query(sql, [], function(err, footprintList){
@@ -114,9 +118,11 @@ var getFootprintList = function(req, res){
 
 var getFootprintListByCurrentLocationAndViewLevel = function(req, res){
     var data = req.query;
-    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
+    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
+        "LEFT JOIN comment " +
+        "ON footprint.footprint_id = comment.footprint_id " +
         "WHERE footprint.latitude <= ? AND footprint.longitude >= ? AND footprint.latitude >= ? AND footprint.longitude <= ? " +
         "GROUP BY footprint_id ";
 
@@ -150,9 +156,11 @@ var getFootprintListByLocation = function(req, res){
     console.log("data ",data);
     console.log(data.startlat, data.startlng, data.endlat, data.endlng);
     var startLat = data.startlat, startLng = data.startlng, endLat = data.endlat, endLng = data.endlng;
-    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount " +
+    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
+        "LEFT JOIN comment " +
+        "ON footprint.footprint_id = comment.footprint_id " +
         "WHERE footprint.latitude <= ? AND footprint.longitude >= ? AND footprint.latitude >= ? AND footprint.longitude <= ? " +
         "GROUP BY footprint_id ";
 
@@ -164,23 +172,32 @@ var getFootprintListByLocation = function(req, res){
        var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
        res.json(footprintListJSON);
     });
-
 };
 
 var createFootprint = function(req, res){
-    var data = req.body;
+    const data = req.body;
     //console.log("#debug createFootprint\ndata : " + data);
     //console.log(req.body, req.isAuthenticated(), req.user);
 
-    var sql = "INSERT INTO footprint (id, title, icon_key, content, latitude, longitude)"
+    const sql = "INSERT INTO footprint (id, title, icon_url, content, latitude, longitude)"
         + " VALUES (?, ?, ?, ?, ?, ?)";
+    const imageSql = "INSERT INTO image (image_key, footprint_id) VALUES (?, ?)";
 
-    connection.query(sql, [req.user.id ,data.title, data.icon_url, data.content, data.latitude, data.longitude],
+    connection.query(sql, [req.user.id ,data.title, data.icon_key, data.content, data.latitude, data.longitude],
         function(err, result){
             if(err){
-                throw err;
+                return res.json(err);
             }else{
                 if(result){
+                    console.log(data);
+                    console.log(req.body.imageKeys);
+                    if(req.body.imageKeys !== undefined){
+                        for(var i = 0; i < req.imageKeys.length; i++){
+                            connection.query(imageSql, [result[0].footprint_id, req.imageKeys[i]], function(err, image){
+                                if (err) throw err;
+                            })
+                        }
+                    }
                     res.json({message: 'success to create footprint'});
                 }else{
                     res.json({message: 'fail to create'});
@@ -188,6 +205,7 @@ var createFootprint = function(req, res){
             }
         });
 };
+
 
 var deleteFootprintByFootprintID = function(req, res){
 
