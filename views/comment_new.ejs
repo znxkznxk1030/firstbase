@@ -8,8 +8,8 @@
 <form action="/comments/create" method="post" enctype="application/json" accept-charset="UTF-8">
     <h2><%= user.displayName %></h2>
     <div>
-        <label>footprintId</label>
-        <input type="text" name="footprintId"/>
+        <label>footprint id : <%= footprintId %></label>
+        <input type="hidden" name="footprintId" value="<%= footprintId %>"/>
     </div>
     <div>
         <label>content</label>
