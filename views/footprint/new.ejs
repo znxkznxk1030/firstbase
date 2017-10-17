@@ -5,38 +5,37 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 <body>
-<form action="/footprint/create" method="post" enctype="application/json">
-    <h2><%= user.displayName %></h2>
-    <div>
-        <label>title</label>
-        <input type="text" name="title"/>
-    </div>
-    <div>
-        <label>icon_url</label>
-        <input type="text" name="icon_url"/>
-    </div>
-    <div>
-        <label>content</label>
-        <input type="text" name="content"/>
-    </div>
 
-    <div>
-        <label>latitude</label>
-        <input type="number" name="latitude"/>
-    </div>
+    <div class='footprint-new'>
+        <form action="/footprint/create" method="post" enctype="application/json">
+            <h2>닉네임: <%= user.displayName %></h2>
+            <div>
+                <input type="text" class="form-control" name="title" id="title" placeholder="제목"/>
+            </div>
+            <div>
+                <img src='/img/layout/travel.png'>
+                <input type="text" class="form-control" name="icon_url" id="icon_url" placeholder="아이콘 주소"/>
+            </div>
+            <div>
+                <input type="textarea" class="form-control" name="content" id="content" placeholder="내용"/>
+            </div>
 
-    <div>
-        <label>longitude</label>
-        <input type="number" name="longitude"/>
-    </div>
+            <div>
+                <input type="number" step="any" class="form-control" name="latitude" id="latitude" placeholder="latitude"/>
+            </div>
 
-    <div>
-        <input type="submit" value="create new footprint"/>
+            <div>
+                <input type="number" step="any" class="form-control" name="longitude" id="longitude" placeholder="longitude"/>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-success btn-block">글 쓰기</button>
+            </div>
+        </form>
+        <form  action="/files/upload" enctype="multipart/form-data"  method="post">
+            <input  type="file" name="image" accept="image/*">
+            <button type="submit" class="btn btn-success btn-block">사진 제출</button>
+        </form>
     </div>
-</form>
-<form  action="/files/upload" enctype="multipart/form-data"  method="post">
-    <input  type="file" name="image" accept="image/*">
-    <button type="submit">Submit</button>
-</form>
 </body>
 </html>
