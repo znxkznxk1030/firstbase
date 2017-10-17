@@ -34,7 +34,7 @@ var getFootprintListByUser = function(req, res){
 
 var getFootprintByFootprintID = function(req, res){
     var footprintId = req.query.footprintid;
-    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count(comment.comment_id) AS commentCount " +
+    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, comment " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
@@ -179,9 +179,9 @@ var createFootprint = function(req, res){
     //console.log("#debug createFootprint\ndata : " + data);
     //console.log(req.body, req.isAuthenticated(), req.user);
 
-    const sql = "INSERT INTO footprint (id, title, icon_url, content, latitude, longitude)"
+    const sql = "INSERT INTO footprint (id, title, icon_key, content, latitude, longitude) "
         + " VALUES (?, ?, ?, ?, ?, ?)";
-    const imageSql = "INSERT INTO image (image_key, footprint_id) VALUES (?, ?)";
+    const imageSql = "INSERT INTO image (image_key, footprint_id) VALUES (?, ?) ";
 
     connection.query(sql, [req.user.id ,data.title, data.icon_key, data.content, data.latitude, data.longitude],
         function(err, result){
