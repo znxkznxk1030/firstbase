@@ -34,7 +34,7 @@ var getFootprintListByUser = function(req, res){
 
 var getFootprintByFootprintID = function(req, res){
     var footprintId = req.query.footprintid;
-    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, comment " +
+    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count(comment.comment_id) AS commentCount " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
@@ -76,7 +76,6 @@ var getFootprintByFootprintID = function(req, res){
                             return cb(null, { message : "insert"});
                         });
                     }
-
                 });
             }
         }
@@ -90,7 +89,6 @@ var getFootprintByFootprintID = function(req, res){
                 //res.json(result.slice(1,3));
             }
     });
-
 };
 
 var getFootprintList = function(req, res){
