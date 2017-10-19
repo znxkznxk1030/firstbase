@@ -21,8 +21,8 @@ router.get('/signup-form', function(req, res, next) {
 
 router.post('/registrate', function(req, res, next){
     console.log(req.body);
-    //todo password poilcy
-    if(!req.body.password1 && req.body.password1 === req.body.password2){
+
+    if(req.body.password1 === req.body.password2){
         user.registrateUser(req.body, function(err, result){
            if(err) res.json(err);
             else res.json({message : 'success register'});

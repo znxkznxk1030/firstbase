@@ -28,10 +28,15 @@ var registrateUser = function registrateUser(data, cb){
                     console.log('#debug registeUser result : ' + password);
 
                     connection.query('INSERT INTO password (id, password) VALUES(?,?)', [data.id, password], function(err, result){
-                        if(err) throw err;
+                        if(err) {
+                            connection.query('DELETE FROM user WHERE id=?', [data.id], function(err, result){
+                                if(err) throw err;
+                            });
+                            return cb(err, false);
+                        }
                         console.log(result);
                         if(result){
-                            cb(null, true);
+                            return cb(null, true);
                         }else {
                             connection.query('DELETE FROM user WHERE id=?', [data.id], function(err, result){
                                 if(err) throw err;
