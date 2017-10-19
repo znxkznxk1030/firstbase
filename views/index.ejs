@@ -29,16 +29,19 @@
         <div id = "map-area">
             <div id = "map">
             </div>
-        </div>
-        <div id = "add-button" onclick="button1_click();">
-            <img src="/img/layout/write-button.png">
+            <div id = "add-button" onclick="write_button_click();">
+                <img src="/img/layout/write-button.png">
+            </div>
+            <div id = "radar-button" onclick="search_positon();">
+                <img src="/img/layout/radar.png">
+            </div>
         </div>
         <div id = "contents-area">
             <div id = "top-menu">
                 <div class = "space">
                 </div>
                 <div id = "logo-img">
-                    <img src="/img/layout/logo.png">
+                    <a href="/"><img src="/img/layout/logo.png"></a>
                 </div>
                 <div class = "space">
                 </div>
@@ -50,52 +53,23 @@
                 <div class = "space">
                 </div>
                 <div id = "login-register-button">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">LOG IN</button>
+                    <button type="button" class="btn" data-toggle="modal" data-target="#myModal">LOG IN</button>
                 </div>
                 <div class = "space">
                 </div>
             </div>
-            <div id = "contents1">
-                <div class="content">
-                    <div class="title">
-                        제목
-                    </div>
-                    <div class="post">
-                        게시물 내용
-                    </div>
-                </div>
-                <div class="content">
-                    <div class="title">
-                        제목
-                    </div>
-                    <div class="post">
-                        게시물 내용
+            <div id = "contents">
+            </div>
+            <div id = "down-menu">
+                <div id = "down-search">
+                    <input type="search" class="form-control" name="search" id="search" placeholder="Search" />
+                    <div class="search-button">
+                        <button class="btn" type="button">
+                            <img src="/img/layout/search.png">
+                        </button>
                     </div>
                 </div>
-                <div class="content">
-                    <div class="title">
-                        제목
-                    </div>
-                    <div class="post">
-                        게시물 내용
-                    </div>
-                </div>
-                <div class="content">
-                    <div class="title">
-                        제목
-                    </div>
-                    <div class="post">
-                        게시물 내용
-                    </div>
-                </div>
-                <div class="content">
-                    <div class="title">
-                        제목
-                    </div>
-                    <div class="post">
-                        게시물 내용
-                    </div>
-                </div>
+                <div id = "down-filter"><img src="/img/layout/filter.png"></div>
             </div>
         </div>
     </div>
@@ -114,11 +88,11 @@
                     <form action="/users/login" method="post" enctype="application/json">
                         <div class="form-group">
                             <label for="id">Email</label>
-                            <input type="text" class="form-control" id="id" placeholder="Enter Email"/>
+                            <input type="text" class="form-control" name="id" id="id" placeholder="Enter Email"/>
                         </div>
                         <div class="form-group">
                             <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Enter Password"/>
+                            <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password"/>
                         </div>
                         <div class="form-submit">
                             <button type="submit" class="btn btn-success btn-block">Login</button>
@@ -136,115 +110,14 @@
                 </div>
             </div>
             <div class="modal-footer">
-              <p>Not a member? <a href="#">Sign Up</a></p>
+              <p>Not a member? <a href="/users/signup-form">Sign Up</a></p>
               <p>Forgot <a href="#">Password?</a></p>
               <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal">Cancel</button>
           </div>
       </div>
   </div>
 </div>
+
+<script type="text/javascript" src="/js/app.js" defer></script>
 </body>
-<script type="text/javascript" defer>
-    /*
-    $(".emoticon img").mousedown(function(){
-
-        x = event.pageX;
-        y = event.pageY;
-        alert(x+" "+y);
-    });
-    */
-    var point = false;
-
-    $(document).on('mousedown', '.emoticon img', function(){
-        crossMap();
-    });
-
-    function crossMap(){
-        $(document).on('mouseenter', '#map', function(){
-            $( ".emoticon img" ).draggable({
-                containment: "#map"
-            });
-        });
-    }
-
-    $(document).on('mouseup', '.emoticon img', function(event){
-        x = event.pageX;
-        y = event.pageY;
-        calMap(x,y);
-    });
-
-    function calMap(x,y){
-        a = $("#map").outerWidth();
-        b = $("#map").outerHeight();
-        if( (a>x) && (b>y) ){
-            $( ".emoticon img" ).draggable({
-                disabled: true
-            });
-        }
-        point = true;
-        $("#contents2").html("<div class='content'><form action = '#' accept-charset='utf-8' name = 'person_info' method = 'get'><div class='title'>제목</div><fieldset><legend>개인 정보 입력</legend>닉네임 : <input type = 'text' name = 'name'/><br><br>지역 : <input type = 'text' name = 'age'/><br><br></fieldset><div class='post'>게시물 내용</div><fieldset style = 'width:180; height:180'><legend>게시글 입력</legend>사진 : <input type = 'text' name = 'hobby'/><br><br>내용 : <input type = 'text' name = 'specialty'/><br><br><input type = 'submit' value = 'submit'/><input type = 'reset' value = 'reset'/><br><br></fieldset></form></div>");
-    }
-
-    var mapOptions = {
-        center: new naver.maps.LatLng(37.3595704, 127.105399),
-        zoom: 10
-    };
-
-    var map = new naver.maps.Map('map', mapOptions);
-
-    var marker1 = new naver.maps.Marker({
-        position: new naver.maps.LatLng(37.3595704, 127.105399),
-        map: map
-    });
-
-    var marker2 = new naver.maps.Marker({
-        position: new naver.maps.LatLng(37.3495704, 127.105399),
-        map: map
-    });
-
-    var marker3 = new naver.maps.Marker({
-        position: new naver.maps.LatLng(37.3695704, 127.105399),
-        map: map
-    });
-
-    var marker4 = new naver.maps.Marker({
-        position: new naver.maps.LatLng(37.3595704, 127.085399),
-        map: map
-    });
-
-    var marker5 = new naver.maps.Marker({
-        position: new naver.maps.LatLng(37.3595704, 127.125399),
-        map: map
-    });
-
-
-    var listener = naver.maps.Event.addListener(map, 'mousemove', function(e) {
-        if(point == true){
-            var here = e.coord;
-            checkHere(here);
-            /*naver.maps.Event.removeListener(listener);*/
-            point = false
-        }
-    });
-
-    function checkHere(here) {
-        var markerOptions = {
-            position:  new naver.maps.LatLng(here.y, here.x),
-            map: map,
-            icon: {
-                url: 'https://image.flaticon.com/icons/png/128/45/45873.png'
-            }
-        };
-
-        var marker11 = new naver.maps.Marker(markerOptions);
-    }
-
-    function button1_click() {
-        $("#contents-area").html("<div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div><div class='emoticon'><img src='travel.png'></div>");
-        $(".emoticon img").draggable({
-            containment: "body"
-        });
-    }
-
-</script>
 </html>

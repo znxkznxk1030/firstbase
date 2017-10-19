@@ -22,7 +22,7 @@ a {
     flex: 1 1 auto;
     width: 55%;
     height: 100%;
-    background-color: red;
+    background-color: white;
 }
 
 #map{
@@ -33,23 +33,50 @@ a {
 }
 
 #add-button{
+    z-index: 100;
     display: block;
     position: absolute;
-    bottom: 4%;
-    right : 46%;
     width: 60px;
     height: 60px;
     background-color: white;
     margin: 0;
     padding: 0;
+    border: 1px solid #000;
 }
 
 #add-button img{
     width: 60px;
     height: 60px;
     margin: 0;
-    padding: 0;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 8px;
+    padding-bottom: 8px;
 }
+
+#radar-button{
+    z-index: 100;
+    display: block;
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    margin-top: 10px;
+    border: 1px solid #000;
+}
+
+#radar-button img{
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    padding-top: 2px;
+    padding-left: 2px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+}
+
 
 #contents-area{
     display: flex;
@@ -59,7 +86,7 @@ a {
     flex-flow: row wrap;
     justify-content: space-around;
     align-items: center;
-    background-color: blue;
+    background-color: white;
 }
 
 #top-menu{
@@ -100,6 +127,7 @@ a {
     justify-content: center;
     align-items: center;
     background-color: white;
+    border: 1px solid #ddd;
 }
 
 #chat-button img{
@@ -121,20 +149,31 @@ a {
     flex : 1 1 auto;
     justify-content: center;
     height: 100%;
+    color: white;
+    background-color: #00bbd2;
+    border: 1px solid #ddd;
 }
 
-#contents1{
+#contents{
     display: flex;
     flex : 1 1 auto;
     width: 100%;
-    height: 90%;
+    height: 80%;
     flex-flow: column nowrap;
     justify-content: space-around;
     align-items: center;
-    background-color: blue;
+    background-color: #00bbd2;
 }
 
-
+.content-wrapper{
+    display: flex;
+    flex : 1 1 auto;
+    width: 100%;
+    height: 100%;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}
 
 .content{
     display: flex;
@@ -143,6 +182,8 @@ a {
     max-width: 90%
     height: 18%;
     max-height: 18%;
+    margin-top: 1%;
+    margin-bottom: 1%;
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
@@ -153,7 +194,9 @@ a {
     flex : 1 1 auto;
     width: 100%;
     height: 100%;
+    align-items: center;
     background-color: white;
+    overflow:hidden;
 }
 
 .post{
@@ -161,7 +204,81 @@ a {
     flex : 1 1 auto;
     width: 100%;
     height: 100%;
-    background-color: yellow;
+    align-items: center;
+    background-color: white;
+    overflow:hidden;
+}
+
+.contents-page{
+    display: flex;
+    flex : 1 1 auto;
+    width: 100%;
+    height: 10%;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+
+.page{
+    border: 1px solid #ddd;
+    padding: 5px;
+    margin: 3px;"
+}
+
+#down-menu{
+    display: flex;
+    flex : 1 1 auto;
+    width: 100%;
+    height: 10%;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#down-search{
+    display: flex;
+    flex : 0 1 auto;
+    flex-flow: row nowrap;
+    width: 80%;
+}
+
+#down-search input{
+    display: flex;
+    flex: 1 1 auto;
+}
+
+#down-search .search-button{
+    display: flex;
+    flex: 0 1 auto;
+    width: 50px;
+    height: 50px;
+}
+
+#down-search .search-button button{
+    background-color: #00bbd2;
+}
+
+#down-search .search-button img{
+    display: flex;
+    flex : 1 1 auto;
+    width: 100%;
+    height: 100%;
+}
+
+
+#down-filter{
+    display: flex;
+    flex : 0 1 auto;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #ddd;
+}
+
+#down-filter img{
+    display: flex;
+    flex : 1 1 auto;
+    width: 100%;
+    height: 100%;
 }
 
 .emoticon{
