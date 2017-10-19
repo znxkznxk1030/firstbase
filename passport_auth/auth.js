@@ -36,7 +36,7 @@ var authMiddleware = function authMiddleware(req, res, next){
         jwt.verify(req.cookies.jwt, SECRET, function(err, decoded){
             if(err) return res.json({message:'token is wrong'});
 
-            console.log(decoded);
+            // console.log(decoded);
             req.user = decoded;
             next();
         });
@@ -65,7 +65,7 @@ var testAuthenticated = function(req, res){
 };
 
 var clearCookieClear = function(req, res){
-    res.clearCookie('jws').send(req.cookies.jws);
+    res.clearCookie('jwt').send(req.cookies.jwt);
 };
 
 

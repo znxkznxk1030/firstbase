@@ -1,446 +1,381 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "description": "This is a sample server Petstore server.  You can find \nout more about Swagger at \n[http://swagger.io](http://swagger.io) or on \n[irc.freenode.net, #swagger](http://swagger.io/irc/).\n",
-    "version": "1.0.0",
-    "title": "FirstBase Restful API",
-    "termsOfService": "http://swagger.io/terms/",
-    "contact": {
-      "email": "znxkznxk1030@gmail.com"
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "This is a sample server Petstore server.  You can find \nout more about Swagger at \n[http://swagger.io](http://swagger.io) or on \n[irc.freenode.net, #swagger](http://swagger.io/irc/).\n",
+    "version" : "1.0.0",
+    "title" : "FirstBase Restful API",
+    "termsOfService" : "http://swagger.io/terms/",
+    "contact" : {
+      "email" : "znxkznxk1030@gmail.com"
     },
-    "license": {
-      "name": "Apache 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "tags": [
-    {
-      "name": "footprint",
-      "description": "Access to footprints"
-    },
-    {
-      "name": "user",
-      "description": "Operations about user",
-      "externalDocs": {
-        "description": "Find out more about our store",
-        "url": "http://swagger.io"
-      }
+  "host" : "virtserver.swaggerhub.com",
+  "basePath" : "/firstbase8/firstbase/1.0.0",
+  "tags" : [ {
+    "name" : "footprint",
+    "description" : "Access to footprints"
+  }, {
+    "name" : "user",
+    "description" : "Operations about user",
+    "externalDocs" : {
+      "description" : "Find out more about our store",
+      "url" : "http://swagger.io"
     }
-  ],
-  "paths": {
-    "/footprint/list": {
-      "get": {
-        "tags": [
-          "footprint"
-        ],
-        "summary": "Display All footprint in the world",
-        "operationId": "getFootprintList",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/footprint"
+  } ],
+  "schemes" : [ "https", "http" ],
+  "paths" : {
+    "/footprint/list" : {
+      "get" : {
+        "tags" : [ "footprint" ],
+        "summary" : "Display All footprint in the world",
+        "operationId" : "getFootprintList",
+        "produces" : [ "application/json" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/footprint"
               }
             }
           },
-          "400": {
-            "description": "Invaild Data"
+          "400" : {
+            "description" : "Invaild Data"
           },
-          "404": {
-            "description": "page not found"
+          "404" : {
+            "description" : "page not found"
           }
         },
-        "security": [
-          {
-            "api_key": []
-          }
-        ]
+        "security" : [ {
+          "api_key" : [ ]
+        } ]
       }
     },
-    "/footprint/list/{user_id}": {
-      "get": {
-        "tags": [
-          "footprint"
-        ],
-        "summary": "Find footprint list by user id",
-        "description": "Returns footprint list",
-        "operationId": "getFootprintListByUser",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "user_id",
-            "in": "path",
-            "description": "ID of user to return",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/footprint"
+    "/footprint/list/{user_id}" : {
+      "get" : {
+        "tags" : [ "footprint" ],
+        "summary" : "Find footprint list by user id",
+        "description" : "Returns footprint list",
+        "operationId" : "getFootprintListByUser",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "user_id",
+          "in" : "path",
+          "description" : "ID of user to return",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/footprint"
               }
             }
           },
-          "400": {
-            "description": "Invaild Data"
+          "400" : {
+            "description" : "Invaild Data"
           },
-          "404": {
-            "description": "page not found"
+          "404" : {
+            "description" : "page not found"
           }
         }
       }
     },
-    "/footprint/detail/{footprint_id}": {
-      "get": {
-        "tags": [
-          "footprint"
-        ],
-        "summary": "Find a footprint by footprint id",
-        "description": "Returns a footprint",
-        "operationId": "getFootprintByFootprintID",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "footprint_id",
-            "in": "path",
-            "description": "ID of footprint to return",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "$ref": "#/definitions/footprint"
+    "/footprint/detail/{footprint_id}" : {
+      "get" : {
+        "tags" : [ "footprint" ],
+        "summary" : "Find a footprint by footprint id",
+        "description" : "Returns a footprint",
+        "operationId" : "getFootprintByFootprintID",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "footprint_id",
+          "in" : "path",
+          "description" : "ID of footprint to return",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/footprint"
             }
           },
-          "400": {
-            "description": "Invaild Data"
+          "400" : {
+            "description" : "Invaild Data"
           },
-          "404": {
-            "description": "page not found"
+          "404" : {
+            "description" : "page not found"
           }
         }
       },
-      "delete": {
-        "tags": [
-          "footprint"
-        ],
-        "summary": "Delete a footprint by footprint id",
-        "description": "Delete a footprint by own id",
-        "operationId": "deleteFootprintByFootprintID",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "footprint_id",
-            "in": "path",
-            "description": "ID of footprint to delete",
-            "required": true,
-            "type": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful delete"
+      "delete" : {
+        "tags" : [ "footprint" ],
+        "summary" : "Delete a footprint by footprint id",
+        "description" : "Delete a footprint by own id",
+        "operationId" : "deleteFootprintByFootprintID",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "footprint_id",
+          "in" : "path",
+          "description" : "ID of footprint to delete",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful delete"
           },
-          "405": {
-            "description": "Invaild Footprint Id"
+          "405" : {
+            "description" : "Invaild Footprint Id"
           }
         }
       }
     },
-    "/footprint/create": {
-      "post": {
-        "tags": [
-          "footprint"
-        ],
-        "summary": "Create a footprint",
-        "description": "Create a footprint above user's feet",
-        "operationId": "createFootprint",
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "user_id",
-            "in": "formData",
-            "description": "get form session. So Please, Don't fill this field by yourself.",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "title",
-            "in": "formData",
-            "description": "title of footprint",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "icon_url",
-            "in": "formData",
-            "description": "URL of icon from our file server (AWS S3)",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "content",
-            "in": "formData",
-            "description": "A main content of user's footprint",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "latitude",
-            "in": "formData",
-            "description": "A latitude of user's position",
-            "required": true,
-            "type": "number"
-          },
-          {
-            "name": "longitude",
-            "in": "formData",
-            "description": "A longitude of user's position",
-            "required": true,
-            "type": "number"
-          }
-        ],
-        "responses": {
-          "405": {
-            "description": "Invaild input"
+    "/footprint/create" : {
+      "post" : {
+        "tags" : [ "footprint" ],
+        "summary" : "Create a footprint",
+        "description" : "Create a footprint above user's feet",
+        "operationId" : "createFootprint",
+        "consumes" : [ "multipart/form-data" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "user_id",
+          "in" : "formData",
+          "description" : "get form session. So Please, Don't fill this field by yourself.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "title",
+          "in" : "formData",
+          "description" : "title of footprint",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "icon_url",
+          "in" : "formData",
+          "description" : "URL of icon from our file server (AWS S3)",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "content",
+          "in" : "formData",
+          "description" : "A main content of user's footprint",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "latitude",
+          "in" : "formData",
+          "description" : "A latitude of user's position",
+          "required" : true,
+          "type" : "number"
+        }, {
+          "name" : "longitude",
+          "in" : "formData",
+          "description" : "A longitude of user's position",
+          "required" : true,
+          "type" : "number"
+        } ],
+        "responses" : {
+          "405" : {
+            "description" : "Invaild input"
           }
         }
       }
     },
-    "/user/login": {
-      "get": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Logs user into the system",
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "user_id",
-            "in": "formData",
-            "description": "The user id for login",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "formData",
-            "description": "The password for login in clear text",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "$ref": "#/definitions/ApiResponse"
+    "/user/login" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Logs user into the system",
+        "consumes" : [ "multipart/form-data" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "user_id",
+          "in" : "formData",
+          "description" : "The user id for login",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "password",
+          "in" : "formData",
+          "description" : "The password for login in clear text",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/ApiResponse"
             }
           },
-          "400": {
-            "description": "Invalid username/password supplied"
+          "400" : {
+            "description" : "Invalid username/password supplied"
           }
         }
       }
     },
-    "/user/logout": {
-      "get": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Logs out current logged in user session",
-        "produces": [
-          "application/json",
-          "application/xml"
-        ],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Result of Logout",
-            "schema": {
-              "$ref": "#/definitions/ApiResponse"
+    "/user/logout" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Logs out current logged in user session",
+        "produces" : [ "application/json", "application/xml" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Result of Logout",
+            "schema" : {
+              "$ref" : "#/definitions/ApiResponse"
             }
           }
         }
       }
     },
-    "/user/registrate": {
-      "post": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Registrate new user information",
-        "operationId": "registrateUser",
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "parameters": [
-          {
-            "name": "user_id",
-            "in": "formData",
-            "description": "user id for pk (temporary, need more descussions)",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "user_email",
-            "in": "formData",
-            "description": "user email, keep it as unique.",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "password1",
-            "in": "formData",
-            "description": "password to be randomly",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "password2",
-            "in": "formData",
-            "description": "password2 to confirm above password1",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Result of Registration",
-            "schema": {
-              "$ref": "#/definitions/ApiResponse"
+    "/user/registrate" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "summary" : "Registrate new user information",
+        "operationId" : "registrateUser",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "name" : "user_id",
+          "in" : "formData",
+          "description" : "user id for pk (temporary, need more descussions)",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "user_email",
+          "in" : "formData",
+          "description" : "user email, keep it as unique.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "password1",
+          "in" : "formData",
+          "description" : "password to be randomly",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "password2",
+          "in" : "formData",
+          "description" : "password2 to confirm above password1",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Result of Registration",
+            "schema" : {
+              "$ref" : "#/definitions/ApiResponse"
             }
           }
         }
       }
     }
   },
-  "securityDefinitions": {
-    "petstore_auth": {
-      "type": "oauth2",
-      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
-      "flow": "implicit",
-      "scopes": {
-        "write:pets": "modify pets in your account",
-        "read:pets": "read your pets"
+  "securityDefinitions" : {
+    "petstore_auth" : {
+      "type" : "oauth2",
+      "authorizationUrl" : "http://petstore.swagger.io/oauth/dialog",
+      "flow" : "implicit",
+      "scopes" : {
+        "write:pets" : "modify pets in your account",
+        "read:pets" : "read your pets"
       }
     },
-    "api_key": {
-      "type": "apiKey",
-      "name": "api_key",
-      "in": "header"
+    "api_key" : {
+      "type" : "apiKey",
+      "name" : "api_key",
+      "in" : "header"
     }
   },
-  "definitions": {
-    "footprint": {
-      "type": "object",
-      "properties": {
-        "footprint_id": {
-          "type": "integer",
-          "format": "int64"
+  "definitions" : {
+    "footprint" : {
+      "type" : "object",
+      "properties" : {
+        "footprint_id" : {
+          "type" : "integer",
+          "format" : "int64"
         },
-        "user_id": {
-          "type": "string"
+        "user_id" : {
+          "type" : "string"
         },
-        "title": {
-          "type": "string"
+        "title" : {
+          "type" : "string"
         },
-        "icon": {
-          "type": "string"
+        "icon" : {
+          "type" : "string"
         },
-        "context": {
-          "type": "string"
+        "context" : {
+          "type" : "string"
         },
-        "latitude": {
-          "type": "number"
+        "latitude" : {
+          "type" : "number"
         },
-        "longitude": {
-          "type": "number"
+        "longitude" : {
+          "type" : "number"
         },
-        "created_date": {
-          "type": "string",
-          "format": "date-time"
+        "created_date" : {
+          "type" : "string",
+          "format" : "date-time"
         },
-        "modified_date": {
-          "type": "string",
-          "format": "date-time"
+        "modified_date" : {
+          "type" : "string",
+          "format" : "date-time"
         }
       },
-      "xml": {
-        "name": "footprint"
+      "xml" : {
+        "name" : "footprint"
       }
     },
-    "user": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "integer",
-          "format": "int64"
+    "user" : {
+      "type" : "object",
+      "properties" : {
+        "user_id" : {
+          "type" : "integer",
+          "format" : "int64"
         },
-        "user_email": {
-          "type": "string"
+        "user_email" : {
+          "type" : "string"
         },
-        "password": {
-          "type": "string"
+        "password" : {
+          "type" : "string"
         },
-        "created_date": {
-          "type": "string",
-          "format": "date-time"
+        "created_date" : {
+          "type" : "string",
+          "format" : "date-time"
         },
-        "modified_date": {
-          "type": "string",
-          "format": "date-time"
+        "modified_date" : {
+          "type" : "string",
+          "format" : "date-time"
         }
       },
-      "xml": {
-        "name": "User"
+      "xml" : {
+        "name" : "User"
       }
     },
-    "ApiResponse": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
+    "ApiResponse" : {
+      "type" : "object",
+      "properties" : {
+        "message" : {
+          "type" : "string"
         }
       }
     }
   },
-  "externalDocs": {
-    "description": "Find out more about Swagger",
-    "url": "http://swagger.io"
-  },
-  "host": "virtserver.swaggerhub.com",
-  "basePath": "/firstbase8/firstbase/1.0.0",
-  "schemes": [
-    "https",
-    "http"
-  ]
+  "externalDocs" : {
+    "description" : "Find out more about Swagger",
+    "url" : "http://swagger.io"
+  }
 }

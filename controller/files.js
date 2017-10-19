@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const formidable = require('formidable');
 var guid = require('guid');
+const iconKeys = require('./iconKey.json');
 
 AWS.config.loadFromPath('s3config.json');
 
@@ -80,7 +81,7 @@ var upload = function(req, res, next){
 var retrieve = function(req, res){
     const params = {
         Bucket: bucketName,
-        Key : 'friends-fun.jpg'
+        Key : 'mushroom_super.png'
     };
 
     var url = s3.getSignedUrl('getObject', params);
@@ -97,12 +98,32 @@ var retrieveIcon = function(req, res){
         Key : iconKey
     };
 
-    var icon_url = s3.getSignedUrl('getObject', params);
+    var iconUrl = s3.getSignedUrl('getObject', params);
 
-    console.log(icon_url);
-    res.json({message:"success", icon_url: icon_url});
+    console.log(iconUrl);
+    res.json({message:"success", iconUrl: iconUrl});
 };
+
+var retrieveIconAllFromDirectory = function(req, res){
+    var iconUrls = [];
+    console.log("#debug retrieve All : " + iconKeys.iconKeys);
+    iconKeys.iconKeys.forEach(function(iconKey){
+        var params = {
+            Bucket: bucketName,
+            Key: iconKey
+        };
+
+        console.log("#debug retrieveAll : " + iconKey);
+        var iconUrl = s3.getSignedUrl('getObject', params);
+        iconUrls.push(iconUrl);
+    });
+
+    res.json({code:1, message:"success to load all icon", length:iconUrls.length, iconUrls: iconUrls});
+
+};
+
 
 exports.upload = upload;
 exports.retrieve = retrieve;
 exports.retrieveIcon = retrieveIcon;
+exports.retrieveIconAllFromDirectory = retrieveIconAllFromDirectory;

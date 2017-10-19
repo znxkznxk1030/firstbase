@@ -63,5 +63,5 @@ var findByUsername = function(username){
 
 
 module.exports = {
-    verifyForm : verifyForm,
+    verifyForm : verifyForm
 } 

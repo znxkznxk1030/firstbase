@@ -17,7 +17,8 @@ var getFootprintListByUser = function(req, res){
                 if (err){
                     throw err;
                 }
-
+                //todo 튜닝
+                //todo sql 분리
                 var footprintListJson = JSON.parse(JSON.stringify(footprintList));
 
                 console.log(footprintList);

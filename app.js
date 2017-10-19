@@ -80,10 +80,10 @@ app.use(function(err, req, res, next) {
 });
 
 //app.listen(52273, function(){});
-
-http.createServer(app).listen(config.port, function(){
-  console.log('server running port : ' + config.port);
-});
+// console.log("start2 : " + config.port);
+// http.createServer(app).listen(config.port, function(){
+//   console.log('server running port : ' + config.port);
+// });
 
 
 module.exports = app;
