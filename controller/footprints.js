@@ -2,6 +2,12 @@ var connection = require('../database/db');
 var user = require('../passport_auth/user');
 var locationUtil = require('../utils/locationUtil');
 var async = require('async');
+const bucketName = 'firstbase-bucket';
+const AWS = require('aws-sdk');
+
+AWS.config.loadFromPath('s3config.json');
+
+const s3 = new AWS.S3({ region : 'ap-northeast-2' });
 
 var getFootprintListByUser = function(req, res){
     console.log(req.params.id);
