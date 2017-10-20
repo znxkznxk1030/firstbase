@@ -115,7 +115,7 @@ var getFootprintByFootprintID = function(req, res){
     async.series(task, function(err, result){
             if(err) res.json({ code: 0, message : err});
             else{
-                var output = Object.assign(result[0], result[2]);
+                var output = Object.assign({code: 1}, result[0], result[2]);
                 res.json(output);
                 //res.json(result.slice(1,3));
             }
