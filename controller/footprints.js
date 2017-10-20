@@ -196,7 +196,7 @@ var createFootprint = function(req, res){
                     req.body.imageKeys.forEach(function(imageKey){
                         if(imageKey !== null){
                             console.log(imageKey);
-                            connection.query(imageSql, [result.insertId, req.body.imageKeys[i]], function(err, image){
+                            connection.query(imageSql, [result.insertId, req.body.imageKey], function(err, image){
                                 if (err) throw err;
                             });
                         }
