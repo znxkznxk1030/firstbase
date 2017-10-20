@@ -85,11 +85,11 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-//app.listen(52273, function(){});
-// console.log("start2 : " + config.port);
-// http.createServer(app).listen(config.port, function(){
-//   console.log('server running port : ' + config.port);
-// });
+app.listen(52273, function(){});
+console.log("start2 : " + config.port);
+http.createServer(app).listen(config.port, function(){
+  console.log('server running port : ' + config.port);
+});
 
 
 module.exports = app;
