@@ -193,15 +193,25 @@ var createFootprint = function(req, res){
                     console.log(result);
                     console.log(result.insertId);
 
-                    for(i in req.body.imageKeys){
-                        if(!req.body.imageKeys[i]){
-                            console.log(req.body.imageKeys[i]);
+                    req.body.imageKeys.forEach(function(imageKey){
+                        if(imageKey !== null){
+                            console.log(imageKey);
                             connection.query(imageSql, [result.insertId, req.body.imageKeys[i]], function(err, image){
                                 if (err) throw err;
                             });
                         }
-                    }
+                    });
 
+                    // for(i in req.body.imageKeys){
+                    //     console.log(i);
+                    //     if(!req.body.imageKeys[i]){
+                    //         console.log(req.body.imageKeys[i]);
+                    //         connection.query(imageSql, [result.insertId, req.body.imageKeys[i]], function(err, image){
+                    //             if (err) throw err;
+                    //         });
+                    //     }
+                    // }
+                    //
                     // if(req.body.imageKeys !== undefined){
                     //     for(var i = 0; i < req.imageKeys.length; i++){
                     //         connection.query(imageSql, [result.footprint_id, req.imageKeys[i]], function(err, image){
