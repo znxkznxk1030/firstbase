@@ -34,7 +34,7 @@ var getFootprintListByUser = function(req, res){
 };
 
 var getFootprintByFootprintID = function(req, res){
-    var footprintId = req.query.footprintid;
+    var footprintId = req.query.footprintId;
     var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count(comment.comment_id) AS commentCount " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
@@ -45,6 +45,7 @@ var getFootprintByFootprintID = function(req, res){
 
     var find_sql = "SELECT * FROM view WHERE id = ? AND footprint_id = ?";
     var view_insert_sql = "INSERT INTO view (id, footprint_id) VALUES (?, ?)";
+    var image_load_sql = "SELECT * FROM image WHERE footprint_id = ?";
 
     var task = [
         function(cb){
@@ -53,22 +54,21 @@ var getFootprintByFootprintID = function(req, res){
                     //res.json( {message : "error to find footprint"} );
                     return cb(err, {message : "error to find footprint"});
                 }
-                console.log(footprint);
-                if(footprint[0]) return cb(null, footprint);
+                console.log("aa" + footprint);
+                if(footprint[0]) return cb(null, JSON.parse(JSON.stringify(footprint))[0]);
                 else return cb(err, {message : "error to find footprint"});
                 //res.json(JSON.parse(JSON.stringify(footprint)));
             });
         },
         function(cb){
-            if(req.user){
-
+            if(req.user.id){
                 connection.query(find_sql, [req.user.id, footprintId], function(err, view_id){
                     if(err){
                         return cb(err, { message: "id not found"});
                     }
-                    //console.log(view_id[0]);
+                    console.log(view_id);
                     if(view_id[0]){
-                            return cb(null, { message: "already view"});
+                            return cb(null, { message: "already watched"});
                     }else{
                         connection.query(view_insert_sql, [req.user.id, footprintId], function(err, result){
                             if(err) {
@@ -79,14 +79,38 @@ var getFootprintByFootprintID = function(req, res){
                     }
                 });
             }
+        },
+        function(cb){
+            connection.query(image_load_sql, [footprintId], function(err, imageInfo){
+                if(err) return cb(err, { message: 'error'});
+
+                console.log(imageInfo);
+                imageInfo = JSON.parse(JSON.stringify(imageInfo));
+
+                var imageUrls = [];
+
+                imageInfo.forEach(function(image){
+                    var params = {
+                        Bucket: bucketName,
+                        Key: image.image_key
+                    };
+
+                    console.log("#debug retrieveAll : " + image.image_key);
+                    var imageUrl = s3.getSignedUrl('getObject', params);
+                    imageUrls.push(imageUrl);
+                });
+
+                return cb(null, {imageUrls: imageUrls});
+
+            })
         }
     ];
 
     async.series(task, function(err, result){
-            if(err) res.json({ message : err});
+            if(err) res.json({ code: 0, message : err});
             else{
-                console.log(result);
-                res.json(JSON.parse(JSON.stringify(result[0]))[0]);
+                var output = Object.assign(result[0], result[2]);
+                res.json(output);
                 //res.json(result.slice(1,3));
             }
     });
@@ -188,11 +212,6 @@ var createFootprint = function(req, res){
                 return res.json(err);
             }else{
                 if(result){
-                    console.log(data);
-                    console.log(req.body.imageKeys);
-                    console.log(result);
-                    console.log(result.insertId);
-
                     req.body.imageKeys.forEach(function(imageKey){
                         if(imageKey !== null){
                             console.log(imageKey);
@@ -201,24 +220,6 @@ var createFootprint = function(req, res){
                             });
                         }
                     });
-
-                    // for(i in req.body.imageKeys){
-                    //     console.log(i);
-                    //     if(!req.body.imageKeys[i]){
-                    //         console.log(req.body.imageKeys[i]);
-                    //         connection.query(imageSql, [result.insertId, req.body.imageKeys[i]], function(err, image){
-                    //             if (err) throw err;
-                    //         });
-                    //     }
-                    // }
-                    //
-                    // if(req.body.imageKeys !== undefined){
-                    //     for(var i = 0; i < req.imageKeys.length; i++){
-                    //         connection.query(imageSql, [result.footprint_id, req.imageKeys[i]], function(err, image){
-                    //             if (err) throw err;
-                    //         })
-                    //     }
-                    // }
                     res.json({code : 1, message: 'success to create footprint'});
                 }else{
                     res.json({code : 0, message: 'fail to create'});
@@ -226,7 +227,6 @@ var createFootprint = function(req, res){
             }
         });
 };
-
 
 var deleteFootprintByFootprintID = function(req, res){
 
