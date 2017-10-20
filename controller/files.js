@@ -55,7 +55,7 @@ var createItemObject = function(files, cb){
     });
 };
 
-var upload = function(req, res, next){
+var upload = function(req, res){
     var form = new formidable.IncomingForm();
     console.log(guid.raw());
 
@@ -64,17 +64,8 @@ var upload = function(req, res, next){
 
         createItemObject(files, function(err, result){
             if(err) return res.send(err);
-            else return res.json({ message : "Successfully uploaded", iconKey:result});
+            else return res.json({ message : "Successfully uploaded", imageKey:result});
         });
-
-
-        // async.series([
-        //     //createMainBucket,
-        //     createItemObject(files)
-        // ], function (err, result) {
-        //     if(err) return res.send(err);
-        //     else return res.json({ message : "Successfully uploaded"});
-        // });
     });
 };
 
@@ -101,7 +92,7 @@ var retrieveIcon = function(req, res){
     var iconUrl = s3.getSignedUrl('getObject', params);
 
     console.log(iconUrl);
-    res.json({message:"success", iconUrl: iconUrl});
+    res.json({code:1, message:"success", iconUrl: iconUrl});
 };
 
 var retrieveIconAllFromDirectory = function(req, res){
