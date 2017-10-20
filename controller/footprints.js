@@ -190,9 +190,11 @@ var createFootprint = function(req, res){
                 if(result){
                     console.log(data);
                     console.log(req.body.imageKeys);
+                    console.log(result);
 
                     for(i in req.imageKeys){
-                        connection.query(imageSql, [result[0].footprint_id, req.imageKeys[i]], function(err, image){
+                        console.log(req.imageKeys[i]);
+                        connection.query(imageSql, [result.footprint_id, req.imageKeys[i]], function(err, image){
                             if (err) throw err;
                         });
                     }
@@ -201,7 +203,7 @@ var createFootprint = function(req, res){
 
                     // if(req.body.imageKeys !== undefined){
                     //     for(var i = 0; i < req.imageKeys.length; i++){
-                            connection.query(imageSql, [result[0].footprint_id, req.imageKeys[i]], function(err, image){
+                            connection.query(imageSql, [result.footprint_id, req.imageKeys[i]], function(err, image){
                                 if (err) throw err;
                             })
                     //     }
