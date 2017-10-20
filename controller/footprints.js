@@ -197,9 +197,9 @@ var createFootprint = function(req, res){
                             })
                         }
                     }
-                    res.json({message: 'success to create footprint'});
+                    res.json({code : 1, message: 'success to create footprint'});
                 }else{
-                    res.json({message: 'fail to create'});
+                    res.json({code : 0, message: 'fail to create'});
                 }
             }
         });
