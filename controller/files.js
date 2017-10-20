@@ -106,7 +106,7 @@ var retrieveIconAllFromDirectory = function(req, res){
 
         console.log("#debug retrieveAll : " + iconKey);
         var iconUrl = s3.getSignedUrl('getObject', params);
-        iconUrls.push(iconUrl);
+        iconUrls.push({key: iconKey, value: iconUrl});
     });
 
     res.json({code:1, message:"success to load all icon", length:iconUrls.length, iconUrls: iconUrls});
