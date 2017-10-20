@@ -192,22 +192,20 @@ var createFootprint = function(req, res){
                     console.log(req.body.imageKeys);
                     console.log(result[0]);
 
-                    for(i in req.imageKeys){
-                        if(!req.imageKeys){
-                            console.log(req.imageKeys[i]);
-                            connection.query(imageSql, [result.footprint_id, req.imageKeys[i]], function(err, image){
+                    for(i in req.body.imageKeys){
+                        if(!req.body.imageKeys){
+                            console.log(req.body.imageKeys[i]);
+                            connection.query(imageSql, [result.footprint_id, req.body.imageKeys[i]], function(err, image){
                                 if (err) throw err;
                             });
                         }
                     }
 
-
-
                     // if(req.body.imageKeys !== undefined){
                     //     for(var i = 0; i < req.imageKeys.length; i++){
-                            connection.query(imageSql, [result.footprint_id, req.imageKeys[i]], function(err, image){
-                                if (err) throw err;
-                            })
+                    //         connection.query(imageSql, [result.footprint_id, req.imageKeys[i]], function(err, image){
+                    //             if (err) throw err;
+                    //         })
                     //     }
                     // }
                     res.json({code : 1, message: 'success to create footprint'});
