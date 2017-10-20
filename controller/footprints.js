@@ -180,7 +180,7 @@ var createFootprint = function(req, res){
 
     const sql = "INSERT INTO footprint (id, title, icon_key, content, latitude, longitude) "
         + " VALUES (?, ?, ?, ?, ?, ?)";
-    const imageSql = "INSERT INTO image (image_key, footprint_id) VALUES (?, ?) ";
+    const imageSql = "INSERT INTO image (footprint_id, image_key) VALUES (?, ?) ";
 
     connection.query(sql, [req.user.id ,data.title, data.icon_key, data.content, data.latitude, data.longitude],
         function(err, result){
