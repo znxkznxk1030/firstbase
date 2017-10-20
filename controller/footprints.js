@@ -190,12 +190,13 @@ var createFootprint = function(req, res){
                 if(result){
                     console.log(data);
                     console.log(req.body.imageKeys);
-                    console.log(result[0]);
+                    console.log(result);
+                    console.log(result.insertId);
 
                     for(i in req.body.imageKeys){
                         if(!req.body.imageKeys[i]){
                             console.log(req.body.imageKeys[i]);
-                            connection.query(imageSql, [result.footprint_id, req.body.imageKeys[i]], function(err, image){
+                            connection.query(imageSql, [result.insertId, req.body.imageKeys[i]], function(err, image){
                                 if (err) throw err;
                             });
                         }
