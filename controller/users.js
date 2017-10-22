@@ -36,7 +36,7 @@ var updateUserImage = function(req, res){
 
     uploadUserImage(req, function(err, profileImage){
         if(err) res.json(err);
-        connection.query(sql, [profileImage.key],
+        connection.query(sql, [profileImage.key, req.user.id],
             function(err, userUpdated){
                 if(err) return res.json({code:-1, message:'sql error'});
                 return res.json({code: 1, profileUrl: profileImage.url});
