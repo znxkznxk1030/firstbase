@@ -108,9 +108,9 @@ function makePage(data) {
 function renderPage(data) {
     if(data.length > 0) {
         var cnt = Math.min(data.length, 5);
-        $('#content-wrapper').html("");
         $('#contents-page').html("");
         var fnAppendPage = function(start){
+            $('#content-wrapper').html("");
             var end = Math.min(data.length, start+5);
             for(var i=start; i<end; i++) {
                 var o = data[i];
