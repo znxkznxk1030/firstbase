@@ -1,7 +1,7 @@
-var connection = require('../database/db');
-var user = require('../passport_auth/user');
-var locationUtil = require('../utils/locationUtil');
-var async = require('async');
+const connection = require('../database/db');
+const user = require('../passport_auth/user');
+const locationUtil = require('../utils/locationUtil');
+const async = require('async');
 const bucketName = 'firstbase-bucket';
 const AWS = require('aws-sdk');
 
@@ -132,14 +132,9 @@ var getFootprintList = function(req, res){
         "GROUP BY footprint_id ";
 
     connection.query(sql, [], function(err, footprintList){
-        if(err){
-            throw err;
-        }
+        if(err) res.json({code: -1, message: err});
 
         var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
-
-        console.log(footprintList);
-        console.log(footprintListJSON);
 
         res.json(footprintListJSON);
     });

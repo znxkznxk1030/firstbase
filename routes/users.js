@@ -3,7 +3,7 @@ var router = express.Router();
 var passport = require('passport');
 var user = require('../passport_auth/user');
 var auth = require("../passport_auth/auth");
-var nicknameCheck = require("../controller/users").nicknameCheck;
+var controller = require("../controller/users");
 
 router.use(passport.initialize());
 router.use(passport.session());
@@ -58,10 +58,12 @@ router.get('/login-success', function(req, res){
 
 router.get('/logout', function(req, res){
     req.logout();
-    res.clearCookie('sid');
+    res.clearCookie('jwt')
     res.json({ message : "success to logout"});
 });
 
-router.get('/nickname-check', nicknameCheck);
+router.get('/nickname-check', controller.nicknameCheck);
+
+router.get('/profile', auth.authMiddleware, controller.getUserInfo);
 
 module.exports = router;

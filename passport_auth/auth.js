@@ -28,15 +28,12 @@ var isAuthenticated = function isAuthenticated(){
 
 var authMiddleware = function authMiddleware(req, res, next){
     var token = req.cookies.jwt || req.query.jwt;
-    console.log("#debug authMiddleware\ntoken : " + req.cookies.jwt);
     if(!token){
-        return res.json({message: 'not logged in'});
+        return res.json({code: 0, message: 'not logged in'});
     }
     else{
         jwt.verify(req.cookies.jwt, SECRET, function(err, decoded){
-            if(err) return res.json({message:'token is wrong'});
-
-            // console.log(decoded);
+            if(err) return res.json({code: -1, message:'token is wrong'});
             req.user = decoded;
             next();
         });

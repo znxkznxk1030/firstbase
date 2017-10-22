@@ -5,7 +5,6 @@ var controller = require('../controller/files');
 
 router.post('/upload', controller.upload);
 
-router.get('/retrieve', controller.retrieve);
 router.get('/retrieveIcon', controller.retrieveIcon);
 router.get('/retrieveIconAll', controller.retrieveIconAllFromDirectory);
 

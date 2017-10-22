@@ -69,20 +69,18 @@ var upload = function(req, res){
     });
 };
 
-var retrieve = function(req, res){
+//Not Api Function
+var retrieveByKey = function(key){
     const params = {
         Bucket: bucketName,
-        Key : 'mushroom_super.png'
+        Key : key
     };
 
-    var url = s3.getSignedUrl('getObject', params);
-    console.log(url);
+    return s3.getSignedUrl('getObject', params);
 };
 
 var retrieveIcon = function(req, res){
     var iconKey = req.query.iconKey;
-
-    console.log(iconKey);
 
     const params = {
         Bucket: bucketName,
@@ -115,6 +113,6 @@ var retrieveIconAllFromDirectory = function(req, res){
 
 
 exports.upload = upload;
-exports.retrieve = retrieve;
+exports.retrieveByKey = retrieveByKey;
 exports.retrieveIcon = retrieveIcon;
 exports.retrieveIconAllFromDirectory = retrieveIconAllFromDirectory;
