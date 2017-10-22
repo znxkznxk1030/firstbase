@@ -66,7 +66,7 @@ var getUserInfo = function(req, res){
         },
         function(profile, cb){
             var profileUrl;
-
+            console.log(profile.profile_key);
             if(profile.profile_key) profileUrl = retrieveByKey(profile.profile_key);
             else profileUrl = retrieveByKey(profileDefaultKey);
 
