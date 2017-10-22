@@ -78,47 +78,48 @@
     <div class="modal fade" id="myModal" role="dialog">
         <div class="modal-dialog">
 
-          <!-- Modal content-->
-          <div class="modal-content">
-            <div class="modal-header" style="padding:35px 50px;">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4>Login</h4>
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="padding:35px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Login</h4>
+                </div>
+                <div class="modal-body" style="padding:40px 50px;">
+                    <div id = "login-form">
+                        <form action="http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:8080/users/login" method="post" enctype="application/json">
+                            <div class="form-group">
+                                <label for="id">Email</label>
+                                <input type="text" class="form-control" name="id" id="id" placeholder="Enter Email"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password"/>
+                            </div>
+                            <div class="form-submit">
+                                <button type="submit" class="btn btn-success btn-block">Login</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="social-login">
+                        <a class="btn" href="/auth/facebook"><button type="button" class="btn btn-primary">Facebook으로 로그인</button></a>
+                    </div>
+                    <div class="social-login">
+                        <a class="btn" href="/auth/google"><button type="button" class="btn btn-danger">Google으로 로그인</button></a>
+                    </div>
+                    <div class="social-login">
+                        <a class="btn" href="/users/signup-form"><button type="button" class="btn btn-warning">Sign Up</button></a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <p>Not a member? <a href="/users/signup-form">Sign Up</a></p>
+                    <p>Forgot <a href="#">Password?</a></p>
+                    <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal">Cancel</button>
+                </div>
             </div>
-            <div class="modal-body" style="padding:40px 50px;">
-                <div id = "login-form">
-                    <form action="/users/login" method="post" enctype="application/json">
-                        <div class="form-group">
-                            <label for="id">Email</label>
-                            <input type="text" class="form-control" name="id" id="id" placeholder="Enter Email"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password"/>
-                        </div>
-                        <div class="form-submit">
-                            <button type="submit" class="btn btn-success btn-block">Login</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="social-login">
-                    <a class="btn" href="/auth/facebook"><button type="button" class="btn btn-primary">Facebook으로 로그인</button></a>
-                </div>
-                <div class="social-login">
-                    <a class="btn" href="/auth/google"><button type="button" class="btn btn-danger">Google으로 로그인</button></a>
-                </div>
-                <div class="social-login">
-                    <a class="btn" href="/users/signup-form"><button type="button" class="btn btn-warning">Sign Up</button></a>
-                </div>
-            </div>
-            <div class="modal-footer">
-              <p>Not a member? <a href="/users/signup-form">Sign Up</a></p>
-              <p>Forgot <a href="#">Password?</a></p>
-              <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal">Cancel</button>
-          </div>
-      </div>
-  </div>
-</div>
-
-<script type="text/javascript" src="/js/app.js" defer></script>
+        </div>
+    </div>
+    <div id = "popUp">
+    </div>
+    <script type="text/javascript" src="/js/app.js" defer></script>
 </body>
 </html>

@@ -3,6 +3,7 @@ var baseUrl = "http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:80
 
 var mapWidth = $("#map-area").outerWidth();
 var mapHeight = $("#map-area").outerHeight();
+var allIcon = {};
 
 $(window).resize(function() {
     mapWidth = $("#map-area").outerWidth();
@@ -37,7 +38,7 @@ $(document).ready(function(){
     $.ajax({
         type: 'GET',
         data: "",
-        url: '/footprint/list',
+        url: baseUrl+'/footprint/list',
         success: function(data) {
             makePage(data);
         }
@@ -53,6 +54,15 @@ $(document).ready(function(){
         getMarkers(bounds);
     });
     search_positon();
+
+    $.ajax({
+        type: 'GET',
+        data: "",
+        url: baseUrl+'/files/retrieveIconAll',
+        success: function(data) {
+            saveIcons(data);
+        }
+    });
 });
 
 function makeMarkers(data){
@@ -87,8 +97,12 @@ function makePage(data) {
         for(var i=start; i<end; i++) {
             var o = data[i];
             var $content = $('<div class="content"></div>').appendTo($list);
-            var $title = $('<div class="title"></div>').appendTo($content).text(o.title);
-            var $post = $('<div class="post"></div>').appendTo($content).text(o.content);
+            var $title = $('<div class="title""></div>').appendTo($content).text(o.title).data('data', o).click(function(){
+                popUp($(this).data('data'));
+            });
+            var $post = $('<div class="post""></div>').appendTo($content).text(o.content).data('data', o).click(function(){
+                popUp($(this).data('data'));
+            });
         }
     };
 
@@ -115,8 +129,12 @@ function renderPage(data) {
             for(var i=start; i<end; i++) {
                 var o = data[i];
                 var $content = $('<div class="content"></div>').appendTo($("#content-wrapper"));
-                var $title = $('<div class="title"></div>').appendTo($content).text(o.title);
-                var $post = $('<div class="post"></div>').appendTo($content).text(o.content);
+                var $title = $('<div class="title""></div>').appendTo($content).text(o.title).data('data', o).click(function(){
+                    popUp($(this).data('data'));
+                });
+                var $post = $('<div class="post""></div>').appendTo($content).text(o.content).data('data', o).click(function(){
+                    popUp($(this).data('data'));
+                });
             }
         };
         var pageCnt = data.length / 5;
@@ -242,8 +260,57 @@ function search_positon(){
 
 function onSuccessGeolocation(position) {
     var location = new naver.maps.LatLng(position.coords.latitude,
-     position.coords.longitude);
+       position.coords.longitude);
 
     map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.
     map.setZoom(10); // 지도의 줌 레벨을 변경합니다.
+}
+
+function popUp(data) {
+    $("#popUp").html('<div id="detail-cancel"><button type="button" class="close" onclick="cancel();">&times;</button></div><div id="detail-post"><div id = "detail-top"><div id = "detail-icon"></div><div id = "detail-title"></div></div><div id = "detail-data"><div id = "detail-id"></div><div id = "detail-modified_date"></div></div><div id = "detail-images"><div id = "detail-image"></div></div><div id = "detail-content"></div><div id = "detail-cmt-count"></div></div>');
+    $("#popUp").css("width", "45vw");
+    $("#popUp").css("height", "100vh");
+    $("#popUp").css("top", "0");
+    $("#popUp").css("left", "55vw");
+    $("#popUp").css("display", "flex");
+    var icon_key = data.icon_key;
+    var $icon;
+    $.each( allIcon, function( key, value ) {
+        if(key == icon_key){
+            $icon = '<img src='+value+'>';
+        }
+    });
+    var $icon = $($icon).appendTo($("#detail-icon"));
+    console.log(data);
+    console.log(data.image);
+    $("#detail-title").text(data.title);
+    $("#detail-id").text(data.id);
+    $("#detail-modified_date").text(data.modified_date);
+    $("#detail-image").text(data.image);
+    $("#detail-content").text(data.content);
+    $("#detail-cmt-count").text(data.commentCount);
+    $.ajax({
+        type: 'GET',
+        data: {footprintId : data.footprint_id},
+        url: baseUrl+'/footprint/detail',
+        success: function(data) {
+            console.log(data);
+        }
+    });
+}
+
+function cancel(){
+    $("#popUp").css("display", "none");
+}
+
+function saveIcons(data){
+    var o = data.iconUrls;
+    for(i = 0; i<o.length; i++){
+        var key = o[i].key;
+        var value = o[i].value;
+        allIcon[key] = value;
+        //var icon = JSON.stringify("{"+key+" : "+value+"}");
+        //allIcon.push(JSON.parse(icon));
+    }
+    console.log(allIcon);
 }
