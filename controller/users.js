@@ -46,7 +46,7 @@ var updateUserImage = function(req, res){
 
 var getUserInfo = function(req, res){
 
-    const sql = "SELECT id, displayName, provider, description, profile_key AS profileKey " +
+    const sql = "SELECT id, displayName, provider, description, profile_key " +
         "FROM user " +
         "WHERE user.id = ? ";
 
