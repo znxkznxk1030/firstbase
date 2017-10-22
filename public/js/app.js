@@ -294,9 +294,12 @@ function popUp(data) {
         data: {footprintId : data.footprint_id},
         url: baseUrl+'/footprint/detail',
         success: function(data) {
+            console.log(data);
+            console.log(data.imageUrls);
+            console.log(data.imageUrls[i]);
             var $img;
             for(i=0;i<data.imageUrls.length;i++){
-                $icon = '<img src='+data.imageUrls[i]+'>';
+                $img = '<img src='+data.imageUrls[i]+'>';
                 $($img).appendTo($("#detail-image"));
             }
         }
