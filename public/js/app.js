@@ -280,7 +280,7 @@ function popUp(data) {
             $icon = '<img src='+value+'>';
         }
     });
-    var $icon = $($icon).appendTo($("#detail-icon"));
+    $($icon).appendTo($("#detail-icon"));
     console.log(data);
     console.log(data.image);
     $("#detail-title").text(data.title);
@@ -294,7 +294,11 @@ function popUp(data) {
         data: {footprintId : data.footprint_id},
         url: baseUrl+'/footprint/detail',
         success: function(data) {
-            console.log(data);
+            var $img;
+            for(i=0;i<data.imageUrls.length;i++){
+                $icon = '<img src='+data.imageUrls[i]+'>';
+                $($img).appendTo($("#detail-image"));
+            }
         }
     });
 }
