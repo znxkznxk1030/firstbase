@@ -65,11 +65,10 @@ var getUserInfo = function(req, res){
             });
         },
         function(profile, cb){
-            var profileUrl;
-            console.log(profile.profile_key);
-            if(profile.profile_key) profileUrl = retrieveByKey(profile.profile_key);
+            var profileUrl, profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
+            //console.log(profileKey);
+            if(profileKey) profileUrl = retrieveByKey(profileKey);
             else profileUrl = retrieveByKey(profileDefaultKey);
-
 
             cb(null, _.extend(profile[0], {profileUrl: profileUrl}));
         }
