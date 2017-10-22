@@ -3,6 +3,7 @@ const async = require('async');
 const retrieveByKey = require("./files").retrieveByKey;
 const profileDefaultKey = 'profiledefault.png';
 const _ = require('underscore');
+var uploadUserImage = require("./files").uploadUserImage;
 
 var nicknameCheck = function(req, res){
 
@@ -39,7 +40,7 @@ var updateUserImage = function(req, res){
             function(err, userUpdated){
                 if(err) return res.json({code:-1, message:'sql error'});
                 return res.json({code: 1, profileUrl: profileImage.url});
-            })
+            });
     });
 };
 
