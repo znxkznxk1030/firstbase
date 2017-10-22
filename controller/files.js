@@ -62,9 +62,30 @@ var upload = function(req, res){
     form.parse(req, function(err, fields, files){
         if(err) res.json({ message : "form error"});
 
-        createItemObject(files, function(err, result){
+        createItemObject(files, function(err, key){
             if(err) return res.send(err);
-            else return res.json({ message : "Successfully uploaded", imageKey:result});
+            else return res.json({ message : "Successfully uploaded", imageKey: key});
+        });
+    });
+};
+
+var uploadUserImage = function(req, cb){
+    var form = new formidable.IncomingForm();
+
+    form.parse(req, function(err, fields, files){
+        if(err) return cb({ code: -1, message : "form error"}, null);
+
+        createItemObject(files, function(err, key){
+            if(err) return cb({code : -1, message: 'sql error'}, null);
+            else
+            {
+                const params = {
+                    Bucket: bucketName,
+                    Key : key
+                };
+
+                cb(null, {key : key, url : s3.getSignedUrl('getObject', params)});
+            }
         });
     });
 };
@@ -74,6 +95,15 @@ var retrieveByKey = function(key){
     const params = {
         Bucket: bucketName,
         Key : key
+    };
+
+    return s3.getSignedUrl('getObject', params);
+};
+
+var retrieveByKeyCategory = function(key, category){
+    const params = {
+        Bucket: bucketName,
+        Key: category + '/' + key
     };
 
     return s3.getSignedUrl('getObject', params);
@@ -111,8 +141,9 @@ var retrieveIconAllFromDirectory = function(req, res){
 
 };
 
-
 exports.upload = upload;
 exports.retrieveByKey = retrieveByKey;
 exports.retrieveIcon = retrieveIcon;
 exports.retrieveIconAllFromDirectory = retrieveIconAllFromDirectory;
+exports.retrieveByKeyCategory = retrieveByKeyCategory;
+exports.uploadUserImage = uploadUserImage;

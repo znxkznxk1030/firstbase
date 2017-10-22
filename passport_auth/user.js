@@ -18,14 +18,12 @@ var registrateUser = function registrateUser(data, cb){
              console.log('user is exist');
             cb({message : 'error already exist'}, user);
         }else{
-            // console.log('registrate');
             passwordUtil.passwordCreate(data.password1, function(err, password){
                 if(err) throw err;
 
                 var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
                 connection.query(sql, [data.id, data.displayName, 'Local'], function(err, result){
                     if(err) throw err;
-                    console.log('#debug registeUser result : ' + password);
 
                     connection.query('INSERT INTO password (id, password) VALUES(?,?)', [data.id, password], function(err, result){
                         if(err) {

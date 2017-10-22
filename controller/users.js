@@ -20,9 +20,27 @@ var nicknameCheck = function(req, res){
 };
 
 var updateUserInfo = function(req, res){
+    const sql = "UPDATE user SET displayName = ?, description = ? WHERE user.id = ? ";
+    const data = req.body;
 
+    connection.query(sql, [data.displayName, data.description, req.user.id],
+        function(err, userUpdated){
+            if(err) return res.json({code:-1, message:'sql error'});
+            return res.json({code: 1, message:'success to update profile'});
+    });
+};
 
+var updateUserImage = function(req, res){
+    const sql = "UPDATE user SET profile_key = ? WHERE user.id = ? ";
 
+    uploadUserImage(req, function(err, profileImage){
+        if(err) res.json(err);
+        connection.query(sql, [profileImage.key],
+            function(err, userUpdated){
+                if(err) return res.json({code:-1, message:'sql error'});
+                return res.json({code: 1, profileUrl: profileImage.url});
+            })
+    });
 };
 
 var getUserInfo = function(req, res){
@@ -65,3 +83,4 @@ var getUserInfo = function(req, res){
 exports.nicknameCheck = nicknameCheck;
 exports.getUserInfo = getUserInfo;
 exports.updateUserInfo = updateUserInfo;
+exports.updateUserImage = updateUserImage;
