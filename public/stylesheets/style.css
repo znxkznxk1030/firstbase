@@ -20,16 +20,48 @@ a {
 #map-area {
     display: flex;
     flex: 1 1 auto;
-    width: 55%;
+    width: 60%;
     height: 100%;
+    flex-flow: column nowrap;
     background-color: white;
+}
+
+#top-map{
+    display: flex;
+    flex: 1 1 auto;
+    width: 100%;
+    height: 8%;
+    align-items: center;
+}
+
+#logo-img{
+    display: flex;
+    flex : 0 1 auto;
+    width: 50px;
+    height: 50px;
+    margin-left: 2px;
+}
+
+#logo-img img{
+    display: flex;
+    flex : 0 1 auto;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+#top-left-menu{
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: space-around;
 }
 
 #map{
     display: flex;
     flex: 1 1 auto;
     width: 100%;
-    height: 100%;
+    height: 92%;
 }
 
 #add-button{
@@ -45,8 +77,8 @@ a {
 }
 
 #add-button img{
-    width: 60px;
-    height: 60px;
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding-top: 10px;
     padding-left: 10px;
@@ -63,13 +95,12 @@ a {
     background-color: white;
     margin: 0;
     padding: 0;
-    margin-top: 10px;
     border: 1px solid #000;
 }
 
 #radar-button img{
-    width: 28px;
-    height: 28px;
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding-top: 2px;
     padding-left: 2px;
@@ -77,11 +108,10 @@ a {
     padding-bottom: 4px;
 }
 
-
 #contents-area{
     display: flex;
     flex : 1 1 auto;
-    width: 45%;
+    width: 35%;
     height: 100%;
     flex-flow: row wrap;
     justify-content: space-around;
@@ -89,41 +119,29 @@ a {
     background-color: white;
 }
 
-#top-menu{
+#top-right-menu{
     display: flex;
     flex : 1 1 auto;
     width: 100%;
-    height: 10%;
+    height: 8%;
     flex-flow: row nowrap;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
 }
 
-#top-menu .space{
+#top-right-menu .space{
     display: flex;
     flex : 0 1 auto;
     width: 5%;
     height: 100%;
 }
 
-#logo-img{
-    display: flex;
-    flex : 0 1 auto;
-    width: 50px;
-    height: 50px;
-}
-
-#logo-img img{
-    display: flex;
-    flex : 0 1 auto;
-    width: 100%;
-    height: 100%;
-}
-
 #chat-button{
     display: flex;
-    flex : 1 1 auto;
+    flex : 0 1 auto;
     height: 50px;
+    width: 200px;
+    padding: 0px 75px;
     justify-content: center;
     align-items: center;
     background-color: white;
@@ -133,8 +151,8 @@ a {
 #chat-button img{
     display: flex;
     flex : 0 1 auto;
-    width: 50px;
-    height: auto;
+    width: 100%;
+    height: 100%;
 }
 
 #login-register-button{
@@ -158,11 +176,11 @@ a {
     display: flex;
     flex : 1 1 auto;
     width: 100%;
-    height: 80%;
+    height: 84%;
     flex-flow: column nowrap;
     justify-content: space-around;
     align-items: center;
-    background-color: #00bbd2;
+    background-color: white;
 }
 
 #content-wrapper{
@@ -214,7 +232,7 @@ a {
     display: flex;
     flex : 1 1 auto;
     width: 100%;
-    height: 10%;
+    height: 5%;
     justify-content: center;
     align-items: center;
     background-color: white;
@@ -222,7 +240,7 @@ a {
 
 .page{
     border: 1px solid #ddd;
-    padding: 5px;
+    padding: 1px 4px;
     margin: 3px;"
 }
 
@@ -230,7 +248,7 @@ a {
     display: flex;
     flex : 1 1 auto;
     width: 100%;
-    height: 10%;
+    height: 8%;
     flex-flow: row nowrap;
     justify-content: space-around;
     align-items: center;
@@ -240,23 +258,39 @@ a {
     display: flex;
     flex : 0 1 auto;
     flex-flow: row nowrap;
-    width: 80%;
+    width: 75%;
+    height: 75%;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: .25rem;
+}
+
+#down-search :focus{
 }
 
 #down-search input{
     display: flex;
     flex: 1 1 auto;
+    border: 0px;
 }
 
 #down-search .search-button{
     display: flex;
-    flex: 0 1 auto;
-    width: 50px;
-    height: 50px;
+    flex: 1 1 auto;
+    align-items: center;
+    margin-right: 5px;
 }
 
 #down-search .search-button button{
-    background-color: #00bbd2;
+    background-color: white;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    margin: 0;
+}
+
+
+#down-search .search-button button:focus{
+    box-shadow: 0px 0px 0px #FFF;
 }
 
 #down-search .search-button img{
@@ -266,18 +300,20 @@ a {
     height: 100%;
 }
 
-
 #down-filter{
     display: flex;
     flex : 0 1 auto;
-    width: 50px;
-    height: 50px;
+    width: 10%;
+    height: 75%;
+    padding: 2px;
+    border-radius: .25rem;
     border: 1px solid #ddd;
+    justify-content: center;
 }
 
 #down-filter img{
     display: flex;
-    flex : 1 1 auto;
+    flex : 0 1 auto;
     width: 100%;
     height: 100%;
 }
@@ -476,8 +512,8 @@ a {
 #detail-image{
     display: flex;
     flex: 0 1 auto;
-    width : 100%;
-    height: 30%;
+    width : 150px;
+    height: 150px;
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
@@ -486,8 +522,8 @@ a {
 #detail-image img{
     display: flex;
     flex: 0 1 auto;
-    width : 50px;
-    height: 50px;
+    width: 100%;
+    height: 100%;
 }
 
 #detail-content{

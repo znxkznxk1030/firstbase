@@ -46,6 +46,7 @@ $(document).ready(function(){
 
     $("#add-button").css("margin-left",mapWidth-70);
     $("#add-button").css("margin-top",mapHeight-70);
+    $("#radar-button").css("margin-top",$("#top-map").outerHeight()+10);
     $("#radar-button").css("margin-left",mapWidth-38);
 
     var Bounds = map.getBounds();
