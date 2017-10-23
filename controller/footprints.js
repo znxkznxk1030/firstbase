@@ -183,22 +183,20 @@ var createFootprint = function(req, res){
                         message: 'sql fail'});
             if(result)
             {
-                if(!imageKeys)
-                    return res.status(201)
-                        .json({ code : 1,
-                            message: 'success to create footprint mark'});
-
-                imageKeys.forEach(
-                    function(imageKey){
-                        if(imageKey !== null)
-                        {
-                            //console.log(imageKey);
-                            connection.query(sqlInsertImage, [result.insertId, imageKey],
-                                function(err, image){
-                                    if (err) throw err;
-                                });
-                        }
-                });
+                if(imageKeys)
+                {
+                    imageKeys.forEach(
+                        function(imageKey){
+                            if(imageKey !== null)
+                            {
+                                //console.log(imageKey);
+                                connection.query(sqlInsertImage, [result.insertId, imageKey],
+                                    function(err, image){
+                                        if (err) throw err;
+                                    });
+                            }
+                        });
+                }
 
                 return res.status(201)
                     .json({ code : 1,
