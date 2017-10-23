@@ -43,127 +43,6 @@ var getFootprintListByUser = function(req, res){
     });
 };
 
-var getFootprintByFootprintID = function(req, res){
-    const user = req.user;
-    const footprintId = req.query.footprintId;
-
-    // todo: query test
-    if(!footprintId)
-    {
-        res.status(400)
-            .json({code: -1,
-                message: 'footprintId that you sent is not allowed'})
-    }
-
-    // todo: split sql query
-    const sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count(comment.comment_id) AS commentCount " +
-        "FROM footprint LEFT JOIN view " +
-        "ON footprint.footprint_id = view.footprint_id " +
-        "LEFT JOIN comment " +
-        "ON footprint.footprint_id = comment.footprint_id " +
-        "WHERE footprint.footprint_id = ? " +
-        "GROUP BY footprint_id ";
-
-    const find_sql = "SELECT * FROM view WHERE id = ? AND footprint_id = ?";
-    const view_insert_sql = "INSERT INTO view (id, footprint_id) VALUES (?, ?)";
-    const image_load_sql = "SELECT * FROM image WHERE footprint_id = ?";
-
-    const task = [
-        /**
-         *  Get selected footprint data set
-         *
-         * @param cb
-         */
-        function(cb){
-            connection.query(sql, [footprintId],
-                function(err, footprint){
-                if(err)
-                    return cb(err, {message : "error to find footprint"});
-
-                if(footprint[0])
-                    return cb(null, JSON.parse(JSON.stringify(footprint))[0]);
-                else
-                    return cb(err, {message : "error to find footprint"});
-            });
-        },
-        /**
-         *  Check user watch
-         *  todo: refresh every day
-         *
-         * @param cb
-         * @returns {*}
-         */
-        function(cb){
-            if(req.user.id){
-                connection.query(find_sql, [req.user.id, footprintId],
-                    function(err, view_id){
-                        if(err)
-                            return cb(err, { message: "id not found"});
-
-                        if(view_id[0])
-                        {
-                            return cb(null, { message: "already watched"});
-                        }else
-                        {
-                            connection.query(view_insert_sql, [req.user.id, footprintId],
-                                function(err, result){
-                                    if(err)
-                                        return cb(err, { message: "not found"});
-
-                                    return cb(null, { message : "insert"});
-                                });
-                        }
-                });
-            }else
-            {
-                return cb(null, { message : "not logged in"});
-            }
-        },
-        /**
-         *  Get images by footprint Id
-         *
-         * @public
-         */
-        function(cb){
-            connection.query(image_load_sql, [footprintId],
-                function(err, imageInfo){
-                    if(err) return cb(err, { message: 'error'});
-
-                    console.log(imageInfo);
-                    imageInfo = JSON.parse(JSON.stringify(imageInfo));
-
-                    var imageUrls = [];
-
-                    imageInfo.forEach(function(image){
-                        var params = {
-                            Bucket: bucketName,
-                            Key: image.image_key
-                        };
-
-                        console.log("#debug retrieveAll : " + image.image_key);
-                        var imageUrl = s3.getSignedUrl('getObject', params);
-                        imageUrls.push(imageUrl);
-                    });
-
-                    return cb(null, {imageUrls: imageUrls});
-            })
-        }
-    ];
-
-    async.series(task,
-        function(err, result){
-            if(err)
-                return res.status(400)
-                    .json({ code: -1,
-                        message : err});
-
-            const output = Object.assign({code: 1}, result[0], result[2]);
-
-            res.status(200)
-                .json(output);
-    });
-};
-
 var getFootprintList = function(req, res){
     var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
         "FROM footprint " +
@@ -223,11 +102,15 @@ var getFootprintListByCurrentLocationAndViewLevel = function(req, res){
  * @param res
  */
 var getFootprintListByLocation = function(req, res){
-    var data = req.query;
-    console.log("data ",data);
-    console.log(data.startlat, data.startlng, data.endlat, data.endlng);
-    var startLat = data.startlat, startLng = data.startlng, endLat = data.endlat, endLng = data.endlng;
-    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
+    const data = req.query;
+    //console.log("data ",data);
+    //console.log(data.startlat, data.startlng, data.endlat, data.endlng);
+    const startLat = data.startlat,
+        startLng = data.startlng,
+        endLat = data.endlat,
+        endLng = data.endlng;
+
+    const sqlRetrieveFootprint = "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
@@ -235,7 +118,7 @@ var getFootprintListByLocation = function(req, res){
         "WHERE footprint.latitude <= ? AND footprint.longitude >= ? AND footprint.latitude >= ? AND footprint.longitude <= ? " +
         "GROUP BY footprint_id ";
 
-    connection.query(sql, [startLat, startLng, endLat, endLng],
+    connection.query(sqlRetrieveFootprint, [startLat, startLng, endLat, endLng],
         function(err, footprintList){
             if(err)
                 return res.status(400)
@@ -247,6 +130,7 @@ var getFootprintListByLocation = function(req, res){
             return res.json(footprintListJSON);
     });
 };
+
 
 /**
  *
@@ -328,7 +212,173 @@ var createFootprint = function(req, res){
         });
 };
 
+var getFootprintByFootprintID = function(req, res){
+    const user = req.user;
+    const footprintId = req.query.footprintId;
+
+    // todo: query data validation test
+    if(!footprintId)
+    {
+        res.status(400)
+            .json({code: -1,
+                message: 'footprintId that you sent is not allowed'})
+    }
+
+    // todo: split sql query
+    const sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count(comment.comment_id) AS commentCount " +
+        "FROM footprint LEFT JOIN view " +
+        "ON footprint.footprint_id = view.footprint_id " +
+        "LEFT JOIN comment " +
+        "ON footprint.footprint_id = comment.footprint_id " +
+        "WHERE footprint.footprint_id = ? " +
+        "GROUP BY footprint_id ";
+
+    const find_sql = "SELECT * FROM view WHERE id = ? AND footprint_id = ?";
+    const view_insert_sql = "INSERT INTO view (id, footprint_id) VALUES (?, ?)";
+    const image_load_sql = "SELECT * FROM image WHERE footprint_id = ?";
+
+    const task = [
+        /**
+         *  Get selected footprint data set
+         *
+         * @param cb
+         */
+        function(cb){
+            connection.query(sql, [footprintId],
+                function(err, footprint){
+                    if(err)
+                        return cb(err, {message : "error to find footprint"});
+
+                    if(footprint[0])
+                        return cb(null, JSON.parse(JSON.stringify(footprint))[0]);
+                    else
+                        return cb(err, {message : "error to find footprint"});
+                });
+        },
+        /**
+         *  Check user watch
+         *  todo: refresh every day
+         *
+         * @param cb
+         * @returns {*}
+         */
+        function(cb){
+            if(req.user.id){
+                connection.query(find_sql, [req.user.id, footprintId],
+                    function(err, view_id){
+                        if(err)
+                            return cb(err, { message: "id not found"});
+
+                        if(view_id[0])
+                        {
+                            return cb(null, { message: "already watched"});
+                        }else
+                        {
+                            connection.query(view_insert_sql, [req.user.id, footprintId],
+                                function(err, result){
+                                    if(err)
+                                        return cb(err, { message: "not found"});
+
+                                    return cb(null, { message : "insert"});
+                                });
+                        }
+                    });
+            }else
+            {
+                return cb(null, { message : "not logged in"});
+            }
+        },
+        /**
+         *  Get images by footprint Id
+         *
+         * @public
+         */
+        function(cb){
+            connection.query(image_load_sql, [footprintId],
+                function(err, imageInfo){
+                    if(err) return cb(err, { message: 'error'});
+
+                    console.log(imageInfo);
+                    imageInfo = JSON.parse(JSON.stringify(imageInfo));
+
+                    var imageUrls = [];
+
+                    imageInfo.forEach(function(image){
+                        var params = {
+                            Bucket: bucketName,
+                            Key: image.image_key
+                        };
+
+                        console.log("#debug retrieveAll : " + image.image_key);
+                        var imageUrl = s3.getSignedUrl('getObject', params);
+                        imageUrls.push(imageUrl);
+                    });
+
+                    return cb(null, {imageUrls: imageUrls});
+                })
+        }
+    ];
+
+    async.series(task,
+        function(err, result){
+            if(err)
+                return res.status(400)
+                    .json({ code: -1,
+                        message : err});
+
+            const output = Object.assign({code: 1}, result[0], result[2]);
+
+            res.status(200)
+                .json(output);
+        });
+};
+
+var deleteFootprintByFootprintID = function(req, res){
+
+    const footprintId = req.query.footprintId;
+
+
+    // todo: query data validation test
+    if(!footprintId)
+    {
+        res.status(400)
+            .json({code: -1,
+                message: 'footprintId that you sent is not allowed'})
+    }
+
+    const sqlDeleteFootprint = "DELETE FROM footprint WHERE footprint_id = ?";
+
+
+    // todo: delete all referenced tables first
+
+
+    connection.query(sqlDeleteFootprint, [footprintId],
+        function(err, result){
+            if (err)
+                return res.status(400)
+                    .json({code: -1,
+                        message: err});
+
+            if (result)
+            {
+                res.status(200)
+                    .json({code: 1,
+                        message: "success to delete"});
+            } else
+            {
+                res.status(400)
+                    .json({code: -1,
+                        message: "fail to delete"});
+            }
+
+    });
+};
+
+
+
+
 /**
+ *  todo: should move to trace.js
  *
  * @param req
  * @param res
@@ -387,23 +437,43 @@ var createSubFootprint = function(req, res){
 
 };
 
-var deleteFootprintByFootprintID = function(req, res){
+var getSubFootprintByFootprintID = function(req, res){
+    const footprintId = req.query.footprintId;
 
-    var footprint_id = req.params.footprint_id;
-    var sql = "DELETE FROM footprint WHERE footprint_id = ?";
+    // todo: query data validation test
+    if(!footprintId)
+    {
+        return res.status(400)
+            .json({code: -1,
+                message: 'footprintId that you sent is not allowed'})
+    }
 
-    connection.query(sql, [footprint_id], function(err, result){
-        if (err){
-            throw err;
-        }else {
-            if (result) {
-                res.json({message: "success to delete"});
-            } else {
-                res.json({message: "fail to delete"});
+    const sqlRetrieveSubFootprintByFootprintId = "SELECT sub_footprint.icon_key, sub_footprint.latitude, sub_footprint.longitude " +
+        "FROM sub_footprint " +
+        "WHERE footprint_id = ? ";
+
+    connection.query(sqlRetrieveSubFootprintByFootprintId, [footprintId],
+        function(err, subFootprints){
+            if(err)
+                return res.status(400)
+                    .json({code: -1,
+                    message: err});
+
+            if(subFootprints)
+            {
+                return res.status(200)
+                    .json(subFootprints);
+            }else
+            {
+                return res.status(400)
+                    .json({code: -1,
+                    message: 'parameters fail'});
             }
-        }
-    });
+
+        });
+
 };
+
 
 module.exports = {
     getFootprintListByLocation : getFootprintListByLocation,
@@ -413,5 +483,6 @@ module.exports = {
     createFootprint : createFootprint,
     deleteFootprintByFootprintID : deleteFootprintByFootprintID,
     getFootprintListByCurrentLocationAndViewLevel : getFootprintListByCurrentLocationAndViewLevel,
-    createSubFootprint : createSubFootprint
+    createSubFootprint : createSubFootprint,
+    getSubFootprintByFootprintID: getSubFootprintByFootprintID
 };
