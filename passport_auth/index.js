@@ -23,36 +23,38 @@ passport.use('local-login', new LocalStrategy({
     usernameField : 'id',
     passwordField : 'password',
     passReqToCallback : true
-},function(req, id, password, done) {
+},
+    function(req, id, password, done) {
     // console.log("local-login : " + req.body);
-    user.findOne(id, function(err, profile){
-        if(profile){
-            user.findPassword(id, function(err, retrievedPassword){
-                if(err) throw done(err, null);
+        user.findOne(id, function(err, profile){
+            if(profile){
+                user.findPassword(id, function(err, retrievedPassword){
+                    if(err) throw done(err, null);
 
-                console.log(retrievedPassword);
-                passwordUtil.passwordCheck (password, retrievedPassword, function(err, isAuth){
-                     console.log(isAuth);
-                    if(isAuth){
-                        // console.log('login success');
-                        return done(null, profile);
-                    }else{
-                        // console.log('login fail');
-                        return done(null, false, { message: 'Wrong Password'});
-                    }
+                    console.log(retrievedPassword);
+                    passwordUtil.passwordCheck (password, retrievedPassword, function(err, isAuth){
+                        console.log(isAuth);
+                        if(isAuth){
+                            // console.log('login success');
+                            return done(null, profile);
+                        }else{
+                            // console.log('login fail');
+                            return done(null, false, { message: 'Wrong Password'});
+                        }
+                    });
                 });
-            });
-        }else{
-            return done(null, false, { message: 'Wrong Username' });
-        }
-    });
+            }else{
+                return done(null, false, { message: 'Wrong Username' });
+            }
+        });
 }));
 
 passport.use(new facebook({
     clientID: config.facebook.appID,
     clientSecret: config.facebook.appSecret,
     callbackURL: config.host + config.port + config.routes.facebookAuthCallback
-}, function(accessToken, refreshToken, profile, done){
+},
+    function(accessToken, refreshToken, profile, done){
         console.log(profile);
         user.findOne(profile.id, function(err, one){
             if(one){
@@ -75,18 +77,18 @@ passport.use(new google({
     clientSecret: config.google.clientSecret,
     callbackURL: config.host + config.port + config.routes.googleAuthCallback
     }, function(accessToken, refreshToken, profile, done){
-        console.log(profile);
-       user.findOne(profile.id, function(err, one){
-            if(one){
+    console.log(profile);
+    user.findOne(profile.id, function(err, one){
+        if(one){
+            done(null, profile);
+        }else{
+            user.registrateSocialUser(profile, function(err, result){
+                if(err) throw err;
+                console.log("debug passport social user registration : " + result);
                 done(null, profile);
-          }else{
-                user.registrateSocialUser(profile, function(err, result){
-                    if(err) throw err;
-                    console.log("debug passport social user registration : " + result);
-                    done(null, profile);
-                });
-            }
-       });
+            });
+        }
+    });
     })
 );
 

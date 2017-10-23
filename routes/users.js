@@ -36,8 +36,14 @@ router.post('/registrate', function(req, res, next){
 router.post('/login', function(req, res, next){
     passport.authenticate('local-login', function(err, user, info){
     var error = err || info;
-    if(error) return res.json(401, error);
-    if(!user) return res.json(404, {message: 'user not found...'});
+
+    if(error)
+        return res.status(401)
+            .json(error);
+    if(!user) return res.status(404)
+        .json({code:-2,
+            message: 'user not found...'});
+
     console.log(user);
 
     var token = auth.signToken(user);

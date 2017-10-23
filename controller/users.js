@@ -9,25 +9,69 @@ var nicknameCheck = function(req, res){
 
     const nickName = req.param.nickName;
     const sql = "SELECT * FROM user WHERE user.displayName = ?";
-    connection.query(sql, [nickName], function(err, profile){
-        if (err) return res.json({code: -1, message: 'sql error'});
 
-        if(profile.displayName){
-            res.json({code:-1, message : 'this name is already existed!'});
-        }else{
-            res.json({code:1, message : 'possible to use'});
-        }
+    //todo: validate nickName
+    if(!nickName)
+    {
+        return res.status(200)
+            .json({code: -1,
+                isPossible: -1,
+                message: "nickName should be not null"});
+    }
+
+
+    connection.query(sql, [nickName],
+        function(err, profile){
+            if (err) return res.status(400)
+                .json({code: -1,
+                    message: err});
+
+            if(profile.displayName){
+                return res.status(200)
+                    .json({code: 1,
+                        isPossible: -1,
+                        message : 'this name is already existed!'});
+            }else{
+                return res.status(200)
+                    .json({code:1,
+                        isPossible: 1,
+                        message : 'possible to use'});
+            }
     })
 };
 
 var updateUserInfo = function(req, res){
     const sql = "UPDATE user SET displayName = ?, description = ? WHERE user.id = ? ";
-    const data = req.body;
+    const body = req.body;
 
-    connection.query(sql, [data.displayName, data.description, req.user.id],
+    const user = req.user;
+
+    const displayName = body.displayName;
+    var description = body.description;
+
+    // todo: vaildate parameters
+    if(!displayName)
+    {
+        return res.status(400)
+            .json({code: -1,
+            message: "display name should be not null"});
+    }
+
+    if(!description)
+    {
+        description = "Say Something About Me";
+    }
+
+    connection.query(sql, [displayName, description, user.id],
         function(err, userUpdated){
-            if(err) return res.json({code:-1, message:'sql error'});
-            return res.json({code: 1, message:'success to update profile'});
+            if(err)
+                return res.status(400)
+                    .json({code:-1,
+                        message:'sql error'});
+
+            return res.status(200)
+                .json({code: 1,
+                    message:'success to update profile'});
     });
 };
 
@@ -38,8 +82,21 @@ var updateUserImage = function(req, res){
         if(err) res.json(err);
         connection.query(sql, [profileImage.key, req.user.id],
             function(err, userUpdated){
-                if(err) return res.json({code:-1, message:'sql error'});
-                return res.json({code: 1, profileUrl: profileImage.url});
+                if(err) return res.status(400)
+                                .json({code: -1,
+                                    message: err});
+
+                if(userUpdated)
+                {
+                    return res.status(200)
+                        .json({code: 1,
+                            profileUrl: profileImage.url});
+                }else
+                {
+                    return res.status(400)
+                        .json({code:-1,
+                            message:'update error'});
+                }
             });
     });
 };
@@ -74,9 +131,14 @@ var getUserInfo = function(req, res){
         }
     ];
 
-    async.waterfall(task, function(err, profile){
-        if(err) return res.json(err);
-        return res.json(profile);
+    async.waterfall(task,
+        function(err, profile){
+            if(err) return res.status(400)
+                            .json({code: -1,
+                                message:err});
+
+            return res.status(200)
+                .json(profile);
     });
 };
 

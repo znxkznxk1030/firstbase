@@ -127,7 +127,8 @@ var getFootprintListByLocation = function(req, res){
 
             var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
 
-            return res.json(footprintListJSON);
+            return res.status(200)
+                .json(footprintListJSON);
     });
 };
 
@@ -155,14 +156,14 @@ var createFootprint = function(req, res){
     // todo : createFootprint
     // parameter test
 
-    if(title === null)
+    if(!title)
     {
         return res.status(400)
             .json({ code : -1,
                 message: 'title should be not null'});
     }
 
-    if(latitude === null || longitude === null)
+    if(!latitude || !longitude)
     {
         return res.status(400)
             .json({ code : -1,
@@ -262,8 +263,8 @@ var getFootprintByFootprintID = function(req, res){
          * @returns {*}
          */
         function(cb){
-            if(req.user.id){
-                connection.query(find_sql, [req.user.id, footprintId],
+            if(user.id){
+                connection.query(find_sql, [user.id, footprintId],
                     function(err, view_id){
                         if(err)
                             return cb(err, { message: "id not found"});
@@ -273,7 +274,7 @@ var getFootprintByFootprintID = function(req, res){
                             return cb(null, { message: "already watched"});
                         }else
                         {
-                            connection.query(view_insert_sql, [req.user.id, footprintId],
+                            connection.query(view_insert_sql, [user.id, footprintId],
                                 function(err, result){
                                     if(err)
                                         return cb(err, { message: "not found"});
@@ -394,14 +395,14 @@ var createSubFootprint = function(req, res){
     // todo: create subFootprint
     // parameter test
 
-    if(title === null)
+    if(!title)
     {
         return res.status(400)
             .json({ code : -1,
                 message: 'title should be not null'});
     }
 
-    if(latitude === null || longitude === null)
+    if(!latitude || !longitude)
     {
         return res.status(400)
             .json({ code : -1,
@@ -468,11 +469,8 @@ var getSubFootprintByFootprintID = function(req, res){
                     .json({code: -1,
                     message: 'parameters fail'});
             }
-
         });
-
 };
-
 
 module.exports = {
     getFootprintListByLocation : getFootprintListByLocation,
