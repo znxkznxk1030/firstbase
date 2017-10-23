@@ -13,6 +13,8 @@ var registrateSocialUser = function registrateSocialLoginUser(data, cb){
 };
 
 var registrateUser = function registrateUser(data, cb){
+    // todo: refactoring
+    // callback hell -> async heaven
     findOne(data.id, function(err, user){
         if(user){
              console.log('user is exist');

@@ -5,17 +5,21 @@ var crypto = require('crypto'), //node.js has 'crpyto' already.
 const Buffer = require('safe-buffer').Buffer;
 
 var passwordCreate = function passwordCreate(password, cb){
-        crypto.randomBytes(config.crypto.randomSize, function(err, salt){
+        crypto.randomBytes(config.crypto.randomSize,
+            function(err, salt){
                 if(err) return cb(err, null);
 
                 crypto.pbkdf2(password, config.salt.toString('base64'),
-                        config.crypto.workFactor, config.crypto.keylen, function(err, key){
+                        config.crypto.workFactor, config.crypto.keylen,
+                    function(err, key){
                             cb(null, key.toString('base64'));
                         });
+
         });
 };
 
 var passwordCheck = function passwordCheck(password, derivedPassword, cb){
+
         crypto.pbkdf2(password, config.salt.toString('base64'), config.crypto.workFactor, config.crypto.keylen,
                 function(err, key){
                     // console.log(key.toString('base64'));

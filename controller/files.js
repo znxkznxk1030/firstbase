@@ -47,7 +47,7 @@ var createItemObject = function(files, cb){
     s3.putObject(params, function (err, data){
         if(err){
             console.log("Error uploading image : ", err);
-            throw err;
+            return cb(err, null);
         }else{
             console.log("Successfully uploaded image on S3", iconKey);
             return cb(null, iconKey);
@@ -60,11 +60,21 @@ var upload = function(req, res){
     console.log(guid.raw());
 
     form.parse(req, function(err, fields, files){
-        if(err) res.json({ message : "form error"});
+        if(err)
+            res.status(400)
+                .json({ code: -1,
+                    message : "form error"});
 
         createItemObject(files, function(err, key){
-            if(err) return res.send(err);
-            else return res.json({ message : "Successfully uploaded", imageKey: key});
+            if(err)
+                return res.status(400)
+                    .json({code: -1,
+                    message:err});
+            else
+                return res.status(200)
+                    .json({ code: 1,
+                        message : "Successfully uploaded",
+                        imageKey: key});
         });
     });
 };
@@ -72,21 +82,25 @@ var upload = function(req, res){
 var uploadUserImage = function(req, cb){
     var form = new formidable.IncomingForm();
 
-    form.parse(req, function(err, fields, files){
-        if(err) return cb({ code: -1, message : "form error"}, null);
+    form.parse(req,
+        function(err, fields, files){
+            if(err)
+                return cb({ code: -1, message : "form error"}, null);
 
-        createItemObject(files, function(err, key){
-            if(err) return cb({code : -1, message: 'sql error'}, null);
-            else
-            {
-                const params = {
-                    Bucket: bucketName,
-                    Key : key
-                };
+            createItemObject(files,
+                function(err, key){
+                    if(err)
+                        return cb({code : -1, message: 'sql error'}, null);
+                    else
+                    {
+                        const params = {
+                            Bucket: bucketName,
+                            Key : key
+                        };
 
-                cb(null, {key : key, url : s3.getSignedUrl('getObject', params)});
-            }
-        });
+                        return cb(null, {key : key, url : s3.getSignedUrl('getObject', params)});
+                    }
+                });
     });
 };
 
@@ -119,25 +133,36 @@ var retrieveIcon = function(req, res){
 
     var iconUrl = s3.getSignedUrl('getObject', params);
 
-    console.log(iconUrl);
-    res.json({code:1, message:"success", iconUrl: iconUrl});
+    //console.log(iconUrl);
+    res.status(200)
+        .json({code:1,
+            message:"success",
+             iconUrl: iconUrl});
 };
 
 var retrieveIconAllFromDirectory = function(req, res){
     var iconUrls = [];
-    console.log("#debug retrieve All : " + iconKeys.iconKeys);
+    //console.log("#debug retrieve All : " + iconKeys.iconKeys);
+
     iconKeys.iconKeys.forEach(function(iconKey){
         var params = {
             Bucket: bucketName,
             Key: iconKey
         };
 
-        console.log("#debug retrieveAll : " + iconKey);
+        //console.log("#debug retrieveAll : " + iconKey);
+
         var iconUrl = s3.getSignedUrl('getObject', params);
-        iconUrls.push({key: iconKey, value: iconUrl});
+
+        iconUrls.push({key: iconKey,
+                value: iconUrl});
     });
 
-    res.json({code:1, message:"success to load all icon", length:iconUrls.length, iconUrls: iconUrls});
+    res.status(200)
+        .json({code:1,
+            message:"success to load all icon",
+            length:iconUrls.length,
+            iconUrls: iconUrls});
 
 };
 
