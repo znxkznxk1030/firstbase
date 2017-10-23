@@ -27,13 +27,25 @@ var isAuthenticated = function isAuthenticated(){
 };
 
 var authMiddleware = function authMiddleware(req, res, next){
-    var token = req.cookies.jwt || req.query.jwt;
-    if(!token){
-        return res.json({code: 0, message: 'not logged in'});
-    }
-    else{
+    var token = req.cookies.jwt;
+
+    /**
+     * verify token
+     */
+    if(!token)
+    {
+        return res.status(401)
+            .json({code: -2,
+                message: 'not logged in'});
+    }else
+    {
         jwt.verify(req.cookies.jwt, SECRET, function(err, decoded){
-            if(err) return res.json({code: -1, message:'token is wrong'});
+            if(err) {
+                return res.status(401)
+                    .json({code: -2,
+                        message:'token is wrong'});
+            }
+
             req.user = decoded;
             next();
         });
@@ -43,13 +55,20 @@ var authMiddleware = function authMiddleware(req, res, next){
 var passMiddleware = function passMiddleware(req, res, next){
     var token = req.cookies.jwt;
 
-    jwt.verify(token, SECRET, function(err, decoded){
-            if(err) return res.json({message:'token is wrong'});
+    if(!token)
+    {
+        jwt.verify(token, SECRET, function(err, decoded){
+            if(err) return res.status(401)
+                .json({ code: -2,
+                    message:'token is wrong'});
 
             req.user = decoded;
             next();
-    });
-
+        });
+    }else
+    {
+        next();
+    }
 };
 
 var testAuthenticated = function(req, res){
@@ -64,7 +83,6 @@ var testAuthenticated = function(req, res){
 var clearCookieClear = function(req, res){
     res.clearCookie('jwt').send(req.cookies.jwt);
 };
-
 
 exports.signToken = signToken;
 exports.isAuthenticated = isAuthenticated;
