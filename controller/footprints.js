@@ -424,6 +424,7 @@ var createSubFootprint = function(req, res){
             {
                 return res.status(201)
                     .json({ code : 1,
+                        footprintId: result.insertId,
                         message: 'success to create sub footprint mark'});
             }else
             {
