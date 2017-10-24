@@ -364,6 +364,8 @@ var getFootprintByFootprintID = function(req, res){
     const find_sql = "SELECT * FROM view WHERE id = ? AND footprint_id = ?";
     const view_insert_sql = "INSERT INTO view (id, footprint_id) VALUES (?, ?)";
     const image_load_sql = "SELECT * FROM image WHERE footprint_id = ?";
+    const sqlGetNickname =
+        "SELECT displayName FROM user WHERE id = ?";
 
     const task = [
         /**
@@ -378,7 +380,29 @@ var getFootprintByFootprintID = function(req, res){
                         return cb(err, {message : "error to find footprint"});
 
                     if(footprint[0])
-                        return cb(null, JSON.parse(JSON.stringify(footprint))[0]);
+                    {
+                        var returnData = JSON.parse(JSON.stringify(footprint))[0];
+                        connection.query(sqlGetNickname, [footprint[0].id],
+                            function(err, result){
+                                if(err)
+                                    return cb(err, null);
+
+                                if(result[0])
+                                {
+                                    console.log(result[0].displayName);
+                                    console.log(returnData);
+                                    returnData['displayName'] = result[0].displayName;
+                                    console.log(returnData);
+                                    //return cb(null, returnData);
+                                }else
+                                {
+                                    return cb({ message: 'get Nickname error'}, null);
+                                }
+                            });
+
+                        return cb(null, returnData);
+
+                    }
                     else
                         return cb(err, {message : "error to find footprint"});
                 });
@@ -443,7 +467,7 @@ var getFootprintByFootprintID = function(req, res){
                     });
 
                     return cb(null, {imageUrls: imageUrls});
-                })
+                });
         }
     ];
 
@@ -454,10 +478,9 @@ var getFootprintByFootprintID = function(req, res){
                     .json({ code: -1,
                         message : err});
 
-            const output = Object.assign({code: 1}, result[0], result[2]);
-
-            res.status(200)
-                .json(output);
+            var output = Object.assign({code: 1}, result[0], result[2]);
+            return res.status(200)
+                    .json(output);
         });
 };
 
