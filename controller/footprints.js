@@ -152,7 +152,7 @@ var createFootprint = function(req, res){
         content =  body.content,
         latitude = body.latitude,
         longitude = body.longitude;
-    
+
     var type = body.type;
 
 
@@ -277,7 +277,7 @@ var createFootprint = function(req, res){
 
                 var task = [
                     function(cb){
-                        if(imageKeys)
+                        if(!imageKeys)
                         {
                             return cb(null, false);
                         }
@@ -287,12 +287,12 @@ var createFootprint = function(req, res){
                                 if(err)
                                     return cb(err, null);
 
-                                cb(null, true);
+                                return cb(null, true);
                             })
                     },
 
                     function(cb){
-                        if(subMarkers)
+                        if(!subMarkers)
                         {
                             return cb(null, false);
                         }
@@ -301,7 +301,7 @@ var createFootprint = function(req, res){
                                 if(err)
                                     return cb(err, null);
 
-                                cb(null, true);
+                                return cb(null, true);
                             })
                     }
                 ];
