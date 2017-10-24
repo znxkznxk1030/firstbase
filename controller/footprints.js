@@ -621,9 +621,10 @@ var getSubFootprintByFootprintID = function(req, res){
                 // objectResponseJson.push({code: 1})
                 //     .push(result[0])
                 //     .push(result[1]);
-                result[0].code = 1;
-                result[0].subMarkers = result[1];
+                result[0]['code'] = 1;
+                result[0]['subMarkers'] = result[1];
                 console.log(result[0]);
+                
                 return res.status(200)
                     .json(result[0]);
             }
