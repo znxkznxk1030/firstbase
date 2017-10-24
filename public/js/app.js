@@ -72,9 +72,20 @@ function makeMarkers(data){
             var latitude = o.latitude;
             var longitude = o.longitude;
 
+            var icon_key = o.icon_key;
+            var iconUrl;
+            $.each( allIcon, function( key, value ) {
+                if(key == icon_key){
+                    iconUrl = value;
+                }
+            });
+
             var marker = new naver.maps.Marker({
                 map: map,
-                position: new naver.maps.LatLng(latitude, longitude)
+                position: new naver.maps.LatLng(latitude, longitude),
+                icon: {
+                    url: iconUrl
+                }
             });
         }
     }
@@ -100,6 +111,14 @@ function makePage(data) {
             var $title = $('<div class="title list-group-item list-group-item-action"></div>').appendTo($content).text(o.title).data('data', o).click(function(){
                 popUp($(this).data('data'));
             });
+            var icon_key = o.icon_key;
+            var $icon;
+            $.each( allIcon, function( key, value ) {
+                if(key == icon_key){
+                    $icon = '<img src='+value+'>';
+                }
+            });
+            $($icon).prependTo($title);
             // var $post = $('<div class="post""></div>').appendTo($content).text(o.content).data('data', o).click(function(){
             //     popUp($(this).data('data'));
             // });
@@ -132,6 +151,14 @@ function renderPage(data) {
                 var $title = $('<div class="title list-group-item list-group-item-action"></div>').appendTo($content).text(o.title).data('data', o).click(function(){
                     popUp($(this).data('data'));
                 });
+                var icon_key = o.icon_key;
+                var $icon;
+                $.each( allIcon, function( key, value ) {
+                    if(key == icon_key){
+                        $icon = '<img src='+value+'>';
+                    }
+                });
+                $($icon).prependTo($title);
                 // var $post = $('<div class="post""></div>').appendTo($content).text(o.content).data('data', o).click(function(){
                 //     popUp($(this).data('data'));
                 // });
@@ -144,7 +171,6 @@ function renderPage(data) {
                 fnAppendPage(pageIdx * 5);
             });
         }
-
         fnAppendPage(0);
     }
     makeMarkers(data);
