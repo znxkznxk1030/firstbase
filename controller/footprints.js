@@ -385,7 +385,7 @@ var getFootprintByFootprintID = function(req, res){
          * @returns {*}
          */
         function(cb){
-            if(user.id){
+            if(user){
                 connection.query(find_sql, [user.id, footprintId],
                     function(err, view_id){
                         if(err)
