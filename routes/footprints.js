@@ -21,6 +21,8 @@ router.post('/create', auth.authMiddleware, controller.createFootprint);
 router.get('/detail', auth.passMiddleware, controller.getFootprintByFootprintID);
 router.get('/delete', auth.authMiddleware, controller.deleteFootprintByFootprintID);
 
+router.get('/submarkers', controller.getSubFootprintByFootprintID);
+
 /**
  * view render functions
  */

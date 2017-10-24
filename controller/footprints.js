@@ -4,6 +4,7 @@ const locationUtil = require('../utils/locationUtil');
 const async = require('async');
 const bucketName = 'firstbase-bucket';
 const AWS = require('aws-sdk');
+const _=require('underscore');
 
 AWS.config.loadFromPath('s3config.json');
 
@@ -572,35 +573,64 @@ var getSubFootprintByFootprintID = function(req, res){
                 message: 'footprintId that you sent is not allowed'})
     }
 
+    const sqlRetrieveFootprintByFootprintId =
+        "SELECT * " +
+        "FROM footprint " +
+        "WHERE footprint_id = ?";
+
     const sqlRetrieveSubFootprintByFootprintId =
         "SELECT sub_footprint.icon_key, sub_footprint.latitude, sub_footprint.longitude " +
         "FROM sub_footprint " +
         "WHERE footprint_id = ? ";
 
-    connection.query(sqlRetrieveSubFootprintByFootprintId, [footprintId],
-        function(err, subFootprints){
+    const task = [
+        function(cb){
+            connection.query(sqlRetrieveFootprintByFootprintId, [footprintId],
+                function(err, footprint){
+                    if(err)
+                        return cb(err, null);
+
+                    if(footprint)
+                        return cb(null, footprint);
+                    else return cb('sql error', null);
+                })
+        },
+        function(cb){
+            connection.query(sqlRetrieveSubFootprintByFootprintId, [footprintId],
+                function(err, subFootprints){
+                    if(err)
+                        return cb(err, null);
+
+                    if(subFootprints)
+                        return cb(null, subFootprints);
+                    else return cb('sql error', null);
+                });
+        }
+    ];
+
+    async.series(task,
+        function(err, result){
             if(err)
                 return res.status(400)
-                    .json({code: -1,
-                    message: err});
+                        .json({code: -1,
+                                message: err});
 
-            if(subFootprints)
+            if(result)
             {
                 return res.status(200)
-                    .json(subFootprints);
-            }else
-            {
+                    .json({code: 1,
+                        footprint: result[0],
+                        subMarkers: result[1]});
+            }
+            else
                 return res.status(400)
                     .json({code: -1,
-                    message: 'parameters fail'});
-            }
+                            message: 'sql output error'});
         });
+
+
 };
 
-
-var createFootprintWithSubFootprints = function(req, res){
-
-};
 
 module.exports = {
     getFootprintListByLocation : getFootprintListByLocation,
@@ -612,5 +642,4 @@ module.exports = {
     getFootprintListByCurrentLocationAndViewLevel : getFootprintListByCurrentLocationAndViewLevel,
     createSubFootprint : createSubFootprint,
     getSubFootprintByFootprintID: getSubFootprintByFootprintID,
-    createFootprintWithSubFootprints: createFootprintWithSubFootprints
 };
