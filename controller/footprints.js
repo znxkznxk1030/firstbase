@@ -591,7 +591,7 @@ var getSubFootprintByFootprintID = function(req, res){
                         return cb(err, null);
 
                     if(footprint)
-                        return cb(null, footprint);
+                        return cb(null, JSON.parse(JSON.stringify(footprint))[0]);
                     else return cb('sql error', null);
                 })
         },
@@ -617,10 +617,15 @@ var getSubFootprintByFootprintID = function(req, res){
 
             if(result)
             {
+                // var objectResponseJson = {};
+                // objectResponseJson.push({code: 1})
+                //     .push(result[0])
+                //     .push(result[1]);
+                result[0].code = 1;
+                result[0].subMarkers = result[1];
+                console.log(result[0]);
                 return res.status(200)
-                    .json({code: 1,
-                        footprint: result[0],
-                        subMarkers: result[1]});
+                    .json(result[0]);
             }
             else
                 return res.status(400)
