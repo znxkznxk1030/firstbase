@@ -4,42 +4,40 @@
 body {
     padding: 0;
     margin: 0;
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 #main {
     display: flex;
     width: 100vw;
     height: 100vh;
-}
-
-#map-area {
-    display: flex;
-    flex: 1 1 auto;
-    width: 60%;
-    height: 100%;
     flex-flow: column nowrap;
-    background-color: white;
 }
 
-#top-map{
+#nav-area {
     display: flex;
-    flex: 1 1 auto;
-    width: 100%;
-    height: 8%;
+    flex: 0 1 auto;
+    flex-flow: row nowrap;
+    width: 100vw;
+    height: 8vh;
+    background-color: #FFFFFF;
+}
+
+#top-left-area{
+    display: flex;
+    flex: 0 1 auto;
+    width: 65%;
+    height: 100%;
+    flex-flow: row nowrap;
     align-items: center;
 }
 
 #logo-img{
     display: flex;
     flex : 0 1 auto;
-    width: 50px;
-    height: 50px;
-    margin-left: 2px;
+    width: 40px;
+    height: 40px;
+    margin-left: 8px;
 }
 
 #logo-img img{
@@ -51,17 +49,185 @@ a {
     border-radius: 10px;
 }
 
-#top-left-menu{
+#brand{
+    display: flex;
+    flex : 0 1 auto;
+    width: 100px;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    font-size: 3vmin;
+    text-align: center;
+    color: #212121;
+}
+
+#brand:hover, a:hover{
+    color: #212121;
+    text-decoration: none;
+}
+
+#navbar-nav{
+    display: flex;
+    flex : 1 1 auto;
+    height: 100%;
+    align-items: center;
+    flex-flow: row wrap;
+}
+
+#nav-item{
+    display: flex;
+    flex : 0 1 auto;
+    width: 35%;
+    justify-content: center;
+    align-items: center;
+    font-size: 3vmin;
+    text-align: center;
+    white-space: nowrap;
+}
+
+#nav-item a.nav-link{
+    color: #FFE3B1;
+}
+
+#nav-item:hover, #nav-item a.nav-link:hover{
+    color: #B2996A;
+}
+
+#top-search{
+    display: flex;
+    flex : 0 1 auto;
+    flex-flow: row wrap;
+    width: calc(30% - 15px);
+    height: 75%;
+    align-items: center;
+    margin-right: 15px;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: .25rem;
+    background-color: white;
+    margin-left: auto;
+}
+
+#top-search input{
+    display: flex;
+    flex: 0 1 auto;
+    border: 0px;
+    width: calc(100% - 26px - 5px);
+}
+
+#top-search .search-button{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-right: 5px;
+    width: 26px;
+}
+
+#top-search .search-button button{
+    background-color: white;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    margin: 0;
+}
+
+#top-search .search-button button:focus{
+    box-shadow: 0px 0px 0px #FFF;
+}
+
+#top-search .search-button img{
+    display: flex;
+    flex : 1 1 auto;
+    width: 100%;
+    height: 100%;
+}
+
+#top-right-area{
+    display: flex;
+    flex : 0 1 auto;
+    width: 35%;
+    height: 100%;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+#chat-button{
+    display: flex;
+    flex : 0 1 auto;
+    height: 75%;
+    width: calc(100% - 80px - 15px - 15px);
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: .5rem;
+}
+
+#chat-button #chat-img{
+    display: flex;
+    flex : 0 1 auto;
+    height: 38px;
+    width: 38px;
+}
+
+#chat-button #chat-img img{
+    display: flex;
+    flex : 0 1 auto;
+    height: 100%;
+    width: 100%;
+}
+
+#login-register-button{
+    display: flex;
+    flex : 0 1 auto;
+    width: 80px;
+    height: 75%;
+    align-items: center;
+    margin-left: 15px;
+}
+
+#login-register-button button{
+    display: flex;
+    flex : 0 1 auto;
+    width: 80px;
+    justify-content: center;
+    height: 100%;
+    color: white;
+    font-size: 2.5vmin;
+    background-color: #B1D4FF;
+    border: 1px solid #ddd;
+    border-radius: .5rem;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#main-area {
+    display: flex;
+    width: 100vw;
+    height: 92vh;
+    flex-flow: row nowrap;
+}
+
+#map-area {
     display: flex;
     flex: 1 1 auto;
-    justify-content: space-around;
+    width: 65%;
+    height: 100%;
+    flex-flow: row nowrap;
+    background-color: white;
+    padding: 15px;
+    background-color: #FFF1D7;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
+
 
 #map{
     display: flex;
     flex: 1 1 auto;
     width: 100%;
-    height: 92%;
+    height: 100%;
 }
 
 #add-button{
@@ -94,6 +260,7 @@ a {
     height: 28px;
     background-color: white;
     margin: 0;
+    margin-top: 10px;
     padding: 0;
     border: 1px solid #000;
 }
@@ -113,99 +280,53 @@ a {
     flex : 1 1 auto;
     width: 35%;
     height: 100%;
-    flex-flow: row wrap;
-    justify-content: space-around;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
     align-items: center;
     background-color: white;
-}
-
-#top-right-menu{
-    display: flex;
-    flex : 1 1 auto;
-    width: 100%;
-    height: 8%;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: center;
-}
-
-#top-right-menu .space{
-    display: flex;
-    flex : 0 1 auto;
-    width: 5%;
-    height: 100%;
-}
-
-#chat-button{
-    display: flex;
-    flex : 0 1 auto;
-    height: 50px;
-    width: 200px;
-    padding: 0px 75px;
-    justify-content: center;
-    align-items: center;
-    background-color: white;
-    border: 1px solid #ddd;
-}
-
-#chat-button img{
-    display: flex;
-    flex : 0 1 auto;
-    width: 100%;
-    height: 100%;
-}
-
-#login-register-button{
-    display: flex;
-    flex : 0 1 auto;
-    width: 100px;
-    height: 50px;
-}
-
-#login-register-button button{
-    display: flex;
-    flex : 1 1 auto;
-    justify-content: center;
-    height: 100%;
-    color: white;
-    background-color: #00bbd2;
-    border: 1px solid #ddd;
+    padding: 15px;
+    padding-left: 0px;
+    background-color: #FFF1D7;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 #contents{
     display: flex;
-    flex : 1 1 auto;
+    flex : 0 1 auto;
     width: 100%;
-    height: 84%;
+    height: calc(90% - 15px);
     flex-flow: column nowrap;
     justify-content: space-around;
     align-items: center;
     background-color: white;
+    background-color: #B1D4FF;
+    border: 1px solid #B1D4FF;
+    border-radius: .5rem;
 }
 
 #content-wrapper{
     display: flex;
-    flex : 1 1 auto;
+    flex : 0 1 auto;
     width: 100%;
-    height: 100%;
+    height: 93%;
     flex-flow: column nowrap;
     justify-content: flex-start;
     align-items: center;
-    padding-top: 2%;
 }
 
 .content{
     display: flex;
-    flex : 1 1 auto;
+    flex : 0 1 auto;
     width: 95%;
-    max-width: 95%
-    height: 18%;
-    max-height: 18%;
-    margin-top: 0;
-    margin-bottom: 2%;
+    height: 20%;
+    margin-top: 2%;
     flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
+    border: 1px solid #B1D4FF;
+    border-radius: .5rem;
 }
 
 .title{
@@ -213,6 +334,11 @@ a {
     flex : 1 1 auto;
     width: 100%;
     height: 100%;
+    text-align: center;
+    font-size: 30px;
+    font-style: bold;
+    color: #B2996A;
+    justify-content: center;
     align-items: center;
     background-color: white;
     overflow:hidden;
@@ -230,54 +356,66 @@ a {
 
 #contents-page{
     display: flex;
-    flex : 1 1 auto;
+    flex : 0 1 auto;
     width: 100%;
     height: 5%;
+    align-self: flex-end;
     justify-content: center;
     align-items: center;
     background-color: white;
+    background-color: #B1D4FF;
+    border: 1px solid #B1D4FF;
+    border-radius: .5rem;
 }
 
 .page{
-    border: 1px solid #ddd;
-    padding: 1px 4px;
+    border: 1px;
+    padding: 1px 2px;
     margin: 3px;"
 }
 
 #down-menu{
     display: flex;
-    flex : 1 1 auto;
+    flex : 0 1 auto;
     width: 100%;
-    height: 8%;
+    height: 10%;
+    align-self: flex-end;
     flex-flow: row nowrap;
     justify-content: space-around;
     align-items: center;
+    background-color: #B1D4FF;
+    border: 1px solid #B1D4FF;
+    border-radius: .5rem;
+    margin-top: 15px;
+    padding: 0px 7px;
 }
 
 #down-search{
     display: flex;
     flex : 0 1 auto;
     flex-flow: row nowrap;
-    width: 75%;
+    width: calc(90% - 7px);
     height: 75%;
+    align-items: center;
+    margin-right: 7px;
     border: 1px solid rgba(0,0,0,.15);
     border-radius: .25rem;
-}
-
-#down-search :focus{
+    background-color: white;
 }
 
 #down-search input{
     display: flex;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     border: 0px;
+    width: calc(100% - 26px - 5px);
 }
 
 #down-search .search-button{
     display: flex;
-    flex: 1 1 auto;
     align-items: center;
+    height: 100%;
     margin-right: 5px;
+    width: 26px;
 }
 
 #down-search .search-button button{
@@ -309,6 +447,7 @@ a {
     border-radius: .25rem;
     border: 1px solid #ddd;
     justify-content: center;
+    background-color: white;
 }
 
 #down-filter img{
@@ -405,14 +544,14 @@ a {
 #regi-form form .form-group0{
     display: flex;
     flex : 0 1 auto;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
     height: 38px;
 }
 
 #regi-form form .form-group2{
     display: flex;
     flex : 0 1 auto;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
 }
 
 #popUp {
@@ -452,7 +591,7 @@ a {
     flex: 0 1 auto;
     height: 50px;
     width: 100%;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
 }
 
 #detail-icon{
@@ -483,7 +622,7 @@ a {
     flex: 0 1 auto;
     height: 40px;
     width: 100%;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
 }
 
 #detail-id{

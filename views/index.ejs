@@ -27,60 +27,65 @@
 
 <body>
     <div id = "main">
-        <div id = "map-area">
-            <div id = "top-map">
+        <div id = "nav-area">
+            <div id = "top-left-area">
                 <div id = "logo-img">
                     <a href="/"><img src="/img/layout/logo.png"></a>
                 </div>
-                <div id = "top-left-menu">
-                    <div class = "menu-word">
-                        ABOUT US
+                <a id="brand" href="#">FirstBase</a>
+                <div id="navbar-nav">
+                    <div id="nav-item">
+                        <a class="nav-link" href="#">About us</a>
                     </div>
-                    <div class = "menu-word">
-                        MAP
+                    <div id="nav-item">
+                        <a class="nav-link" href="#">Start Map</a>
+                    </div>
+                    <div id = "top-search">
+                        <input type="search" class="form-control" name="search" id="search" placeholder="Search"/>
+                        <div class="search-button">
+                            <button class="btn" type="button">
+                                <img src="/img/layout/search.png">
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div id = "map">
-            </div>
-            <div id = "add-button" onclick="write_button_click();">
-                <img src="/img/layout/write-button.png">
-            </div>
-            <div id = "radar-button" onclick="search_positon();">
-                <img src="/img/layout/radar.png">
-            </div>
-        </div>
-        <div id = "contents-area">
-            <div id = "top-right-menu">
-                <div class = "space">
-                </div>
-                <div class = "space">
-                </div>
+            <div id = "top-right-area">
                 <div id = "chat-button">
                     <div id = "chat-img">
                         <img src="/img/layout/chat.png">
                     </div>
                 </div>
-                <div class = "space">
-                </div>
                 <div id = "login-register-button">
                     <button type="button" class="btn" data-toggle="modal" data-target="#myModal">LOG IN</button>
                 </div>
-                <div class = "space">
+            </div>
+        </div>
+        <div id = "main-area">
+            <div id = "map-area">
+                <div id = "map">
+                </div>
+                <div id = "add-button" onclick="write_button_click();">
+                    <img src="/img/layout/write-button.png">
+                </div>
+                <div id = "radar-button" onclick="search_positon();">
+                    <img src="/img/layout/radar.png">
                 </div>
             </div>
-            <div id = "contents">
-            </div>
-            <div id = "down-menu">
-                <div id = "down-search">
-                    <input type="search" class="form-control" name="search" id="search" placeholder="Search"/>
-                    <div class="search-button">
-                        <button class="btn" type="button">
-                            <img src="/img/layout/search.png">
-                        </button>
+            <div id = "contents-area">
+                <div id = "contents">
+                </div>
+                <div id = "down-menu">
+                    <div id = "down-search">
+                        <input type="search" class="form-control" name="search" id="search" placeholder="Search"/>
+                        <div class="search-button">
+                            <button class="btn" type="button">
+                                <img src="/img/layout/search.png">
+                            </button>
+                        </div>
                     </div>
+                    <div id = "down-filter"><img src="/img/layout/filter.png"></div>
                 </div>
-                <div id = "down-filter"><img src="/img/layout/filter.png"></div>
             </div>
         </div>
     </div>
@@ -128,8 +133,10 @@
             </div>
         </div>
     </div>
+
     <div id = "popUp">
     </div>
+
     <script type="text/javascript" src="/js/app.js" defer></script>
 </body>
 </html>
