@@ -231,7 +231,7 @@ var createFootprint = function(req, res){
 
         subMarkers.forEach(
             function(subMarker) {
-                if(subMarkder !== null)
+                if(subMarker !== null)
                 {
                     const subLatitude = subMarker.latitude,
                         subLongitude = subMarker.longitude;
