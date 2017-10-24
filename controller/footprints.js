@@ -277,6 +277,7 @@ var createFootprint = function(req, res){
 
                 var task = [
                     function(cb){
+                        console.log(imageKeys);
                         if(!imageKeys)
                         {
                             return cb(null, false);
