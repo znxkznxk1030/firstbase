@@ -287,8 +287,9 @@ var createFootprint = function(req, res){
                                 if(err)
                                     return cb(err, null);
 
-                                return cb(null, true);
-                            })
+                                if(images)
+                                    return cb(null, true);
+                            });
                     },
 
                     function(cb){
@@ -300,9 +301,9 @@ var createFootprint = function(req, res){
                             function(err, markers){
                                 if(err)
                                     return cb(err, null);
-
-                                return cb(null, true);
-                            })
+                                if(markers)
+                                    return cb(null, true);
+                            });
                     }
                 ];
 
