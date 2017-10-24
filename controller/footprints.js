@@ -45,6 +45,9 @@ var getFootprintListByUser = function(req, res){
 };
 
 var getFootprintList = function(req, res){
+
+    return res.redirect('/');
+
     var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
         "FROM footprint " +
         "LEFT JOIN view " +
@@ -103,6 +106,7 @@ var getFootprintListByCurrentLocationAndViewLevel = function(req, res){
  * @param res
  */
 var getFootprintListByLocation = function(req, res){
+
     const data = req.query;
     //console.log("data ",data);
     //console.log(data.startlat, data.startlng, data.endlat, data.endlng);
@@ -502,7 +506,7 @@ var deleteFootprintByFootprintID = function(req, res){
 
 
 /**
- *  todo: should move to trace.js
+ *  todo: move to trace.js
  *
  * @param req
  * @param res
