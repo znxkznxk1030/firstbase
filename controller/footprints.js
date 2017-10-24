@@ -579,7 +579,7 @@ var getSubFootprintByFootprintID = function(req, res){
         "WHERE footprint_id = ?";
 
     const sqlRetrieveSubFootprintByFootprintId =
-        "SELECT sub_footprint.icon_key, sub_footprint.latitude, sub_footprint.longitude " +
+        "SELECT sub_footprint.icon_key AS iconKey, sub_footprint.latitude, sub_footprint.longitude " +
         "FROM sub_footprint " +
         "WHERE footprint_id = ? ";
 
