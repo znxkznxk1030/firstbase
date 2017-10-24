@@ -110,7 +110,8 @@ var getFootprintListByLocation = function(req, res){
         endLat = data.endlat,
         endLng = data.endlng;
 
-    const sqlRetrieveFootprint = "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
+    const sqlRetrieveFootprint =
+        "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
@@ -151,10 +152,12 @@ var createFootprint = function(req, res){
         content =  body.content,
         latitude = body.latitude,
         longitude = body.longitude,
-        imageKeys = body.imageKeys;
+        imageKeys = body.imageKeys,
+        subMarkers = body.subMarkers;
+    var type = body.type;
 
-    // todo : createFootprint
-    // parameter test
+
+    // todo : vaildate parameters
 
     if(!title)
     {
@@ -170,13 +173,97 @@ var createFootprint = function(req, res){
                 message: 'location data should be not null'});
     }
 
+    if(!type)
+    {
+        type = 'default';
+    }
 
-    const sqlCreateFootprint = "INSERT INTO footprint (id, title, icon_key, content, latitude, longitude) "
-        + " VALUES (?, ?, ?, ?, ?, ?)";
-    const sqlInsertImage = "INSERT INTO image (footprint_id, image_key) VALUES (?, ?) ";
+
+    const sqlCreateFootprint =
+        "INSERT INTO footprint (id, title, icon_key, content, latitude, longitude, type) "
+        + " VALUES (?, ?, ?, ?, ?, ?, ?)";
+    const sqlInsertImage =
+        "INSERT INTO image (footprint_id, image_key) " +
+        "VALUES (?, ?) ";
+    const sqlCreateSubFootprint =
+        "INSERT INTO sub_footprint ( footprint_id, icon_key, latitude, longitude ) " +
+        "VALUES (?, ?, ?, ?)";
 
 
-    connection.query(sqlCreateFootprint, [userId, title, iconKey, content, latitude, longitude],
+    var createImages = function(footprintId, imageKeys, cb){
+
+        if(!footprintId)
+        {
+            return cb('foreign key err', null);
+        }
+
+        imageKeys.forEach(
+            function(imageKey){
+                if(imageKey !== null)
+                {
+                    //console.log(imageKey);
+                    connection.query(sqlInsertImage, [footprintId, imageKey],
+                        function(err, image){
+                            if (err)
+                                return cb(err, null);
+
+                            if(!image)
+                            {
+                                return cb('image link error', null);
+                            }
+
+                        });
+                }
+            });
+
+        return cb(null, true);
+    };
+
+    var createSubMarkers = function(footprintId, subMarkers, cb){
+        console.log(subMarkers);
+
+        if(!footprintId)
+        {
+            return cb('foreign key err', null);
+        }
+
+        subMarkers.forEach(
+            function(subMarker) {
+                if(subMarkder !== null)
+                {
+                    const subLatitude = subMarker.latitude,
+                        subLongitude = subMarker.longitude;
+                    var subIconKey = subMarker.iconKey;
+                    console.log(subMarker);
+
+                    // todo: vaildate sub markers parameters
+
+                    if(!subIconKey)
+                    {
+                        subIconKey = iconKey;
+                    }
+
+                    if(!subLongitude || !subLatitude)
+                    {
+                        return cb('sub marker location data err', null);
+                    }
+
+                    connection.query(sqlCreateSubFootprint, [footprintId, subIconKey, subLatitude, subLongitude],
+                        function(err, result){
+                            if(err)
+                                return cb(err, null);
+
+                            if(!result)
+                                return cb('fail to create subMarkers', null);
+                        });
+                }
+            });
+
+        return cb(null, true);
+    };
+
+
+    connection.query(sqlCreateFootprint, [userId, title, iconKey, content, latitude, longitude, type],
         function(err, result){
             if(err)
                 return res.status(400)
@@ -184,25 +271,54 @@ var createFootprint = function(req, res){
                         message: 'sql fail'});
             if(result)
             {
-                if(imageKeys)
-                {
-                    imageKeys.forEach(
-                        function(imageKey){
-                            if(imageKey !== null)
-                            {
-                                //console.log(imageKey);
-                                connection.query(sqlInsertImage, [result.insertId, imageKey],
-                                    function(err, image){
-                                        if (err) throw err;
-                                    });
-                            }
-                        });
-                }
+                var task = [
+                    function(cb){
+                        if(imageKeys)
+                        {
+                            return cb(null, false);
+                        }
 
-                return res.status(201)
-                    .json({ code : 1,
-                        footprintId: result.insertId,
-                        message: 'success to create footprint mark'});
+                        createImages(result.insertId, imageKeys,
+                            function(err, images){
+                                if(err)
+                                    return cb(err, null);
+
+                                cb(null, true);
+                            })
+                    },
+
+                    function(cb){
+                        if(subMarkers)
+                        {
+                            return cb(null, false);
+                        }
+                        createSubMarkers(result.insertId, subMarkers,
+                            function(err, markers){
+                                if(err)
+                                    return cb(err, null);
+
+                                cb(null, true);
+                            })
+                    }
+                ];
+
+                async.series(task,
+                    function(err, result){
+                        if(err)
+                        {
+                            return res.status(400)
+                                .json({code: -1,
+                                message: err});
+                        }
+
+                        if(result)
+                        {
+                            return res.status(201)
+                                .json({ code: 1,
+                                    message: 'success to create footprint mark'});
+                        }
+
+                    });
             }else
             {
                 return res.status(400)
@@ -225,7 +341,8 @@ var getFootprintByFootprintID = function(req, res){
     }
 
     // todo: split sql query
-    const sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count(comment.comment_id) AS commentCount " +
+    const sql =
+        "SELECT footprint.*, count(view.view_id) AS viewCount, count(comment.comment_id) AS commentCount " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
@@ -409,7 +526,8 @@ var createSubFootprint = function(req, res){
                 message: 'location data should be not null'});
     }
 
-    const sqlCreateSubFootprint = "INSERT INTO sub_footprint ( footprint_id, icon_key, latitude, longitude ) " +
+    const sqlCreateSubFootprint =
+        "INSERT INTO sub_footprint ( footprint_id, icon_key, latitude, longitude ) " +
         "VALUES (?, ?, ?, ?)";
 
     connection.query(sqlCreateSubFootprint, [footprintId, iconKey, latitude, longitude],
@@ -448,7 +566,8 @@ var getSubFootprintByFootprintID = function(req, res){
                 message: 'footprintId that you sent is not allowed'})
     }
 
-    const sqlRetrieveSubFootprintByFootprintId = "SELECT sub_footprint.icon_key, sub_footprint.latitude, sub_footprint.longitude " +
+    const sqlRetrieveSubFootprintByFootprintId =
+        "SELECT sub_footprint.icon_key, sub_footprint.latitude, sub_footprint.longitude " +
         "FROM sub_footprint " +
         "WHERE footprint_id = ? ";
 
@@ -472,6 +591,11 @@ var getSubFootprintByFootprintID = function(req, res){
         });
 };
 
+
+var createFootprintWithSubFootprints = function(req, res){
+
+};
+
 module.exports = {
     getFootprintListByLocation : getFootprintListByLocation,
     getFootprintListByUser : getFootprintListByUser,
@@ -481,5 +605,6 @@ module.exports = {
     deleteFootprintByFootprintID : deleteFootprintByFootprintID,
     getFootprintListByCurrentLocationAndViewLevel : getFootprintListByCurrentLocationAndViewLevel,
     createSubFootprint : createSubFootprint,
-    getSubFootprintByFootprintID: getSubFootprintByFootprintID
+    getSubFootprintByFootprintID: getSubFootprintByFootprintID,
+    createFootprintWithSubFootprints: createFootprintWithSubFootprints
 };
