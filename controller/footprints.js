@@ -151,9 +151,8 @@ var createFootprint = function(req, res){
         iconKey = body.icon_key,
         content =  body.content,
         latitude = body.latitude,
-        longitude = body.longitude,
-        imageKeys = body.imageKeys,
-        subMarkers = body.subMarkers;
+        longitude = body.longitude;
+    
     var type = body.type;
 
 
@@ -196,6 +195,8 @@ var createFootprint = function(req, res){
         {
             return cb('foreign key err', null);
         }
+
+        console.log(imageKeys);
 
         imageKeys.forEach(
             function(imageKey){
@@ -271,6 +272,9 @@ var createFootprint = function(req, res){
                         message: 'sql fail'});
             if(result)
             {
+                const imageKeys = body.imageKeys,
+                    subMarkers = body.subMarkers;
+
                 var task = [
                     function(cb){
                         if(imageKeys)
