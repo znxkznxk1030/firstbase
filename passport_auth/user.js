@@ -71,7 +71,8 @@ var isFormVaildMiddleware = function(req, res, next){
                 {
                     if(err)
                         return cb(err, null);
-                    if(user)
+                    console.log(user);
+                    if(user[0])
                         return cb('already existed', null);
 
                     else return cb(null);
