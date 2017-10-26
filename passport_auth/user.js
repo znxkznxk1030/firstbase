@@ -105,7 +105,7 @@ var isFormVaildMiddleware = function(req, res, next){
             for(var i = 0; i < userPassword1.length; i++)
             {
                 const t = userPassword1.charAt(i);
-                const code = t.charCodeAt(0);
+                const code = t.charCodeAt(i);
 
                 if(33 <= code && code <= 47)
                     numOfSpecial++;
