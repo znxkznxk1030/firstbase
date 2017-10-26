@@ -148,7 +148,8 @@ var getFootprintListByLocation = function(req, res){
 var createFootprint = function(req, res){
 
     const userProfileByToken = req.user;
-    const userId = userProfileByToken.id;
+    const userId = userProfileByToken.id,
+        userDisplayName = userProfileByToken.displayName;
 
     const body = req.body;
 
@@ -184,7 +185,7 @@ var createFootprint = function(req, res){
 
 
     const sqlCreateFootprint =
-        "INSERT INTO footprint (id, title, icon_key, content, latitude, longitude, type) "
+        "INSERT INTO footprint (id, displayName, title, icon_key, content, latitude, longitude, type) "
         + " VALUES (?, ?, ?, ?, ?, ?, ?)";
     const sqlInsertImage =
         "INSERT INTO image (footprint_id, image_key) " +
@@ -269,7 +270,7 @@ var createFootprint = function(req, res){
     };
 
 
-    connection.query(sqlCreateFootprint, [userId, title, iconKey, content, latitude, longitude, type],
+    connection.query(sqlCreateFootprint, [userId, userDisplayName, title, iconKey, content, latitude, longitude, type],
         function(err, result){
             if(err)
                 return res.status(400)
@@ -352,7 +353,7 @@ var getFootprintByFootprintID = function(req, res){
     }
 
     // todo: split sql query
-    const sql =
+    const sqlRetrieveFootprintByFootprintId =
         "SELECT footprint.*, count(view.view_id) AS viewCount, count(comment.comment_id) AS commentCount " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
@@ -361,9 +362,9 @@ var getFootprintByFootprintID = function(req, res){
         "WHERE footprint.footprint_id = ? " +
         "GROUP BY footprint_id ";
 
-    const find_sql = "SELECT * FROM view WHERE id = ? AND footprint_id = ?";
-    const view_insert_sql = "INSERT INTO view (id, footprint_id) VALUES (?, ?)";
-    const image_load_sql = "SELECT * FROM image WHERE footprint_id = ?";
+    const sqlIsWatched = "SELECT * FROM view WHERE id = ? AND footprint_id = ?";
+    const sqlWatch = "INSERT INTO view (id, footprint_id) VALUES (?, ?)";
+    const sqlImageLoad = "SELECT * FROM image WHERE footprint_id = ?";
     const sqlGetNickname =
         "SELECT displayName FROM user WHERE id = ?";
 
@@ -374,7 +375,7 @@ var getFootprintByFootprintID = function(req, res){
          * @param cb
          */
         function(cb){
-            connection.query(sql, [footprintId],
+            connection.query(sqlRetrieveFootprintByFootprintId, [footprintId],
                 function(err, footprint){
                     if(err)
                         return cb(err, {message : "error to find footprint"});
@@ -416,7 +417,7 @@ var getFootprintByFootprintID = function(req, res){
          */
         function(cb){
             if(user){
-                connection.query(find_sql, [user.id, footprintId],
+                connection.query(sqlIsWatched, [user.id, footprintId],
                     function(err, view_id){
                         if(err)
                             return cb(err, { message: "id not found"});
@@ -426,7 +427,7 @@ var getFootprintByFootprintID = function(req, res){
                             return cb(null, { message: "already watched"});
                         }else
                         {
-                            connection.query(view_insert_sql, [user.id, footprintId],
+                            connection.query(sqlWatch, [user.id, footprintId],
                                 function(err, result){
                                     if(err)
                                         return cb(err, { message: "not found"});
@@ -446,7 +447,7 @@ var getFootprintByFootprintID = function(req, res){
          * @public
          */
         function(cb){
-            connection.query(image_load_sql, [footprintId],
+            connection.query(sqlImageLoad, [footprintId],
                 function(err, imageInfo){
                     if(err) return cb(err, { message: 'error'});
 
@@ -667,7 +668,6 @@ var getSubFootprintByFootprintID = function(req, res){
                     .json({code: -1,
                             message: 'sql output error'});
         });
-
 
 };
 
