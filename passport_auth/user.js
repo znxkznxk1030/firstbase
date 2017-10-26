@@ -114,7 +114,7 @@ var isFormVaildMiddleware = function(req, res, next){
                 else if(65 <= code && code <= 122)
                     numOfChar++;
                 else unVaildChar = true;
-            });
+            };
 
             if(unVaildChar)
                 return cb('only can use char from our term below', null);
