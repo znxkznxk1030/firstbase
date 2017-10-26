@@ -384,24 +384,6 @@ var getFootprintByFootprintID = function(req, res){
                     if(footprint[0])
                     {
                         var returnData = JSON.parse(JSON.stringify(footprint))[0];
-                        connection.query(sqlGetNickname, [footprint[0].id],
-                            function(err, result){
-                                if(err)
-                                    return cb(err, null);
-
-                                if(result[0])
-                                {
-                                    console.log(result[0].displayName);
-                                    console.log(returnData);
-                                    returnData['displayName'] = result[0].displayName;
-                                    console.log(returnData);
-                                    //return cb(null, returnData);
-                                }else
-                                {
-                                    return cb({ message: 'get Nickname error'}, null);
-                                }
-                            });
-
                         return cb(null, returnData);
 
                     }
