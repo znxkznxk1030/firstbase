@@ -110,6 +110,10 @@ var isFormVaildMiddleware = function(req, res, next){
 
                 if(33 <= code && code <= 47)
                     numOfSpecial++;
+                else if(58 <= code && code <= 64)
+                    numOfSpecial++;
+                else if(91 <= code && code <= 96)
+                    numOfSpecial++;
                 else if(48 <= code && code <= 57)
                     numOfDigit++;
                 else if(65 <= code && code <= 122)
