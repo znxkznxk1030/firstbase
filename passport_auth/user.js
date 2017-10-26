@@ -102,8 +102,9 @@ var isFormVaildMiddleware = function(req, res, next){
                 numOfChar = 0,
                 unVaildChar = false;
 
-            userPassword1.forEach(function(t)
+            for(var i = 0; i < userPassword1.length; i++)
             {
+                const t = userPassword1.charAt(i);
                 const code = t.charCodeAt(0);
 
                 if(33 <= code && code <= 47)
@@ -147,42 +148,32 @@ var registrateUser = function registrateUser(formData, cb){
     // todo: refactoring
     // callback hell -> async heaven
     findOne(formData.id, function(err, user){
-        if(user){
-             console.log('user is exist');
-            cb({message : 'error already exist'}, user);
-        }else{
-            passwordUtil.passwordCreate(formData.password1, function(err, password){
+        passwordUtil.passwordCreate(formData.password1, function(err, password){
+            if(err) throw err;
+
+            var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
+            connection.query(sql, [formData.id, formData.displayName, 'Local'], function(err, result){
                 if(err) throw err;
 
-                var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
-                connection.query(sql, [formData.id, formData.displayName, 'Local'], function(err, result){
-                    if(err) throw err;
-
-                    connection.query('INSERT INTO password (id, password) VALUES(?,?)', [formData.id, password], function(err, result){
-                        if(err) {
-                            connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
-                                if(err) throw err;
-                            });
-                            return cb(err, false);
-                        }
-                        console.log(result);
-                        if(result){
-                            return cb(null, true);
-                        }else {
-                            connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
-                                if(err) throw err;
-                            });
-                        }
-                    });
+                connection.query('INSERT INTO password (id, password) VALUES(?,?)', [formData.id, password], function(err, result){
+                    if(err) {
+                        connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
+                            if(err) throw err;
+                        });
+                        return cb(err, false);
+                    }
+                    console.log(result);
+                    if(result){
+                        return cb(null, true);
+                    }else {
+                        connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
+                            if(err) throw err;
+                        });
+                    }
                 });
             });
-        }
-
+        });
     });
-
-    const userId = formData.id,
-        userPassword1 = formData.password1,
-        userPassword2 = formdata.password2;
 };
 
 var findOne = function findOne(id, cb){
