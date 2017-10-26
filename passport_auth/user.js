@@ -14,10 +14,9 @@ var registrateSocialUser = function registrateSocialLoginUser(data, cb){
 };
 
 var isFormVaildMiddleware = function(req, res, next){
-    const userId = formData.id,
-        userPassword1 = formData.password1,
-        userPassword2 = formdata.password2;
-
+    const userId = req.body.id,
+        userPassword1 = req.body.password1,
+        userPassword2 = req.body.password2;
 
     console.log(userId + userPassword1 + userPassword2);
 
