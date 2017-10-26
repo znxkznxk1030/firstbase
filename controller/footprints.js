@@ -148,6 +148,7 @@ var getFootprintListByLocation = function(req, res){
 var createFootprint = function(req, res){
 
     const userProfileByToken = req.user;
+    console.log(userProfileByToken);
     const userId = userProfileByToken.id,
         userDisplayName = userProfileByToken.displayName;
 
