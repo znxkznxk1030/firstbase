@@ -1,6 +1,7 @@
 var connection = require('../database/db');
 var verify = require('./verify');
 var passwordUtil = require('./password');
+var async = require('async');
 
 
 var registrateSocialUser = function registrateSocialLoginUser(data, cb){
@@ -12,24 +13,154 @@ var registrateSocialUser = function registrateSocialLoginUser(data, cb){
     });
 };
 
-var registrateUser = function registrateUser(data, cb){
+var isFormVaildMiddleware = function(req, res, next){
+    const userId = formData.id,
+        userPassword1 = formData.password1,
+        userPassword2 = formdata.password2;
+
+
+    console.log(userId + userPassword1 + userPassword2);
+
+    const sqlIsExisted =
+        "SELECT * FROM user WHERE id = ?";
+
+    const task = [
+        /*
+            Check ID is valid.
+
+            1. Check id form is not blank.
+            2. Check length of id is between 8 and 20.
+            3. Check id has a valid email domain.
+            4. Check id is unique.
+         */
+        function(cb){
+
+            if(userId.isNullOrUndefined)
+                return cb('id form should be not blank', null);
+
+            const length = userId.length;
+            const userIdSplitByDomain = userId.split('@');
+            const ACCEPTED_DOMAIN = [
+                'naver.com',
+                'gmail.com',
+                'daum.net'
+            ];
+
+            if(length < 8)
+                return cb('The length of ID is too short', null);
+            if(length > 25)
+                return cb('The length of ID is too long', null);
+
+            console.log(userIdSplitByDomain);
+
+            if(userIdSplitByDomain.length !== 2)
+                return cb('Id should be email form', null);
+
+            const domain = userIdSplitByDomain[1];
+            var hasAccptedDomain = false;
+
+            ACCEPTED_DOMAIN.forEach(function(accptedDomain){
+                if(accptedDomain === domain)
+                    hasAccptedDomain = true;
+            });
+
+            if(!hasAccptedDomain)
+                return cb('please use accepted domain', null);
+
+            connection.query(sqlIsExisted, [userId],
+                function(err, user)
+                {
+                    if(err)
+                        return cb(err, null);
+                    if(user)
+                        return cb('already existed', null);
+
+                    else return cb(null);
+                });
+        },
+        /*
+            Password Safety Term.
+            1. Check two password is same
+            2. Check password' length is between 8 and 20
+
+         */
+        function(cb){
+            if(userPassword1 !== userPassword2)
+                return cb('two passwords are not same', null);
+
+            const length = userPassword1.length;
+                console.log(length);
+
+            if(length < 8)
+                return cb('The length of password is too short', null);
+
+            if(length > 20)
+                return cb('The length of password is too long', null);
+
+            var numOfDigit = 0,
+                numOfSpecial = 0,
+                numOfChar = 0,
+                unVaildChar = false;
+
+            userPassword1.forEach(function(t)
+            {
+                const code = t.charCodeAt(0);
+
+                if(33 <= code && code <= 47)
+                    numOfSpecial++;
+                else if(48 <= code && code <= 57)
+                    numOfDigit++;
+                else if(65 <= code && code <= 122)
+                    numOfChar++;
+                else unVaildChar = true;
+            });
+
+            if(unVaildChar)
+                return cb('only can use char from our term below', null);
+
+            if(numOfDigit < 5)
+                return cb('The number of digit should be more than 6', null);
+
+            if(numOfSpecial < 3)
+                return cb('The number of special char should be more than 3', null);
+
+            if(numOfChar < 3)
+                return cb('The number of char should be more than 3', null);
+
+
+            return cb(null);
+
+
+        }
+    ];
+
+    async.series(task, function(err, result){
+        if(err)
+            return res.status(401)
+                    .json({code:-2,
+                            message:err});
+        else next();
+    });
+};
+
+var registrateUser = function registrateUser(formData, cb){
     // todo: refactoring
     // callback hell -> async heaven
-    findOne(data.id, function(err, user){
+    findOne(formData.id, function(err, user){
         if(user){
              console.log('user is exist');
             cb({message : 'error already exist'}, user);
         }else{
-            passwordUtil.passwordCreate(data.password1, function(err, password){
+            passwordUtil.passwordCreate(formData.password1, function(err, password){
                 if(err) throw err;
 
                 var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
-                connection.query(sql, [data.id, data.displayName, 'Local'], function(err, result){
+                connection.query(sql, [formData.id, formData.displayName, 'Local'], function(err, result){
                     if(err) throw err;
 
-                    connection.query('INSERT INTO password (id, password) VALUES(?,?)', [data.id, password], function(err, result){
+                    connection.query('INSERT INTO password (id, password) VALUES(?,?)', [formData.id, password], function(err, result){
                         if(err) {
-                            connection.query('DELETE FROM user WHERE id=?', [data.id], function(err, result){
+                            connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
                                 if(err) throw err;
                             });
                             return cb(err, false);
@@ -38,7 +169,7 @@ var registrateUser = function registrateUser(data, cb){
                         if(result){
                             return cb(null, true);
                         }else {
-                            connection.query('DELETE FROM user WHERE id=?', [data.id], function(err, result){
+                            connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
                                 if(err) throw err;
                             });
                         }
@@ -48,6 +179,10 @@ var registrateUser = function registrateUser(data, cb){
         }
 
     });
+
+    const userId = formData.id,
+        userPassword1 = formData.password1,
+        userPassword2 = formdata.password2;
 };
 
 var findOne = function findOne(id, cb){
@@ -136,5 +271,7 @@ module.exports = {
     registrateUser : registrateUser,
     findByUsername : findByUsername,
     comparePasswordByid : comparePasswordByid,
-    comparePasswordByEmail : comparePasswordByEmail
+    comparePasswordByEmail : comparePasswordByEmail,
+    isFormVaildMiddleware : isFormVaildMiddleware
 };
+

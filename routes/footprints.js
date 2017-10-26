@@ -19,7 +19,7 @@ router.get('/list/:lat/:lng/:level', controller.getFootprintListByCurrentLocatio
  */
 router.post('/create', auth.authMiddleware, controller.createFootprint);
 router.get('/detail', auth.passMiddleware, controller.getFootprintByFootprintID);
-router.get('/delete', auth.authMiddleware, controller.deleteFootprintByFootprintID);
+router.delete('/delete', auth.authMiddleware, controller.deleteFootprintByFootprintID);
 
 router.get('/submarkers', controller.getSubFootprintByFootprintID);
 

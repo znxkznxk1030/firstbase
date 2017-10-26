@@ -19,7 +19,7 @@ router.get('/signup-form', function(req, res, next) {
     res.render('registration');
 });
 
-router.post('/registrate', function(req, res, next){
+router.post('/registrate', user.isFormVaildMiddleware,function(req, res, next){
     console.log(req.body);
 
     if(req.body.password1 === req.body.password2){
