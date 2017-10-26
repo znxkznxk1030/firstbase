@@ -106,6 +106,8 @@ var isFormVaildMiddleware = function(req, res, next){
             {
                 var code = userPassword1.charCodeAt(i);
 
+                console.log(code);
+
                 if(33 <= code && code <= 47)
                     numOfSpecial++;
                 else if(48 <= code && code <= 57)
@@ -115,9 +117,9 @@ var isFormVaildMiddleware = function(req, res, next){
                 else unVaildChar = true;
             }
 
-            console.log(numOfSpecial);
-            console.log(numOfChar);
-            console.log(numOfDigit);
+            console.log("special : " + numOfSpecial);
+            console.log("char : " + numOfChar);
+            console.log("digit : " + numOfDigit);
 
             if(unVaildChar)
                 return cb('only can use char from our term below', null);
