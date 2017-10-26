@@ -187,7 +187,7 @@ var createFootprint = function(req, res){
 
     const sqlCreateFootprint =
         "INSERT INTO footprint (id, displayName, title, icon_key, content, latitude, longitude, type) "
-        + " VALUES (?, ?, ?, ?, ?, ?, ?)";
+        + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     const sqlInsertImage =
         "INSERT INTO image (footprint_id, image_key) " +
         "VALUES (?, ?) ";
