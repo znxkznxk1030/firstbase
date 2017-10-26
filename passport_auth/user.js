@@ -104,8 +104,7 @@ var isFormVaildMiddleware = function(req, res, next){
 
             for(var i = 0; i < userPassword1.length; i++)
             {
-                const t = userPassword1.charAt(i);
-                const code = t.charCodeAt(i);
+                var code = userPassword1.charCodeAt(i);
 
                 if(33 <= code && code <= 47)
                     numOfSpecial++;
@@ -123,8 +122,8 @@ var isFormVaildMiddleware = function(req, res, next){
             if(unVaildChar)
                 return cb('only can use char from our term below', null);
 
-            if(numOfDigit < 5)
-                return cb('The number of digit should be more than 6', null);
+            if(numOfDigit < 3)
+                return cb('The number of digit should be more than 3', null);
 
             if(numOfSpecial < 3)
                 return cb('The number of special char should be more than 3', null);
