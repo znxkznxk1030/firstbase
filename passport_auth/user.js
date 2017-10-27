@@ -82,7 +82,7 @@ var isFormVaildMiddleware = function(req, res, next){
             Password Safety Term.
             1. Check two password is same
             2. Check password' length is between 8 and 20
-
+            3. Check password has more than 3 digits, special char, char
          */
         function(cb){
             if(userPassword1 !== userPassword2)

@@ -14,33 +14,49 @@ AWS.config.loadFromPath('s3config.json');
  */
 const s3 = new AWS.S3({ region : 'ap-northeast-2' });
 
-var getFootprintListByUser = function(req, res){
-    console.log(req.params.id);
-    user.findByUsername(req.params.id, function(err, user){
-        if(err){
-            throw err;
-        }
+var getFootprintListByUserDisplayName = function(req, res){
+    const userDisplayName = req.params.userDisplayName;
 
-        if (user) {
-            console.log(user);
-            var sql = "SELECT * FROM footprint WHERE user_id = ?";
-            connection.query(sql, [userId], function(err, footprintList){
-                if (err){
-                    throw err;
-                }
-                //todo 튜닝
-                //todo sql 분리
-                var footprintListJson = JSON.parse(JSON.stringify(footprintList));
+    const sqlRetrieveFootprint =
+        "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
+        "FROM footprint LEFT JOIN view " +
+        "ON footprint.footprint_id = view.footprint_id " +
+        "LEFT JOIN comment " +
+        "ON footprint.footprint_id = comment.footprint_id " +
+        "WHERE footprint.id = ? " +
+        "GROUP BY footprint_id ";
 
-                console.log(footprintList);
-                console.log(footprintListJson);
+    connection.query(sqlRetrieveFootprint, [userDisplayName], function(err, footprintList){
+        if (err)
+            return res.status(400)
+                        .json({code: -1,
+                            message:err});
 
-                res.json(footprintListJson);
-            });
-        }else{
-            res.json({message : "user not found"});
-        }
+        return res.status(200)
+            .json(footprintList);
+    });
+};
 
+var getFootprintListByUserId = function(req, res){
+    const userId = req.params.userId;
+
+    const sqlRetrieveFootprint =
+        "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
+        "FROM footprint LEFT JOIN view " +
+        "ON footprint.footprint_id = view.footprint_id " +
+        "LEFT JOIN comment " +
+        "ON footprint.footprint_id = comment.footprint_id " +
+        "WHERE footprint.id = ? " +
+        "GROUP BY footprint_id ";
+
+    connection.query(sqlRetrieveFootprint, [userId], function(err, footprintList){
+        if (err)
+            return res.status(400)
+                .json({code: -1,
+                    message: err});
+
+        return res.status(200)
+            .json(footprintList);
     });
 };
 
@@ -657,7 +673,7 @@ var getSubFootprintByFootprintID = function(req, res){
 
 module.exports = {
     getFootprintListByLocation : getFootprintListByLocation,
-    getFootprintListByUser : getFootprintListByUser,
+    getFootprintListByUserId : getFootprintListByUserId,
     getFootprintByFootprintID : getFootprintByFootprintID,
     getFootprintList: getFootprintList,
     createFootprint : createFootprint,
@@ -665,4 +681,5 @@ module.exports = {
     getFootprintListByCurrentLocationAndViewLevel : getFootprintListByCurrentLocationAndViewLevel,
     createSubFootprint : createSubFootprint,
     getSubFootprintByFootprintID: getSubFootprintByFootprintID,
+    getFootprintListByUserDisplayName : getFootprintListByUserDisplayName
 };
