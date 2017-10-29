@@ -5,8 +5,8 @@ var auth = require('../passport_auth/auth');
 
 router.get('/list',controller.getFootprintList);
 
-router.get('/list-userId', controller.getFootprintListByUserId);
-router.get('/list-userDisplayName', controller.getFootprintListByUserDisplayName);
+router.get('/listbyid', controller.getFootprintListByUserId);
+router.get('/listbyDisplayName', controller.getFootprintListByUserDisplayName);
 
 
 
