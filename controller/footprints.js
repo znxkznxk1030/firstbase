@@ -526,8 +526,6 @@ var deleteFootprintByFootprintID = function(req, res){
 };
 
 
-
-
 /**
  *  todo: move to trace.js
  *

@@ -15,6 +15,7 @@ var registrateSocialUser = function registrateSocialLoginUser(data, cb){
 
 var isFormVaildMiddleware = function(req, res, next){
     const userId = req.body.id,
+        userDisplayName = req.body.displayName,
         userPassword1 = req.body.password1,
         userPassword2 = req.body.password2;
 
@@ -24,6 +25,21 @@ var isFormVaildMiddleware = function(req, res, next){
         "SELECT * FROM user WHERE id = ?";
 
     const task = [
+        /*
+            Check DisplayName's validation.
+            1. length (5 < && < 25)
+         */
+        function(cb){
+            if(userDisplayName.isNullOrUndefined)
+                return cb('닉네임 입력 칸이 비어있습니다.', null);
+
+            const length = userDisplayName.length;
+
+            if(length < 5)
+                return cb('닉네임의 길이가 너무 짧습니다.', null);
+            if(length > 25)
+                return cb('닉네임의 길이가 너무 깁니다.', null);
+        },
         /*
             Check ID is valid.
 
@@ -35,7 +51,7 @@ var isFormVaildMiddleware = function(req, res, next){
         function(cb){
 
             if(userId.isNullOrUndefined)
-                return cb('id form should be not blank', null);
+                return cb('ID 입력 칸이 비어있습니다', null);
 
             const length = userId.length;
             const userIdSplitByDomain = userId.split('@');
@@ -46,14 +62,14 @@ var isFormVaildMiddleware = function(req, res, next){
             ];
 
             if(length < 8)
-                return cb('The length of ID is too short', null);
+                return cb('ID의 길이가 너무 짧습니다.', null);
             if(length > 25)
-                return cb('The length of ID is too long', null);
+                return cb('ID의 길이가 너무 깁니다.', null);
 
             console.log(userIdSplitByDomain);
 
             if(userIdSplitByDomain.length !== 2)
-                return cb('Id should be email form', null);
+                return cb('ID의 형식은 e-mail 형식이여야 합니다.', null);
 
             const domain = userIdSplitByDomain[1];
             var hasAccptedDomain = false;
@@ -64,7 +80,7 @@ var isFormVaildMiddleware = function(req, res, next){
             });
 
             if(!hasAccptedDomain)
-                return cb('please use accepted domain', null);
+                return cb('사용가능한 도메인을 사용해주세요.(gmail, naver, daum)', null);
 
             connection.query(sqlIsExisted, [userId],
                 function(err, user)
@@ -73,7 +89,7 @@ var isFormVaildMiddleware = function(req, res, next){
                         return cb(err, null);
                     console.log(user);
                     if(user[0])
-                        return cb('already existed', null);
+                        return cb('존재하는 아이디 입니다.', null);
 
                     else return cb(null);
                 });
@@ -86,16 +102,16 @@ var isFormVaildMiddleware = function(req, res, next){
          */
         function(cb){
             if(userPassword1 !== userPassword2)
-                return cb('two passwords are not same', null);
+                return cb('두 패스워드 값이 일치하지 않습니다.', null);
 
             const length = userPassword1.length;
                 console.log(length);
 
             if(length < 8)
-                return cb('The length of password is too short', null);
+                return cb('패스워드의 길이가 너무 짧습니다.', null);
 
             if(length > 20)
-                return cb('The length of password is too long', null);
+                return cb('패스워드의 길이가 너무 깁니다.', null);
 
             var numOfDigit = 0,
                 numOfSpecial = 0,
@@ -126,16 +142,16 @@ var isFormVaildMiddleware = function(req, res, next){
             console.log("digit : " + numOfDigit);
 
             if(unVaildChar)
-                return cb('only can use char from our term below', null);
+                return cb('입력된 패스워드 값에 인식되지 않는 값이 있습니다.', null);
 
             if(numOfDigit < 3)
-                return cb('The number of digit should be more than 3', null);
+                return cb('패스워드는 3개 이상의 숫자를 포함하여야 합니다.', null);
 
-            if(numOfSpecial < 3)
-                return cb('The number of special char should be more than 3', null);
+            if(numOfSpecial < 0)
+                return cb('패스워드는 0개 이상의 특수문자를 포함하여야 합니다.', null);
 
             if(numOfChar < 3)
-                return cb('The number of char should be more than 3', null);
+                return cb('패스워드는 3개 이상의 문자를 포함하여야 합니다.', null);
 
 
             return cb(null);
