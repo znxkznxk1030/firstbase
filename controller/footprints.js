@@ -38,7 +38,7 @@ var getFootprintListByUserDisplayName = function(req, res){
 };
 
 var getFootprintListByUserId = function(req, res){
-    const userId = req.params.userId;
+    const userId = req.query.userId;
 
     const sqlRetrieveFootprint =
         "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
