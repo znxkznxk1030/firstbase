@@ -98,6 +98,7 @@ var io = require('socket.io')(server);
  * chat (socket.io)
  */
 io.on('connection', function(socket){
+    console.log('ii');
     socket.on('login', function(data){
         //console.log('Client logged-in\n name : ' + data.id + '\n userid: ' + data.displayName);
         socket.id = data.id;
