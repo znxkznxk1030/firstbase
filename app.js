@@ -3,9 +3,6 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 
-var session = require('express-session');
-var db = require('./database/db');
-
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
@@ -16,6 +13,7 @@ var files = require('./routes/files');
 var views = require('./routes/views');
 var comments = require('./routes/comments');
 var traces = require('./routes/traces');
+var chat = require('./routes/chat');
 
 var app = express();
 var http = require('http');
@@ -36,6 +34,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname + '/node_modules'));
 
 app.all('/*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -44,10 +43,8 @@ app.all('/*', function(req, res, next) {
 });
 
 // authentication
-//app.use(session({ secret: config.secret, resave: true, saveUninitialized: false })); // 세션 활성화
 app.use(passport.passport.initialize());
-//app.use(passport.passport.session());
-//app.use(flash());
+
 
 app.use('/', index);
 app.use('/users', users);
@@ -56,6 +53,7 @@ app.use('/files', files);
 app.use('/views', views);
 app.use('/comments', comments);
 app.use('/traces', traces);
+app.use('/chat', chat);
 
 //swagger
 app.use('/swagger-ui', express.static(path.join('./node_modules/swagger-ui/dist')));
@@ -87,11 +85,43 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.listen(52273, function(){});
 console.log("start2 : " + config.port);
-http.createServer(app).listen(config.port, function(){
-  console.log('server running port : ' + config.port);
+
+var server = http.createServer(app).listen(config.port, function(){
+    console.log('server running port : ' + config.port);
 });
 
+var io = require('socket.io')(server);
+
+
+/**
+ * chat (socket.io)
+ */
+io.on('connection', function(socket){
+    socket.on('login', function(data){
+        console.log('Client logged-in\n name : ' + data.id + '\n userid: ' + data.displayName);
+        socket.id = data.id;
+        socket.displayName = data.displayName;
+
+        io.emit('login', data.displayName);
+
+    });
+
+    socket.on('chat', function(data){
+
+        var msg = {
+          from : {
+            id : socket.id,
+            displayName : socket.displayName
+          },
+            msg : data.msg
+        };
+
+        console.log('Message from %s: %s', socket.displayName, msg);
+
+        io.emit('chat', msg);
+    });
+
+});
 
 module.exports = app;
