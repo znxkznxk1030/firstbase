@@ -22,6 +22,7 @@ var https = require('https');
 var passport = require('./passport_auth/index');
 var flash = require('connect-flash');
 var config = require("./config");
+var jwt = require("jsonwebtoken");
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -98,7 +99,7 @@ var io = require('socket.io')(server);
  * chat (socket.io)
  */
 io.on('connection', function(socket){
-    console.log('ii');
+
     socket.on('login', function(data){
         //console.log('Client logged-in\n name : ' + data.id + '\n userid: ' + data.displayName);
         socket.id = data.id;
@@ -106,6 +107,24 @@ io.on('connection', function(socket){
 
         io.emit('login', data.displayName);
 
+    });
+
+    socket.on('login-android', function(token){
+        if(!token)
+        {
+            jwt.verify(token, SECRET, function(err, decoded){
+                //if(err) socket.);
+
+
+                socket.id = decoded.id;
+                socket.displayName = decoded.displayName;
+
+                //
+            });
+        }else
+        {
+           //
+        }
     });
 
     socket.on('chat', function(data){
