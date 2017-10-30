@@ -115,9 +115,9 @@ io.on('connection', function(socket){
 
         console.log('token : ' + data.token);
 
-        var token = data.token;
+        const token = data.token;
 
-        if(!token)
+        if(!token.isNullOrUndefined)
         {
             jwt.verify(token, SECRET, function(err, decoded){
                 //if(err) socket.);
