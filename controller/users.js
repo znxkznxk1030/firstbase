@@ -101,7 +101,11 @@ var updateUserImage = function(req, res){
     });
 };
 
-var getUserInfo = function(req, res){
+var getUserInfoByUserId = function(req, res){
+
+};
+
+var getUserInfoByReqHeader = function(req, res){
 
     const sql = "SELECT id, displayName, provider, description, profile_key " +
         "FROM user " +
@@ -109,14 +113,13 @@ var getUserInfo = function(req, res){
 
     const task = [
         function(cb){
-            const userId = req.query.userId;
             //console.log("dd" + req.user.id);
-            if(userId) cb(null, userId);
-            else cb({code: -1, message: '사용자 아이디를 인식 할 수 없습니다.'}, null);
+            if(req.user) cb(null, req.user);
+            else cb({code: -1, message: 'Not Authenticated'}, null);
         },
         function(user, cb){
             //console.log(user);
-            connection.query(sql, [user.id], function(err, profile){
+            connection.query(sql, user.id, function(err, profile){
                 if (err) return cb({code: -1, message: 'sql error'}, null);
 
                 return cb(null, profile);
@@ -144,6 +147,6 @@ var getUserInfo = function(req, res){
 };
 
 exports.nicknameCheck = nicknameCheck;
-exports.getUserInfo = getUserInfo;
+exports.getUserInfoByReqHeader = getUserInfoByReqHeader;
 exports.updateUserInfo = updateUserInfo;
 exports.updateUserImage = updateUserImage;

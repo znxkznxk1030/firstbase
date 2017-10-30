@@ -70,7 +70,7 @@ router.get('/logout', function(req, res){
 
 router.get('/nickname-check', controller.nicknameCheck);
 
-router.get('/profile', auth.authMiddleware, controller.getUserInfo);
+router.get('/profile', auth.authMiddleware, controller.getUserInfoByReqHeader);
 router.post('/update', auth.authMiddleware, controller.updateUserInfo);
 router.post('/updateImage', auth.authMiddleware, controller.updateUserImage);
 
