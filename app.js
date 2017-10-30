@@ -122,6 +122,7 @@ io.on('connection', function(socket){
             jwt.verify(token, SECRET, function(err, decoded){
                 //if(err) socket.);
 
+                console.log(decoded.id + ", " + decoded.displayName);
 
                 socket.id = decoded.id;
                 socket.displayName = decoded.displayName;
