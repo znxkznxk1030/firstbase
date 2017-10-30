@@ -112,6 +112,9 @@ io.on('connection', function(socket){
     });
 
     socket.on('login-android', function(token){
+
+        console.log('token : ' + token);
+
         if(!token)
         {
             jwt.verify(token, SECRET, function(err, decoded){
@@ -120,6 +123,8 @@ io.on('connection', function(socket){
 
                 socket.id = decoded.id;
                 socket.displayName = decoded.displayName;
+
+                console.log('Client logged-in\n name : ' + socket.id + '\n userid: ' + socket.displayName);
 
                 //
             });
