@@ -116,7 +116,7 @@ var getUserInfo = function(req, res){
         },
         function(user, cb){
             //console.log(user);
-            connection.query(sql, [user.id, function(err, profile){
+            connection.query(sql, [user.id], function(err, profile){
                 if (err) return cb({code: -1, message: 'sql error'}, null);
 
                 return cb(null, profile);
