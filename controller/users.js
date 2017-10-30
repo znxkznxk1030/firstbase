@@ -101,8 +101,87 @@ var updateUserImage = function(req, res){
     });
 };
 
+var getUserInfoByUserDisplayName = function(req, res){
+    const sql = "SELECT id, displayName, provider, description, profile_key " +
+        "FROM user " +
+        "WHERE user.id = ? ";
+
+    const displayName = req.query.displayName;
+
+    const task = [
+        function(cb){
+            //console.log("dd" + req.user.id);
+            if(!displayName.isNullOrUndefined) return cb(null, displayName);
+            else return cb({code: -1, message: 'Not Authenticated'}, null);
+        },
+        function(displayName, cb){
+            connection.query(sql, displayName, function(err, profile){
+                if (err) return cb({code: -1, message: 'sql error'}, null);
+
+                return cb(null, profile);
+            });
+        },
+        function(profile, cb){
+            var profileUrl, profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
+            //console.log(profileKey);
+            if(profileKey) profileUrl = retrieveByKey(profileKey);
+            else profileUrl = retrieveByKey(profileDefaultKey);
+
+            return cb(null, _.extend(profile[0], { profileUrl: profileUrl }));
+        }
+    ];
+
+    async.waterfall(task,
+        function(err, profile){
+            if(err) return res.status(400)
+                .json({code: -1,
+                    message:err});
+
+            return res.status(200)
+                .json(profile);
+        });
+};
+
 var getUserInfoByUserId = function(req, res){
 
+    const sql = "SELECT id, displayName, provider, description, profile_key " +
+        "FROM user " +
+        "WHERE user.id = ? ";
+
+    const id = req.query.id;
+
+    const task = [
+        function(cb){
+            //console.log("dd" + req.user.id);
+            if(!id.isNullOrUndefined) return cb(null, id);
+            else return cb({code: -1, message: 'Not Authenticated'}, null);
+        },
+        function(id, cb){
+            connection.query(sql, id, function(err, profile){
+                if (err) return cb({code: -1, message: 'sql error'}, null);
+
+                return cb(null, profile);
+            });
+        },
+        function(profile, cb){
+            var profileUrl, profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
+            //console.log(profileKey);
+            if(profileKey) profileUrl = retrieveByKey(profileKey);
+            else profileUrl = retrieveByKey(profileDefaultKey);
+
+            return cb(null, _.extend(profile[0], { profileUrl: profileUrl }));
+        }
+    ];
+
+    async.waterfall(task,
+        function(err, profile){
+            if(err) return res.status(400)
+                .json({code: -1,
+                    message:err});
+
+            return res.status(200)
+                .json(profile);
+        });
 };
 
 var getUserInfoByReqHeader = function(req, res){
@@ -131,7 +210,7 @@ var getUserInfoByReqHeader = function(req, res){
             if(profileKey) profileUrl = retrieveByKey(profileKey);
             else profileUrl = retrieveByKey(profileDefaultKey);
 
-            cb(null, _.extend(profile[0], { profileUrl: profileUrl }));
+            return cb(null, _.extend(profile[0], { profileUrl: profileUrl }));
         }
     ];
 
@@ -150,3 +229,5 @@ exports.nicknameCheck = nicknameCheck;
 exports.getUserInfoByReqHeader = getUserInfoByReqHeader;
 exports.updateUserInfo = updateUserInfo;
 exports.updateUserImage = updateUserImage;
+exports.getUserInfoByUserDisplayName = getUserInfoByUserDisplayName;
+exports.getUserInfoByUserId = getUserInfoByUserId;

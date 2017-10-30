@@ -47,7 +47,7 @@ router.post('/login', function(req, res, next){
     console.log(user);
 
     var token = auth.signToken(user);
-    res.cookie('jwt', token).json({message: 'success to login', accessToken: token});
+    res.cookie('jwt', token).json({code: 1, message: 'success to login', accessToken: token});
 
     })(req, res, next);
 });
@@ -73,5 +73,8 @@ router.get('/nickname-check', controller.nicknameCheck);
 router.get('/profile', auth.authMiddleware, controller.getUserInfoByReqHeader);
 router.post('/update', auth.authMiddleware, controller.updateUserInfo);
 router.post('/updateImage', auth.authMiddleware, controller.updateUserImage);
+
+router.get('/detail', controller.getUserInfoByUserDisplayName);
+router.get('/more', controller.getUserInfoByUserId);
 
 module.exports = router;

@@ -104,7 +104,6 @@ io.on('connection', function(socket){
 
     socket.on('login', function(data){
         //console.log('Client logged-in\n name : ' + data.id + '\n userid: ' + data.displayName);
-        socket.id = data.id;
         socket.displayName = data.displayName;
 
         io.emit('login', data.displayName);
@@ -113,29 +112,28 @@ io.on('connection', function(socket){
 
     socket.on('login-android', function(data){
 
-        console.log('token : ' + data.token);
-
         const token = data.token;
 
         if(!token.isNullOrUndefined)
         {
             jwt.verify(token, SECRET, function(err, decoded){
-                //if(err) socket.);
+                if(err)
+                {
+                    socket.displayName = "비회원";
+                }else
+                {
+                    socket.displayName = decoded.displayName;
+                }
 
-                console.log(decoded.id + ", " + decoded.displayName);
-
-                socket.id = decoded.id;
-                socket.displayName = decoded.displayName;
-
-                console.log('Client logged-in\n name : ' + socket.id + '\n userid: ' + socket.displayName);
-
-                //
             });
         }else
         {
-           //
-            console.log(token);
+            socket.displayName = "비회원";
         }
+    });
+
+    socket.on('disconnect', function(){
+        console.log(socket.displayName + '님이 나가셨습니다.');
     });
 
     socket.on('chat', function(data){
@@ -144,7 +142,6 @@ io.on('connection', function(socket){
 
         var msg = {
           from : {
-            id : socket.id,
             displayName : socket.displayName
           },
             msg : data.msg
