@@ -109,9 +109,10 @@ var getUserInfo = function(req, res){
 
     const task = [
         function(cb){
+            const userId = req.query.userId;
             //console.log("dd" + req.user.id);
-            if(req.user) cb(null, req.user);
-            else cb({code: -1, message: 'Not Authenticated'}, null);
+            if(userId) cb(null, userId);
+            else cb({code: -1, message: '사용자 아이디를 인식 할 수 없습니다.'}, null);
         },
         function(user, cb){
             //console.log(user);
