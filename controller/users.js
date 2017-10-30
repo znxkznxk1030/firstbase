@@ -118,7 +118,7 @@ var getUserInfoByUserDisplayName = function(req, res){
             connection.query(sql, displayName, function(err, profile){
                 if (err) return cb({code: -1, message: 'sql error'}, null);
 
-                if(profile)
+                if(profile[0])
                     return cb(null, profile);
                 else return cb('user is not existed', null);
             });
