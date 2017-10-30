@@ -102,9 +102,9 @@ var updateUserImage = function(req, res){
 };
 
 var getUserInfoByUserDisplayName = function(req, res){
-    const sql = "SELECT id, displayName, provider, description, profile_key " +
+    const sql = "SELECT displayName, provider, description, profile_key " +
         "FROM user " +
-        "WHERE user.id = ? ";
+        "WHERE user.displayName = ? ";
 
     const displayName = req.query.displayName;
 
@@ -118,7 +118,9 @@ var getUserInfoByUserDisplayName = function(req, res){
             connection.query(sql, displayName, function(err, profile){
                 if (err) return cb({code: -1, message: 'sql error'}, null);
 
-                return cb(null, profile);
+                if(profile)
+                    return cb(null, profile);
+                else return cb('user is not existed', null);
             });
         },
         function(profile, cb){
@@ -144,7 +146,7 @@ var getUserInfoByUserDisplayName = function(req, res){
 
 var getUserInfoByUserId = function(req, res){
 
-    const sql = "SELECT id, displayName, provider, description, profile_key " +
+    const sql = "SELECT displayName, provider, description, profile_key " +
         "FROM user " +
         "WHERE user.id = ? ";
 
