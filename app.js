@@ -115,7 +115,7 @@ io.on('connection', function(socket){
 
         console.log('token : ' + data.token);
 
-        const token = data.token;
+        var token = data.token;
 
         if(!token)
         {
