@@ -111,9 +111,11 @@ io.on('connection', function(socket){
 
     });
 
-    socket.on('login-android', function(token){
+    socket.on('login-android', function(data){
 
-        console.log('token : ' + token);
+        console.log('token : ' + data.token);
+
+        const token = data.token;
 
         if(!token)
         {
