@@ -24,6 +24,8 @@ var flash = require('connect-flash');
 var config = require("./config");
 var jwt = require("jsonwebtoken");
 
+var SECRET = config.token_secret;
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
