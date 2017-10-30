@@ -99,7 +99,7 @@ var io = require('socket.io')(server);
  */
 io.on('connection', function(socket){
     socket.on('login', function(data){
-        console.log('Client logged-in\n name : ' + data.id + '\n userid: ' + data.displayName);
+        //console.log('Client logged-in\n name : ' + data.id + '\n userid: ' + data.displayName);
         socket.id = data.id;
         socket.displayName = data.displayName;
 
@@ -108,6 +108,8 @@ io.on('connection', function(socket){
     });
 
     socket.on('chat', function(data){
+
+        console.log(data);
 
         var msg = {
           from : {
