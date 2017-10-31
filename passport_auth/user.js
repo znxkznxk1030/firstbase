@@ -40,6 +40,18 @@ var isFormVaildMiddleware = function(req, res, next){
             if(length > 25)
                 return cb('닉네임의 길이가 너무 깁니다.', null);
 
+            const sqlDisplayCheck = "SELECT * FROM user WHERE displayName = ? ";
+
+            connection.query(sqlDisplayCheck, [userDisplayName], function(err, result){
+                if(err) return cb(err, null);
+
+                if(result[0]){
+                    return cb('이미 존재하는 닉네임입니다', null);
+                }else{
+                    return cb(null);
+                }
+            });
+
             return cb(null);
         },
         /*
