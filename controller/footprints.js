@@ -62,8 +62,6 @@ var getFootprintListByUserId = function(req, res){
 
 var getFootprintList = function(req, res){
 
-    return res.redirect('/');
-
     var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
         "FROM footprint " +
         "LEFT JOIN view " +
