@@ -117,7 +117,7 @@ io.on('connection', function(socket){
 
         console.log(token);
 
-        if(!token.isNullOrUndefined)
+        if(token !== null && token !== '' && token !== 'undefined')
         {
             jwt.verify(token, SECRET, function(err, decoded){
                 if(err)
