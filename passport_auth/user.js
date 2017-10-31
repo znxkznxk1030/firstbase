@@ -30,7 +30,7 @@ var isFormVaildMiddleware = function(req, res, next){
             1. length (5 < && < 25)
          */
         function(cb){
-            if(userDisplayName.isNullOrUndefined)
+            if(userDisplayName === null || userDisplayName === '' || userDisplayName === 'undefined')
                 return cb('닉네임 입력 칸이 비어있습니다.', null);
 
             const length = userDisplayName.length;
@@ -50,7 +50,7 @@ var isFormVaildMiddleware = function(req, res, next){
          */
         function(cb){
 
-            if(userId.isNullOrUndefined)
+            if(userId === null || userId === 'undefined' || userId === '')
                 return cb('ID 입력 칸이 비어있습니다', null);
 
             const length = userId.length;

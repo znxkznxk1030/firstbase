@@ -58,16 +58,15 @@ var passMiddleware = function passMiddleware(req, res, next){
     if(!token)
     {
         jwt.verify(token, SECRET, function(err, decoded){
-            if(err) return res.status(401)
-                .json({ code: -2,
-                    message:'token is wrong'});
+            if(err) return next();
 
-            req.user = decoded;
-            next();
+            if(decoded)
+                req.user = decoded;
+            return next();
         });
     }else
     {
-        next();
+        return next();
     }
 };
 
