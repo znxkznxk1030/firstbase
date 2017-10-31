@@ -2,6 +2,10 @@ var connection = require('../database/db');
 var user = require('./users');
 var async = require('async');
 
+
+
+
+
 var createComment = function(req, res){
     const data = req.body;
 
@@ -20,7 +24,7 @@ var createComment = function(req, res){
 };
 
 var getCommentsByFootprintId = function(req, res){
-    const footprintId = req.query.footprintid;
+    const footprintId = req.query.footprintId;
 
     const sql = "SELECT * FROM comment WHERE footprint_id = ?";
 

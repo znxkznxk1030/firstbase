@@ -170,12 +170,16 @@ io.on('connection', function(socket){
 
         socket.displayName = displayName;
 
+        var date = new Date(Date.now());
+
         var msg = {
           from : {
             displayName : displayName
           },
             msg : data.msg,
-            date : Date.now()
+
+            date : date.toLocaleDateString(),
+            time : date.getHours() + '시 ' + date.getMinutes() + '분'
         };
 
         console.log('Message from %s: %s', socket.displayName, msg);
