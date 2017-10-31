@@ -151,7 +151,7 @@ io.on('connection', function(socket){
         const token = data.token;
         var displayName;
 
-        if(!token.isNullOrUndefined)
+        if(token !== null && token !== '' && token !== 'undefined')
         {
             jwt.verify(token, SECRET, function(err, decoded){
                 if(err)
