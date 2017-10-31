@@ -25,7 +25,7 @@ router.post('/registrate', user.isFormVaildMiddleware,function(req, res, next){
     if(req.body.password1 === req.body.password2){
         user.registrateUser(req.body, function(err, result){
            if(err) return res.status(401).json({code : -1, message: err});
-            else return res.status(401).json({code: -1, message : 'success register'});
+            else return res.status(200).json({code: 1, message : 'success register'});
         });
     }else{
         return res.status(401).json({code:-1, message: 'Two password fields are not matched!'})
