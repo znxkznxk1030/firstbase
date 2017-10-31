@@ -180,10 +180,12 @@ io.on('connection', function(socket){
 
         console.log('Message from %s: %s', socket.displayName, msg);
 
-        msg.from['isSelf'] = true;
+        msg.from.isSelf = false;
+        console.log(msg);
         socket.broadcast.emit('chat', msg);
-        msg.from['isSelf'] = false;
-        socket.on('chat', msg);
+        msg.from.isSelf = true;
+        console.log(msg);
+        socket.emit('chat', msg);
 
 
     });

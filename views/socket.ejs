@@ -33,7 +33,7 @@
                 });
 
                 socket.on('chat', function(data){
-                    $('#chatLogs').append("<div><h3>" + data.from.displayName + " : <strong>" + data.msg +"</strong>(" + data.date + ")</h3></div>");
+                    $('#chatLogs').append("<div><h3>" + data.from.displayName + " : <strong>" + data.msg +"</strong>(" + data.from.isSelf + ")</h3></div>");
                 });
 
                 $("form").submit(function(e){
