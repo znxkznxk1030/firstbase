@@ -19,7 +19,7 @@ var app = express();
 var http = require('http');
 var https = require('https');
 
-var passport = require('./passport_auth/index');
+var passport = require('./auth/index');
 var flash = require('connect-flash');
 var config = require("./config");
 var jwt = require("jsonwebtoken");

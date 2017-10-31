@@ -1,6 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const user = require('./user');
+const user = require('../controller/users');
 const passwordUtil = require('./password');
 var config = require("../config");
 const google = require('passport-google-oauth').OAuth2Strategy;

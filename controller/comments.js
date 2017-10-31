@@ -1,5 +1,5 @@
 var connection = require('../database/db');
-var user = require('../passport_auth/user');
+var user = require('./users');
 var async = require('async');
 
 var createComment = function(req, res){

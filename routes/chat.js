@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
-var auth = require('../passport_auth/auth');
+var auth = require('../auth/auth');
 
-router.get('/', auth.authMiddleware, function(req, res){
+router.get('/', function(req, res){
     res.render('socket', {
-        id : req.user.id,
-        displayName : req.user.displayName
+        id : 'ddd',
+        displayName : 'ddd'
     });
 });
 

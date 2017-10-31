@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var auth = require('../passport_auth/auth');
+var auth = require('../auth/auth');
 var controller = require('../controller/comments');
 
 router.get('/', controller.getCommentsByFootprintId);

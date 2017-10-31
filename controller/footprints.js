@@ -1,5 +1,5 @@
 const connection = require('../database/db');
-const user = require('../passport_auth/user');
+const user = require('./users');
 const locationUtil = require('../utils/locationUtil');
 const async = require('async');
 const bucketName = 'firstbase-bucket';

@@ -1,8 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
-var user = require('../passport_auth/user');
-var auth = require("../passport_auth/auth");
+var auth = require("../auth/auth");
 var controller = require("../controller/users");
 
 router.use(passport.initialize());
@@ -19,11 +18,11 @@ router.get('/signup-form', function(req, res, next) {
     res.render('registration');
 });
 
-router.post('/registrate', user.isFormVaildMiddleware,function(req, res, next){
+router.post('/registrate', controller.isFormVaildMiddleware,function(req, res, next){
     console.log(req.body);
 
     if(req.body.password1 === req.body.password2){
-        user.registrateUser(req.body, function(err, result){
+        controller.registrateUser(req.body, function(err, result){
            if(err) return res.status(401).json({code : -1, message: err});
             else return res.status(200).json({code: 1, message : 'success register'});
         });
