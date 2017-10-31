@@ -72,14 +72,14 @@ var isFormVaildMiddleware = function(req, res, next){
                 return cb('ID의 형식은 e-mail 형식이여야 합니다.', null);
 
             const domain = userIdSplitByDomain[1];
-            var hasAccptedDomain = false;
+            var hasAcceptedDomain = false;
 
-            ACCEPTED_DOMAIN.forEach(function(accptedDomain){
-                if(accptedDomain === domain)
-                    hasAccptedDomain = true;
+            ACCEPTED_DOMAIN.forEach(function(acceptedDomain){
+                if(acceptedDomain === domain)
+                    hasAcceptedDomain = true;
             });
 
-            if(!hasAccptedDomain)
+            if(hasAcceptedDomain === false)
                 return cb('사용가능한 도메인을 사용해주세요.(gmail, naver, daum)', null);
 
             connection.query(sqlIsExisted, [userId],
