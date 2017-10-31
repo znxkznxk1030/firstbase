@@ -28,6 +28,10 @@
                     displayName: '<%= displayName %>'
                 });
 
+                socket.on('login', function(data){
+                   $('#chatLogs').append('<div><h3>' + data + '님이 왔어요~!</h3></div>');
+                });
+
                 socket.on('chat', function(data){
                     $('#chatLogs').append("<div><h3>" + data.from.displayName + " : <strong>" + data.msg +"</strong> </h3></div>");
                 });

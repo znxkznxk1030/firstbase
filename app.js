@@ -113,23 +113,29 @@ io.on('connection', function(socket){
     socket.on('login-android', function(data){
 
         const token = data.token;
+        var displayName;
 
         if(!token.isNullOrUndefined)
         {
             jwt.verify(token, SECRET, function(err, decoded){
                 if(err)
                 {
-                    socket.displayName = "비회원";
+                    displayName = "비회원";
                 }else
                 {
-                    socket.displayName = decoded.displayName;
+                    displayName = decoded.displayName;
                 }
 
             });
         }else
         {
-            socket.displayName = "비회원";
+            displayName = "비회원";
         }
+
+        socket.displayName = displayName;
+
+        io.emit('login', displayName);
+
     });
 
     socket.on('disconnect', function(){
