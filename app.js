@@ -150,7 +150,8 @@ io.on('connection', function(socket){
           from : {
             displayName : socket.displayName
           },
-            msg : data.msg
+            msg : data.msg,
+            date : Date.now()
         };
 
         console.log('Message from %s: %s', socket.displayName, msg);
