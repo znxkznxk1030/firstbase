@@ -35,7 +35,7 @@ var isFormVaildMiddleware = function(req, res, next){
 
             const length = userDisplayName.length;
 
-            if(length < 5)
+            if(length < 2)
                 return cb('닉네임의 길이가 너무 짧습니다.', null);
             if(length > 25)
                 return cb('닉네임의 길이가 너무 깁니다.', null);
