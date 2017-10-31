@@ -397,6 +397,12 @@ var getFootprintByFootprintID = function(req, res){
     const sqlGetNickname =
         "SELECT displayName FROM user WHERE id = ?";
 
+    const sqlRetrieveComments =
+        "SELECT comment.content ,comment.modified_date AS date, user.displayName " +
+        "FROM comment LEFT JOIN user " +
+        "ON comment.id = user.id " +
+        "WHERE comment.footprint_id = ? ";
+
     const task = [
         /**
          *  Get selected footprint data set
@@ -480,6 +486,16 @@ var getFootprintByFootprintID = function(req, res){
 
                     return cb(null, {imageUrls: imageUrls});
                 });
+        },
+        function(cb){
+            connection.query(sqlRetrieveComments, [footprintId],
+                function(err, comments){
+                    if(err) return cb(err, { message: 'error'});
+
+                    const ret = JSON.parse(JSON.stringify(comments));
+
+                    return cb(null, {comments: ret});
+                });
         }
     ];
 
@@ -490,7 +506,7 @@ var getFootprintByFootprintID = function(req, res){
                     .json({ code: -1,
                         message : err});
 
-            var output = Object.assign({code: 1}, result[0], result[2]);
+            var output = Object.assign({code: 1}, result[0], result[2], result[3]);
             return res.status(200)
                     .json(output);
         });

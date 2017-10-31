@@ -7,7 +7,7 @@ router.get('/', controller.getCommentsByFootprintId);
 router.get('/new', auth.authMiddleware, function(req, res){
     res.render('comment_new', {
         user : req.user,
-        footprintId : req.query.footprintid
+        footprintId : req.query.footprintId
     });
 });
 

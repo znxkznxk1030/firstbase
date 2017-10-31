@@ -3,15 +3,22 @@ var user = require('./users');
 var async = require('async');
 
 
-
-
-
 var createComment = function(req, res){
-    const data = req.body;
+
+    const id = req.user.id,
+        footprintId = req.body.footprintId,
+        content = req.body.content;
+
+    if(content !== null && content !== 'undefined' && content.length > 500)
+    {
+        return res.status(400)
+            .json({code: -1,
+                message: "댓글의 길이가 너무 깁니다."});
+    }
 
     const sql = "INSERT INTO comment (id, footprint_id, content) VALUES (?, ?, ?)";
 
-    connection.query(sql, [req.user.id, data.footprintId, data.content], function(err, rows){
+    connection.query(sql, [id, footprintId, content], function(err, rows){
         if(err)
             return res.status(400)
                 .json({code: -1,
