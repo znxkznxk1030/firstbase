@@ -18,7 +18,7 @@ var getFootprintListByUserDisplayName = function(req, res){
     const userDisplayName = req.params.userDisplayName;
 
     const sqlRetrieveFootprint =
-        "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
+        "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
@@ -41,7 +41,7 @@ var getFootprintListByUserId = function(req, res){
     const userId = req.query.userId;
 
     const sqlRetrieveFootprint =
-        "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
+        "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
@@ -62,7 +62,7 @@ var getFootprintListByUserId = function(req, res){
 
 var getFootprintList = function(req, res){
 
-    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
+    var sql = "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
         "FROM footprint " +
         "LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
@@ -81,7 +81,7 @@ var getFootprintList = function(req, res){
 
 var getFootprintListByCurrentLocationAndViewLevel = function(req, res){
     var data = req.query;
-    var sql = "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
+    var sql = "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
@@ -130,7 +130,7 @@ var getFootprintListByLocation = function(req, res){
         endLng = data.endlng;
 
     const sqlRetrieveFootprint =
-        "SELECT footprint.*, count(view.view_id) AS viewCount, count( comment.comment_id ) AS commentCount " +
+        "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
@@ -383,7 +383,7 @@ var getFootprintByFootprintID = function(req, res){
 
     // todo: split sql query
     const sqlRetrieveFootprintByFootprintId =
-        "SELECT footprint.*, count(view.view_id) AS viewCount, count(comment.comment_id) AS commentCount " +
+        "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
@@ -394,8 +394,12 @@ var getFootprintByFootprintID = function(req, res){
     const sqlIsWatched = "SELECT * FROM view WHERE id = ? AND footprint_id = ?";
     const sqlWatch = "INSERT INTO view (id, footprint_id) VALUES (?, ?)";
     const sqlImageLoad = "SELECT * FROM image WHERE footprint_id = ?";
-    const sqlGetNickname =
-        "SELECT displayName FROM user WHERE id = ?";
+    const sqlCountLike =
+        "SELECT count(*) AS countLike " +
+        "FROM eval WHERE footprint_id = ? AND state = 1";
+    const sqlCountDislike =
+        "SELECT count(*) AS countDisLike " +
+        "FROM eval WHERE footprint_id = ? AND state = 2";
 
     const sqlRetrieveComments =
         "SELECT comment.content ,comment.modified_date AS date, user.displayName " +
@@ -496,6 +500,26 @@ var getFootprintByFootprintID = function(req, res){
 
                     return cb(null, {comments: ret});
                 });
+        },
+        function(cb){
+            connection.query(sqlCountLike, [footprintId],
+                function(err, countLike){
+                    if(err) return cb(err, { message: err});
+
+                    const ret = JSON.parse(JSON.stringify(countLike))[0];
+
+                    return cb(null, ret);
+                });
+        },
+        function(cb){
+            connection.query(sqlCountDislike, [footprintId],
+                function(err, Dislike){
+                    if(err) return cb(err, { message: err});
+
+                    const ret = JSON.parse(JSON.stringify(Dislike))[0];
+
+                    return cb(null, ret);
+                });
         }
     ];
 
@@ -506,7 +530,7 @@ var getFootprintByFootprintID = function(req, res){
                     .json({ code: -1,
                         message : err});
 
-            var output = Object.assign({code: 1}, result[0], result[2], result[3]);
+            var output = Object.assign({code: 1}, result[0], result[2], result[3], result[4], result[5]);
             return res.status(200)
                     .json(output);
         });

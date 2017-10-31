@@ -14,6 +14,7 @@ var views = require('./routes/views');
 var comments = require('./routes/comments');
 var traces = require('./routes/traces');
 var chat = require('./routes/chat');
+var eval = require('./routes/eval');
 
 var app = express();
 var http = require('http');
@@ -57,6 +58,7 @@ app.use('/views', views);
 app.use('/comments', comments);
 app.use('/traces', traces);
 app.use('/chat', chat);
+app.use('/eval', eval);
 
 //swagger
 app.use('/swagger-ui', express.static(path.join('./node_modules/swagger-ui/dist')));

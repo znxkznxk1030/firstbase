@@ -26,7 +26,7 @@ var createComment = function(req, res){
 
         return res.status(200)
             .json({code: 1,
-                message: "success to write comment"});
+                message: "댓글 작성 완료"});
     });
 };
 
