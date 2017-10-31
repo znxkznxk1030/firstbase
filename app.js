@@ -146,9 +146,31 @@ io.on('connection', function(socket){
 
         console.log(data);
 
+        const token = data.token;
+        var displayName;
+
+        if(!token.isNullOrUndefined)
+        {
+            jwt.verify(token, SECRET, function(err, decoded){
+                if(err)
+                {
+                    displayName = "비회원";
+                }else
+                {
+                    displayName = decoded.displayName;
+                }
+
+            });
+        }else
+        {
+            displayName = "비회원";
+        }
+
+        socket.displayName = displayName;
+
         var msg = {
           from : {
-            displayName : socket.displayName
+            displayName : displayName
           },
             msg : data.msg,
             date : Date.now()
