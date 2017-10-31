@@ -15,32 +15,44 @@ $(window).resize(function() {
 
 //지도 생성시에 옵션을 지정할 수 있습니다.
 var map = new naver.maps.Map('map', {
-        center: new naver.maps.LatLng(37.504479, 127.048941), //지도의 초기 중심 좌표
-        zoom: 10, //지도의 초기 줌 레벨
-        minZoom: 2, //지도의 최소 줌 레벨 //축소
-        maxZoom: 12, //확대
-        zoomControl: true, //줌 컨트롤의 표시 여부
-        zoomControlOptions: { //줌 컨트롤의 옵션
-            style: naver.maps.ZoomControlStyle.SMALL, // 바가 아니라 확대 축소로.
-            position: naver.maps.Position.RIGHT_CENTER
-        },
-        logoControl: false, //네이버 로고 삭제
-        scaleControl: false, //거리 단위 표시 삭제
-        mapDataControl: false, //네이버 Corp. 삭제
-    });
+    center: new naver.maps.LatLng(37.504479, 127.048941), //지도의 초기 중심 좌표
+    zoom: 10, //지도의 초기 줌 레벨
+    minZoom: 2, //지도의 최소 줌 레벨 //축소
+    maxZoom: 14, //확대
+    zoomControl: true, //줌 컨트롤의 표시 여부
+    zoomControlOptions: { //줌 컨트롤의 옵션
+        style: naver.maps.ZoomControlStyle.SMALL, // 바가 아니라 확대 축소로.
+        position: naver.maps.Position.RIGHT_CENTER
+    },
+    logoControl: false, //네이버 로고 삭제
+    scaleControl: false, //거리 단위 표시 삭제
+    mapDataControl: false, //네이버 Corp. 삭제
+});
 
 //setOptions 메서드를 통해 옵션을 조정할 수도 있습니다.
 map.setOptions("minZoom", 2);
 
 var markers = [];
+var contentsData;
 
 $(document).ready(function(){
+
     $.ajax({
         type: 'GET',
         data: "",
-        url: baseUrl+'/footprint/list',
+        url: baseUrl+'/files/retrieveIconAll',
+        success: function(data) {
+            saveIcons(data);
+        }
+    });
+
+    $.ajax({
+        type: 'GET',
+        data: "",
+        url: baseUrl+'/footprint/list/',
         success: function(data) {
             makePage(data);
+            contentsData = data;
         }
     });
 
@@ -53,29 +65,21 @@ $(document).ready(function(){
     naver.maps.Event.addListener(map, 'bounds_changed', function(bounds) {
         getMarkers(bounds);
     });
-    search_positon();
 
-    $.ajax({
-        type: 'GET',
-        data: "",
-        url: baseUrl+'/files/retrieveIconAll',
-        success: function(data) {
-            saveIcons(data);
-        }
-    });
 });
 
-function makeMarkers(data){
-    if(data.length > 0) {
-        for(var i=0; i<data.length; i++) {
+function makeMarkers(data) {
+    if (data.length > 0) {
+        for (var i = 0; i < data.length; i++) {
             var o = data[i];
             var latitude = o.latitude;
             var longitude = o.longitude;
 
             var icon_key = o.icon_key;
-            var iconUrl;
-            $.each( allIcon, function( key, value ) {
-                if(key == icon_key){
+            var iconUrl = "";
+
+            $.each(allIcon, function (key, value) {
+                if (key == icon_key) {
                     iconUrl = value;
                 }
             });
@@ -84,9 +88,37 @@ function makeMarkers(data){
                 map: map,
                 position: new naver.maps.LatLng(latitude, longitude),
                 icon: {
-                    url: iconUrl
-                }
+                    url: iconUrl,
+                    size: new naver.maps.Size(30, 30),
+                    scaledSize: new naver.maps.Size(30, 30),
+                    origin: new naver.maps.Point(0, 0),
+                    anchor: new naver.maps.Point(15, 30)
+                },
+                title: o.footprint_id
             });
+            markers.push(marker);
+        }
+
+        function getClickHandler(seq) {
+            return function(e) {
+                var id = markers[seq].getTitle();
+                $.each(contentsData, function (index, item) {
+                    $.each(item, function (key, value) {
+                        if (key == 'footprint_id' && value == id) {
+                            if( $("#popUp").css("display") == "flex" ) {
+                                cancel();
+                            }
+                            else {
+                                popUp(contentsData[index]);
+                            }
+                        }
+                    });
+                });
+            }
+        }
+
+        for (var i=0, ii=markers.length; i<ii; i++) {
+            naver.maps.Event.addListener(markers[i], 'click', getClickHandler(i));
         }
     }
 }
@@ -98,59 +130,22 @@ function showMarker(map, marker) {
 
 function makePage(data) {
     // var myJSON = JSON.stringify(data);
-    var cnt = Math.min(data.length, 5);
     var $list = $('<div id="content-wrapper"></div>').appendTo($('#contents'));
 
     //data[i] 또는 foreach(data)
-    var fnAppendPage = function(start){
-        $('#content-wrapper').html("");
-        var end = Math.min(data.length, start+5);
-        for(var i=start; i<end; i++) {
-            var o = data[i];
-            var $content = $('<div class="content"></div>').appendTo($list);
-            var $title = $('<div class="title list-group-item list-group-item-action"></div>').appendTo($content).text(o.title).data('data', o).click(function(){
-                popUp($(this).data('data'));
-            });
-            var icon_key = o.icon_key;
-            var $icon;
-            $.each( allIcon, function( key, value ) {
-                if(key == icon_key){
-                    $icon = '<img src='+value+'>';
-                }
-            });
-            $($icon).prependTo($title);
-            // var $post = $('<div class="post""></div>').appendTo($content).text(o.content).data('data', o).click(function(){
-            //     popUp($(this).data('data'));
-            // });
-        }
-    };
-
-    var $page = $('<div id="contents-page"></div>').appendTo($('#contents'));
-
-    var pageCnt = data.length / 5;
-    for(i=0; i<pageCnt; i++) {
-        $('<span class="page"></span>').data('page', i).text(i+1).appendTo($page).click(function(){
-            var pageIdx = $(this).data('page');
-            fnAppendPage(pageIdx * 5);
-        });
-    }
-
-    fnAppendPage(0);
-}
-
-function renderPage(data) {
     if(data.length > 0) {
-        var cnt = Math.min(data.length, 5);
-        $('#contents-page').html("");
         var fnAppendPage = function(start){
             $('#content-wrapper').html("");
             var end = Math.min(data.length, start+5);
             for(var i=start; i<end; i++) {
                 var o = data[i];
-                var $content = $('<div class="content"></div>').appendTo($("#content-wrapper"));
-                var $title = $('<div class="title list-group-item list-group-item-action"></div>').appendTo($content).text(o.title).data('data', o).click(function(){
+                var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($list).click(function(){
                     popUp($(this).data('data'));
                 });
+                var $top_content = $('<div class="top-content"></div>').appendTo($content);
+                var $top_content_img = $('<div class="top-content-img"></div>').appendTo($top_content);
+                var $top_content_title = $('<div class="top-content-title"></div>').text(o.title).appendTo($top_content);
+                var $down_content = $('<div class="down-content"></div>').appendTo($content).text(o.content);
                 var icon_key = o.icon_key;
                 var $icon;
                 $.each( allIcon, function( key, value ) {
@@ -158,12 +153,57 @@ function renderPage(data) {
                         $icon = '<img src='+value+'>';
                     }
                 });
-                $($icon).prependTo($title);
+                $($icon).prependTo($top_content_img);
                 // var $post = $('<div class="post""></div>').appendTo($content).text(o.content).data('data', o).click(function(){
                 //     popUp($(this).data('data'));
                 // });
             }
         };
+
+        var $page = $('<div id="contents-page"></div>').appendTo($('#contents'));
+        console.log("asdfas"+data.length);
+        console.log(data);
+        var pageCnt = data.length / 5;
+        for(i=0; i<pageCnt; i++) {
+            $('<span class="page"></span>').data('page', i).text(i+1).appendTo($page).click(function(){
+                var pageIdx = $(this).data('page');
+                fnAppendPage(pageIdx * 5);
+            });
+        }
+        makeMarkers(data);
+        fnAppendPage(0);
+    }
+}
+
+function renderPage(data) {
+    if(data.length > 0) {
+        $('#contents-page').html("");
+        var fnAppendPage = function(start){
+            $('#content-wrapper').html("");
+            var end = Math.min(data.length, start+5);
+            for(var i=start; i<end; i++) {
+                var o = data[i];
+                var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($("#content-wrapper")).click(function(){
+                    popUp($(this).data('data'));
+                });
+                var $top_content = $('<div class="top-content"></div>').appendTo($content);
+                var $top_content_img = $('<div class="top-content-img"></div>').appendTo($top_content);
+                var $top_content_title = $('<div class="top-content-title"></div>').text(o.title).appendTo($top_content);
+                var $down_content = $('<div class="down-content"></div>').appendTo($content).text(o.content);
+                var icon_key = o.icon_key;
+                var $icon;
+                $.each( allIcon, function( key, value ) {
+                    if(key == icon_key){
+                        $icon = '<img src='+value+'>';
+                    }
+                });
+                $($icon).prependTo($top_content_img);
+                // var $post = $('<div class="post""></div>').appendTo($content).text(o.content).data('data', o).click(function(){
+                //     popUp($(this).data('data'));
+                // });
+            }
+        };
+
         var pageCnt = data.length / 5;
         for(i=0; i<pageCnt; i++) {
             $('<span class="page"></span>').data('page', i).text(i+1).appendTo($("#contents-page")).click(function(){
@@ -171,9 +211,9 @@ function renderPage(data) {
                 fnAppendPage(pageIdx * 5);
             });
         }
+        makeMarkers(data);
         fnAppendPage(0);
     }
-    makeMarkers(data);
 }
 
 function getMarkers(Bounds) {
@@ -191,8 +231,7 @@ function getMarkers(Bounds) {
         startlng : startlng,
         endlat : startlat,
         endlng : endlng
-    }
-    console.log(ajaxData);
+    };
 
     $.ajax({
         type: 'GET',
@@ -200,6 +239,7 @@ function getMarkers(Bounds) {
         url: baseUrl+'/footprint/listbylocation/',
         success: function(data) {
             renderPage(data);
+            contentsData = data;
         }
     });
 }
@@ -280,24 +320,12 @@ function writeHere(here) {
     $("#contents-area .footprint-new #longitude").val(here.y);
 }
 
-function search_positon(){
-    navigator.geolocation.getCurrentPosition(onSuccessGeolocation);
-}
-
-function onSuccessGeolocation(position) {
-    var location = new naver.maps.LatLng(position.coords.latitude,
-       position.coords.longitude);
-
-    map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.
-    map.setZoom(10); // 지도의 줌 레벨을 변경합니다.
-}
-
 function popUp(data) {
     $("#popUp").html('<div id="detail-cancel"><button type="button" class="close" onclick="cancel();">&times;</button></div><div id="detail-post"><div id = "detail-top"><div id = "detail-icon"></div><div id = "detail-title"></div></div><div id = "detail-data"><div id = "detail-id"></div><div id = "detail-modified_date"></div></div><div id = "detail-images"><div id = "detail-image"></div></div><div id = "detail-content"></div><div id = "detail-cmt-count"></div></div>');
-    $("#popUp").css("width", "45vw");
+    $("#popUp").css("width", "35vw");
     $("#popUp").css("height", "100vh");
     $("#popUp").css("top", "0");
-    $("#popUp").css("left", "55vw");
+    $("#popUp").css("left", "65vw");
     $("#popUp").css("display", "flex");
     var icon_key = data.icon_key;
     var $icon;
@@ -342,8 +370,6 @@ function saveIcons(data){
         var key = o[i].key;
         var value = o[i].value;
         allIcon[key] = value;
-        //var icon = JSON.stringify("{"+key+" : "+value+"}");
-        //allIcon.push(JSON.parse(icon));
     }
     console.log(allIcon);
 }
