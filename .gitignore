@@ -5,4 +5,4 @@ s3config.json
 config.json
 /config.json
 config.js
-.xml
+*.xml
