@@ -96,7 +96,7 @@ body {
 #top-search{
     display: flex;
     flex : 0 1 auto;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
     width: calc(30% - 15px);
     height: 75%;
     align-items: center;
@@ -104,7 +104,7 @@ body {
     border: 1px solid rgba(0,0,0,.15);
     border-radius: .25rem;
     background-color: white;
-    margin-left: auto;
+    margin-left: 0;
 }
 
 #top-search input{
@@ -116,16 +116,19 @@ body {
 
 #top-search .search-button{
     display: flex;
+    flex: 0 1 auto;
     align-items: center;
-    height: 100%;
+    height: 26px;
     margin-right: 5px;
     width: 26px;
 }
 
 #top-search .search-button button{
+    display: flex;
+    flex: 0 1 auto;
     background-color: white;
-    width: 26px;
-    height: 26px;
+    width: 100%;
+    height: 100%;
     padding: 0;
     margin: 0;
 }
@@ -136,7 +139,7 @@ body {
 
 #top-search .search-button img{
     display: flex;
-    flex : 1 1 auto;
+    flex : 0 1 auto;
     width: 100%;
     height: 100%;
 }
@@ -327,15 +330,55 @@ body {
     align-items: center;
     border: 1px solid #B1D4FF;
     border-radius: .5rem;
+    padding: 0;
 }
 
-.title{
+.top-content{
     display: flex;
-    flex : 1 1 auto;
+    flex : 0 1 auto;
+    width: 100%;
+    height: 50%;
+    font-size: 10px;
+    font-style: bold;
+    color: #B2996A;
+    align-items: center;
+    background-color: white;
+}
+
+.top-content-img{
+    display: flex;
+    flex: 0 1 auto;
+    width: 24px;
+    height: 24px;
+    justify-content: center;
+    align-items: center;
+    margin-left: 11px;
+}
+
+.top-content-img img{
+    display: flex;
+    flex : 0 1 auto;
     width: 100%;
     height: 100%;
+}
+
+.top-content-title{
+    display: flex;
+    flex: 0 1 auto;
+    width: calc(100% - 24px - 11px);
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    overflow:hidden;
+}
+
+.down-content{
+    display: flex;
+    flex : 0 1 auto;
+    width: 100%;
+    height: 50%;
     text-align: center;
-    font-size: 30px;
+    font-size: 10px;
     font-style: bold;
     color: #B2996A;
     justify-content: center;
@@ -412,6 +455,7 @@ body {
 
 #down-search .search-button{
     display: flex;
+    flex: 0 1 auto;
     align-items: center;
     height: 100%;
     margin-right: 5px;
@@ -419,6 +463,8 @@ body {
 }
 
 #down-search .search-button button{
+    display: flex;
+    flex: 0 1 auto;
     background-color: white;
     width: 26px;
     height: 26px;
