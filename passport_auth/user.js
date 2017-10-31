@@ -178,12 +178,12 @@ var registrateUser = function registrateUser(formData, cb){
 
             var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
             connection.query(sql, [formData.id, formData.displayName, 'Local'], function(err, result){
-                if(err) throw err;
+                if(err) return cb(err, false);
 
                 connection.query('INSERT INTO password (id, password) VALUES(?,?)', [formData.id, password], function(err, result){
                     if(err) {
                         connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
-                            if(err) throw err;
+                            if(err) return cb(err, false);
                         });
                         return cb(err, false);
                     }
@@ -192,7 +192,7 @@ var registrateUser = function registrateUser(formData, cb){
                         return cb(null, true);
                     }else {
                         connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
-                            if(err) throw err;
+                            if(err) return cb(err, false);
                         });
                     }
                 });
