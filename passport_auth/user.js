@@ -39,6 +39,8 @@ var isFormVaildMiddleware = function(req, res, next){
                 return cb('닉네임의 길이가 너무 짧습니다.', null);
             if(length > 25)
                 return cb('닉네임의 길이가 너무 깁니다.', null);
+
+            return cb(null);
         },
         /*
             Check ID is valid.
@@ -165,7 +167,7 @@ var isFormVaildMiddleware = function(req, res, next){
             return res.status(401)
                     .json({code:-2,
                             message:err});
-        else next();
+        else return next();
     });
 };
 
