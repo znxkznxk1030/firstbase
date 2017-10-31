@@ -50,8 +50,6 @@ var isFormVaildMiddleware = function(req, res, next){
                     return cb(null);
                 }
             });
-
-            return cb(null);
         },
         /*
             Check ID is valid.

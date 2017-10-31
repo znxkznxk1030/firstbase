@@ -183,14 +183,28 @@ var createFootprint = function(req, res){
     {
         return res.status(400)
             .json({ code : -1,
-                message: 'title should be not null'});
+                message: '제목이 비어있습니다.'});
+    }
+
+    if(title.length > 100)
+    {
+        return res.status(400)
+            .json({ code : -1,
+                message: '제목의 길이가 너무 깁니다.'});
+    }
+
+    if(content.length > 1000)
+    {
+        return res.status(400)
+            .json({ code: -1,
+                message: '내용의 길이가 너무 깁니다.'})
     }
 
     if(!latitude || !longitude)
     {
         return res.status(400)
             .json({ code : -1,
-                message: 'location data should be not null'});
+                message: '위치 데이터가 비어있습니다.'});
     }
 
     if(!type)
