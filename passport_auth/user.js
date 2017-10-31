@@ -3,7 +3,6 @@ var verify = require('./verify');
 var passwordUtil = require('./password');
 var async = require('async');
 
-
 var registrateSocialUser = function registrateSocialLoginUser(data, cb){
     var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
     connection.query(sql, [data.id, data.displayName, data.provider], function(err, result){
