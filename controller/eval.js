@@ -12,7 +12,7 @@ var evalFootprint = function(req, res){
         state = req.body.state;
 
     const sqlIsEvaled =
-        "SELECT * FROM eval WHERE footprintId = ? AND id = ? ";
+        "SELECT * FROM eval WHERE footprint_id = ? AND id = ? ";
     const sqlChangeEval =
         "UPDATE eval SET state = ? WHERE footprint_id = ? AND id = ?";
     const sqlEval =
