@@ -80,9 +80,15 @@ var findPassword = function findPassword(id, cb){
  */
 var getUserInfoByReqHeader = function(req, res){
 
-    const sql = "SELECT id, displayName, provider, description, profile_key " +
+    const sql = "SELECT * " +
         "FROM user " +
         "WHERE user.id = ? ";
+
+    const sqlGetFollowerCount =
+        "SELECT count(*) AS countFollower FROM follow WHERE follow.target_id = ? ";
+
+    const sqlGetFollowingCount =
+        "SELECT count(*) AS countFollowing FROM follow WHERE follow.follower_id = ? ";
 
     const task = [
         function(cb){
@@ -104,7 +110,20 @@ var getUserInfoByReqHeader = function(req, res){
             if(profileKey) profileUrl = retrieveByKey(profileKey);
             else profileUrl = retrieveByKey(profileDefaultKey);
 
-            return cb(null, _.extend(profile[0], { profileUrl: profileUrl }));
+            return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], { profileUrl: profileUrl }));
+        },
+        function(profile, cb){
+            console.log(profile.id);
+            connection.query(sqlGetFollowerCount, [profile.id], function(err, countFollower){
+                if (err) return cb({code: -1, message: err}, null);
+                return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollower[0]))));
+            });
+        },
+        function(profile, cb){
+            connection.query(sqlGetFollowingCount, [profile.id], function(err, countFollowing){
+                if (err) return cb({code: -1, message: err}, null);
+                return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollowing[0]))));
+            });
         }
     ];
 
@@ -113,16 +132,25 @@ var getUserInfoByReqHeader = function(req, res){
             if(err) return res.status(400)
                 .json({code: -1,
                     message:err});
+            else{
+                delete profile.id;
 
-            return res.status(200)
-                .json(profile);
+                return res.status(200)
+                    .json(profile);
+            }
         });
 };
 
 var getUserInfoByUserDisplayName = function(req, res){
-    const sql = "SELECT displayName, provider, description, profile_key " +
+    const sql = "SELECT * " +
         "FROM user " +
         "WHERE user.displayName = ? ";
+
+    const sqlGetFollowerCount =
+        "SELECT count(*) AS countFollower FROM follow WHERE follow.target_id = ? ";
+
+    const sqlGetFollowingCount =
+        "SELECT count(*) AS countFollowing FROM follow WHERE follow.follower_id = ? ";
 
     const displayName = req.query.displayName;
 
@@ -134,7 +162,7 @@ var getUserInfoByUserDisplayName = function(req, res){
         },
         function(displayName, cb){
             connection.query(sql, displayName, function(err, profile){
-                if (err) return cb({code: -1, message: 'sql error'}, null);
+                if (err) return cb({code: -1, message: err}, null);
 
                 if(profile[0])
                     return cb(null, profile);
@@ -147,7 +175,20 @@ var getUserInfoByUserDisplayName = function(req, res){
             if(profileKey) profileUrl = retrieveByKey(profileKey);
             else profileUrl = retrieveByKey(profileDefaultKey);
 
-            return cb(null, _.extend(profile[0], { profileUrl: profileUrl }));
+            return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], { profileUrl: profileUrl }));
+        },
+        function(profile, cb){
+            console.log(profile.id);
+            connection.query(sqlGetFollowerCount, [profile.id], function(err, countFollower){
+                if (err) return cb({code: -1, message: err}, null);
+                return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollower[0]))));
+            });
+        },
+        function(profile, cb){
+            connection.query(sqlGetFollowingCount, [profile.id], function(err, countFollowing){
+                if (err) return cb({code: -1, message: err}, null);
+                return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollowing[0]))));
+            });
         }
     ];
 
@@ -157,16 +198,26 @@ var getUserInfoByUserDisplayName = function(req, res){
                 .json({code: -1,
                     message:err});
 
-            return res.status(200)
-                .json(profile);
+            else{
+                delete profile.id;
+
+                return res.status(200)
+                    .json(profile);
+            }
         });
 };
 
 var getUserInfoByUserId = function(req, res){
 
-    const sql = "SELECT displayName, provider, description, profile_key " +
+    const sql = "SELECT * " +
         "FROM user " +
         "WHERE user.id = ? ";
+
+    const sqlGetFollowerCount =
+        "SELECT count(*) AS countFollower FROM follow WHERE follow.target_id = ? ";
+
+    const sqlGetFollowingCount =
+        "SELECT count(*) AS countFollowing FROM follow WHERE follow.follower_id = ? ";
 
     const id = req.query.id;
 
@@ -189,7 +240,20 @@ var getUserInfoByUserId = function(req, res){
             if(profileKey) profileUrl = retrieveByKey(profileKey);
             else profileUrl = retrieveByKey(profileDefaultKey);
 
-            return cb(null, _.extend(profile[0], { profileUrl: profileUrl }));
+            return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], { profileUrl: profileUrl }));
+        },
+        function(profile, cb){
+            console.log(profile.id);
+            connection.query(sqlGetFollowerCount, [profile.id], function(err, countFollower){
+                if (err) return cb({code: -1, message: err}, null);
+                return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollower[0]))));
+            });
+        },
+        function(profile, cb){
+            connection.query(sqlGetFollowingCount, [profile.id], function(err, countFollowing){
+                if (err) return cb({code: -1, message: err}, null);
+                return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollowing[0]))));
+            });
         }
     ];
 
@@ -198,9 +262,12 @@ var getUserInfoByUserId = function(req, res){
             if(err) return res.status(400)
                 .json({code: -1,
                     message:err});
+            else{
+                delete profile.id;
 
-            return res.status(200)
-                .json(profile);
+                return res.status(200)
+                    .json(profile);
+            }
         });
 };
 

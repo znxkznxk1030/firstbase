@@ -529,10 +529,11 @@ var getFootprintByFootprintID = function(req, res){
                 return res.status(400)
                     .json({ code: -1,
                         message : err});
-
-            var output = Object.assign({code: 1}, result[0], result[2], result[3], result[4], result[5]);
-            return res.status(200)
+            else{
+                var output = Object.assign({code: 1}, result[0], result[2], result[3], result[4], result[5]);
+                return res.status(200)
                     .json(output);
+            }
         });
 };
 

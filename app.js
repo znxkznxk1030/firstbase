@@ -15,6 +15,7 @@ var comments = require('./routes/comments');
 var traces = require('./routes/traces');
 var chat = require('./routes/chat');
 var eval = require('./routes/eval');
+var follow = require('./routes/follow');
 
 var app = express();
 var http = require('http');
