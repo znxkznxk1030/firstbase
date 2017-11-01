@@ -18,4 +18,44 @@ var follow = function(req, res){
     });
 };
 
+var getFollowerList = function(req, res){
+
+    const displayName = req.query.displayName;
+
+    const sqlGetFollowerList =
+        "SELECT * " +
+        "FROM user INNER JOIN follow " +
+        "ON user.id = follow.target_id " +
+        "WHERE user.displayName = ? ";
+
+    connection.query(sqlGetFollowerList, displayName, function(err, followers){
+        if(err) return res.status(400).json({code: -1, message: err});
+
+        return res.status(200).json({code: 1, followers : followers, message: '팔로워 찾기 성공'});
+    })
+
+
+};
+
+var getFollowingList = function(req, res){
+
+    const displayName = req.query.displayName;
+
+    const sqlGetFollowerList =
+        "SELECT * " +
+        "FROM user INNER JOIN follow " +
+        "ON user.id = follow.follower_id " +
+        "WHERE user.displayName = ? ";
+
+    connection.query(sqlGetFollowerList, displayName, function(err, followers){
+        if(err) return res.status(400).json({code: -1, message: err});
+
+        return res.status(200).json({code: 1, followers : followers, message: '팔로잉한 유저들 찾기 성공'});
+    })
+
+
+};
+
 exports.follow = follow;
+exports.getFollowerList = getFollowerList;
+exports.getFollowingList = getFollowingList;

@@ -60,6 +60,7 @@ app.use('/comments', comments);
 app.use('/traces', traces);
 app.use('/chat', chat);
 app.use('/eval', eval);
+app.use('/follow', follow);
 
 //swagger
 app.use('/swagger-ui', express.static(path.join('./node_modules/swagger-ui/dist')));
