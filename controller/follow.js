@@ -7,7 +7,7 @@ var follow = function(req, res){
         followId = req.body.followId;
 
     const sqlFollow =
-        "INSERT INTO follow (follower_id, following_id) " +
+        "INSERT INTO follow (follower_id, target_id) " +
         "VALUES (?, ?) ";
 
     connection.query(sqlFollow, [id, followId],
@@ -45,7 +45,7 @@ var getFollowerList = function(req, res){
 var getFollowingList = function(req, res){
 
     const displayName = req.query.displayName;
-    
+
     if(displayName === null || displayName === '' || displayName === 'undefined')
     {
         return res.status(400).json({code: -1, message: '닉네임이 비어있습니다.'});
