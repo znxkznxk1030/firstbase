@@ -14,7 +14,7 @@ var evalFootprint = function(req, res){
     const sqlIsEvaled =
         "SELECT * FROM eval WHERE footprintId = ? AND id = ? ";
     const sqlChangeEval =
-        "UPDATE eval SET state = ? WHERE footprintId = ? AND id = ?";
+        "UPDATE eval SET state = ? WHERE footprint_id = ? AND id = ?";
     const sqlEval =
         "INSERT INTO eval (footprint_id, id, state) " +
         "VALUES (?, ?, ?) ";
