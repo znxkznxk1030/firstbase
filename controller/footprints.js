@@ -14,6 +14,21 @@ AWS.config.loadFromPath('s3config.json');
  */
 const s3 = new AWS.S3({ region : 'ap-northeast-2' });
 
+
+var getAuthor = function(footprintId, cb){
+
+    const sqlGetAuthor = "SELECT footprint.id FROM footprint WHERE footprint_id = ?";
+
+    connection.query(sqlGetAuthor, [footprintId], function(err, author){
+        if (err) return cb(err, null);
+
+        const objectAuthor = JSON.parse(JSON.stringify(author))[0];
+
+        if(objectAuthor) return cb(null, objectAuthor);
+        else return cb('없는 게시글입니다.', null);
+    });
+};
+
 var getFootprintListByUserDisplayName = function(req, res){
     const userDisplayName = req.params.userDisplayName;
 
@@ -369,6 +384,57 @@ var createFootprint = function(req, res){
         });
 };
 
+var deleteFootprintByFootprintID = function(req, res){
+
+    const userId = req.user.id,
+        footprintId = req.body.footprintId;
+
+    if(footprintId === null || typeof footprintId === 'undefined' || footprintId === ''){
+        return res.status(400).json({code: -1, message: "footprint 가 없습니다."});
+    }
+
+    const sqlDeleteFootprint =
+        "DELETE FROM footprint WHERE footprintId = ?";
+
+    var task = [
+        function(cb){
+
+            getAuthor(footprintId, function(err, author){
+                if(err) return cb(err, null);
+
+                if(author !== userId)
+                {
+                    return cb('작성자만 게시물을 삭제 할 수 있습니다.', null);
+                }else
+                {
+                    return cb(null);
+                }
+            });
+
+        },
+        function(cb){
+
+            connection.query(sqlDeleteFootprint, [footprintId],
+                function(err, result){
+                    if(err) return cb(err, null);
+
+                    return cb(null, result);
+            });
+        }
+    ];
+
+
+    async.series(task, function(err, result){
+        if(err) return res.status(400).json({code: -1, message: err});
+        else{
+            return res.status(200).json({code: 1, message: result});
+        }
+
+    });
+
+
+};
+
 var getFootprintByFootprintID = function(req, res){
     const user = req.user;
     const footprintId = req.query.footprintId;
@@ -381,7 +447,6 @@ var getFootprintByFootprintID = function(req, res){
                 message: 'footprintId that you sent is not allowed'})
     }
 
-    // todo: split sql query
     const sqlRetrieveFootprintByFootprintId =
         "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
         "FROM footprint LEFT JOIN view " +
@@ -402,7 +467,7 @@ var getFootprintByFootprintID = function(req, res){
         "FROM eval WHERE footprint_id = ? AND state = 2";
 
     const sqlRetrieveComments =
-        "SELECT comment.content ,comment.modified_date AS date, user.displayName " +
+        "SELECT comment.is_ban AS isBAN, comment.comment_id AS commentId, comment.content ,comment.modified_date AS date, user.displayName, user.profile_key " +
         "FROM comment LEFT JOIN user " +
         "ON comment.id = user.id " +
         "WHERE comment.footprint_id = ? ";
@@ -419,11 +484,26 @@ var getFootprintByFootprintID = function(req, res){
                     if(err)
                         return cb(err, {message : "error to find footprint"});
 
-                    if(footprint[0])
-                    {
-                        var returnData = JSON.parse(JSON.stringify(footprint))[0];
-                        return cb(null, returnData);
+                    var objectFootprint = JSON.parse(JSON.stringify(footprint))[0];
 
+                    if(objectFootprint)
+                    {
+
+                        var iconKey = objectFootprint.icon_key;
+
+                        if(iconKey === null)
+                        {
+                            iconKey = 'profiledefault.png';
+                        }
+
+                        var params = {
+                            Bucket: bucketName,
+                            Key: iconKey
+                        };
+
+                        const iconUrl = s3.getSignedUrl('getObject', params);
+
+                        return cb(null, _.extend(objectFootprint, {iconUrl: iconUrl}));
                     }
                     else
                         return cb(err, {message : "error to find footprint"});
@@ -496,8 +576,33 @@ var getFootprintByFootprintID = function(req, res){
                 function(err, comments){
                     if(err) return cb(err, { message: 'error'});
 
-                    const ret = JSON.parse(JSON.stringify(comments));
+                    var ret = JSON.parse(JSON.stringify(comments));
 
+
+                    console.log(ret);
+
+                    ret = ret.map(function(comment){
+
+                        var profileKey = comment.profile_key;
+
+                        if(profileKey === null)
+                        {
+                            profileKey = 'profiledefault.png';
+                        }
+
+                        const params = {
+                            Bucket: bucketName,
+                            Key: profileKey
+                        };
+
+                        const profileUrl = s3.getSignedUrl('getObject', params);
+
+                        console.log(_.extend(comment, {profileUrl : profileUrl}));
+
+                        return _.extend(comment, {profileUrl : profileUrl});
+                    });
+
+                    console.log(ret);
                     return cb(null, {comments: ret});
                 });
         },
@@ -535,47 +640,6 @@ var getFootprintByFootprintID = function(req, res){
                     .json(output);
             }
         });
-};
-
-var deleteFootprintByFootprintID = function(req, res){
-
-    const footprintId = req.query.footprintId;
-
-
-    // todo: query data validation test
-    if(!footprintId)
-    {
-        res.status(400)
-            .json({code: -1,
-                message: 'footprintId that you sent is not allowed'})
-    }
-
-    const sqlDeleteFootprint = "DELETE FROM footprint WHERE footprint_id = ?";
-
-
-    // todo: delete all referenced tables first
-
-
-    connection.query(sqlDeleteFootprint, [footprintId],
-        function(err, result){
-            if (err)
-                return res.status(400)
-                    .json({code: -1,
-                        message: err});
-
-            if (result)
-            {
-                res.status(200)
-                    .json({code: 1,
-                        message: "success to delete"});
-            } else
-            {
-                res.status(400)
-                    .json({code: -1,
-                        message: "fail to delete"});
-            }
-
-    });
 };
 
 

@@ -12,5 +12,7 @@ router.get('/new', auth.authMiddleware, function(req, res){
 });
 
 router.post('/create', auth.authMiddleware, controller.createComment);
+router.post('/update', auth.authMiddleware, controller.updateComment);
+router.post('/delete', auth.authMiddleware, controller.deleteComment);
 
 module.exports = router;
