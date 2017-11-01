@@ -22,6 +22,11 @@ var getFollowerList = function(req, res){
 
     const displayName = req.query.displayName;
 
+    if(displayName === null || displayName === '' || displayName === 'undefined')
+    {
+        return res.status(400).json({code: -1, message: '닉네임이 비어있습니다.'});
+    }
+
     const sqlGetFollowerList =
         "SELECT * " +
         "FROM user INNER JOIN follow " +
@@ -40,6 +45,11 @@ var getFollowerList = function(req, res){
 var getFollowingList = function(req, res){
 
     const displayName = req.query.displayName;
+    
+    if(displayName === null || displayName === '' || displayName === 'undefined')
+    {
+        return res.status(400).json({code: -1, message: '닉네임이 비어있습니다.'});
+    }
 
     const sqlGetFollowerList =
         "SELECT * " +
