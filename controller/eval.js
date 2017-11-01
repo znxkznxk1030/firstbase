@@ -48,7 +48,12 @@ var evalFootprint = function(req, res){
             }else{
                 if(JSON.parse(JSON.stringify(eval))[0].state === state)
                 {
-                    return res.status(200).json({code: 1, message: '이미 평가 하였습니다.'});
+
+                    connection.query(sqlChangeEval, [0, footprintId, id],
+                        function(err){
+                            if(err) return res.status(400).json({code: -1, message: err});
+                            return res.status(200).json({code: 1, message: "평가 취소하였습니다."});
+                        });
                 }else
                 {
                     connection.query(sqlChangeEval, [state, footprintId, id],
