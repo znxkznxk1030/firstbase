@@ -24,6 +24,8 @@ var evalFootprint = function(req, res){
         return res.status(400).json({code: -1, message: 'state 값이 잘못 들어옴 state 값은 1 아니면 2 여야 함 (int)'});
     }
 
+    console.log(state);
+
     connection.query(sqlIsEvaled, [footprintId, id],
         function(err, eval){
             if(err) return res.status(400).json({code: -1, message: err});
