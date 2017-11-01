@@ -19,9 +19,14 @@ var evalFootprint = function(req, res){
         "INSERT INTO eval (footprint_id, id, state) " +
         "VALUES (?, ?, ?) ";
 
-    if(state === null || state === 'undefined' || !(state === 1 || state === 2))
+    if(state === null || typeof state === 'undefined' || !(state === 1 || state === 2))
     {
         return res.status(400).json({code: -1, message: 'state 값이 잘못 들어옴 state 값은 1 아니면 2 여야 함 (int)'});
+    }
+
+    if(footprintId === null || typeof footprintId === 'undefined')
+    {
+        return res.status(400).json({code: -1, message: 'footprint id 칸이 비어져있습니다'});
     }
 
     console.log(state);
