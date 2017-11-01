@@ -25,6 +25,7 @@ var evalFootprint = function(req, res){
     }
 
     console.log(state);
+    console.log(footprintId);
 
     connection.query(sqlIsEvaled, [footprintId, id],
         function(err, eval){
@@ -53,7 +54,6 @@ var evalFootprint = function(req, res){
                 }
             }
     });
-
 };
 
 exports.evalFootprint = evalFootprint;
