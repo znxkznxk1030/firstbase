@@ -4,7 +4,7 @@ var async = require('async');
 var follow = function(req, res){
 
     const id = req.user.id,
-        followId = req.body.followId;
+        followId = req.body.targetId;
 
     const sqlFollow =
         "INSERT INTO follow (follower_id, target_id) " +
