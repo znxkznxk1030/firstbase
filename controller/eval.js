@@ -28,6 +28,8 @@ var evalFootprint = function(req, res){
         function(err, eval){
             if(err) return res.status(400).json({code: -1, message: err});
 
+            console.log(eval);
+
             if(!eval)
             {
                 connection.query(sqlEval, [footprintId, id, state],
