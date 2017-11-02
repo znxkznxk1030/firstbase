@@ -183,7 +183,7 @@ io.on('connection', function(socket){
             msg : data.msg,
 
             date : date.toLocaleDateString(),
-            time : date.getHours() + '시 ' + date.getMinutes() + '분'
+            time : (date.getHours() + 9) + '시 ' + date.getMinutes() + '분'
         };
 
         console.log('Message from %s: %s', socket.displayName, msg);
@@ -194,7 +194,6 @@ io.on('connection', function(socket){
         msg.from.isSelf = true;
         //console.log(msg);
         socket.emit('chat', msg);
-
 
     });
 
