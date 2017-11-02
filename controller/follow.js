@@ -1,6 +1,44 @@
 var connection = require('../database/db');
 var async = require('async');
 
+var unfollow = function(req, res){
+    const id = req.user.id,
+        targetDisplayName = req.body.targetDisplayName;
+
+    const sqlGetId =
+        "SELECT id FROM user WHERE displayName = ?";
+
+    const sqlUnFollow =
+        "DELETE FROM follow WHERE follower_id = ? AND target_id = ?"
+
+    var task = [
+        function(cb){
+            connection.query(sqlGetId, [targetDisplayName], function(err, targetId){
+                if(err) return cb(err, null);
+
+                return cb(null, targetId);
+            });
+        },
+        function(targetId, cb){
+            connection.query(sqlUnFollow, [id, targetId],
+                function(err, result){
+                    if(err) return cb(err, null);
+
+                    return cb(null);
+                });
+        }
+    ];
+
+    async.waterfall(task, function(err, result){
+        if(err) return res.status(400).json({code: -1, message: err});
+        else{
+            return res.status(200).json({code: 1, message:'팔로우 시작'});
+        }
+
+    });
+
+};
+
 var follow = function(req, res){
 
     const id = req.user.id,
@@ -30,7 +68,6 @@ var follow = function(req, res){
                 });
         }
     ];
-
 
     async.waterfall(task, function(err, result){
         if(err) return res.status(400).json({code: -1, message: err});
@@ -91,3 +128,4 @@ var getFollowingList = function(req, res){
 exports.follow = follow;
 exports.getFollowerList = getFollowerList;
 exports.getFollowingList = getFollowingList;
+exports.unfollow = unfollow;
