@@ -389,6 +389,7 @@ var deleteFootprintByFootprintID = function(req, res){
     const userId = req.user.id,
         footprintId = req.body.footprintId;
 
+    console.log(userId);
     console.log(footprintId);
 
     if(footprintId === null || typeof footprintId === 'undefined' || footprintId === ''){
