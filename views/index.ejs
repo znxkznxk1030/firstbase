@@ -68,6 +68,9 @@
             <div id = "add-button" onclick="write_button_click();">
                 <img src="/img/layout/write-button.png">
             </div>
+            <div id = "add-button2" style="display: none;">
+                <img src="/img/layout/search.png">
+            </div>
             <div id = "radar-button" onclick="search_positon();">
                 <img src="/img/layout/radar.png">
             </div>
@@ -135,6 +138,24 @@
 </div>
 
 <div id = "popUp">
+    <div id="detail-cancel">
+        <button type="button" class="close" onclick="cancel();">&times;</button>
+    </div>
+    <div id="detail-post">
+        <div id = "detail-top">
+            <div id = "detail-icon" class="change"></div>
+            <div id = "detail-title" class="change"></div>
+        </div>
+        <div id = "detail-data">
+            <div id = "detail-id" class="change"></div>
+            <div id = "detail-modified_date" class="change"></div>
+        </div>
+        <div id = "detail-images">
+            <div id = "detail-image" class="change"></div>
+        </div>
+        <div id = "detail-content" class="change"></div>
+        <div id = "detail-cmt-count" class="change"></div>
+    </div>
 </div>
 
 <script type="text/javascript" src="/js/app.js" defer></script>
