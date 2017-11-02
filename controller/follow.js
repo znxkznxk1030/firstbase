@@ -22,7 +22,7 @@ var follow = function(req, res){
             });
         },
         function(targetId, cb){
-            connection.query(sqlFollow, [id, followId],
+            connection.query(sqlFollow, [id, targetId],
                 function(err, result){
                     if(err) return cb(err, null);
 
