@@ -389,6 +389,8 @@ var deleteFootprintByFootprintID = function(req, res){
     const userId = req.user.id,
         footprintId = req.body.footprintId;
 
+    console.log(footprintId);
+
     if(footprintId === null || typeof footprintId === 'undefined' || footprintId === ''){
         return res.status(400).json({code: -1, message: "footprint 가 없습니다."});
     }
