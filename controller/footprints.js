@@ -397,7 +397,7 @@ var deleteFootprintByFootprintID = function(req, res){
     }
 
     const sqlDeleteFootprint =
-        "DELETE FROM footprint WHERE footprintId = ?";
+        "DELETE FROM footprint WHERE footprint_id = ?";
 
     var task = [
         function(cb){
@@ -405,7 +405,7 @@ var deleteFootprintByFootprintID = function(req, res){
             getAuthor(footprintId, function(err, author){
                 if(err) return cb(err, null);
 
-                console.log(author);
+                console.log(author.id);
 
                 if(author.id !== userId)
                 {
