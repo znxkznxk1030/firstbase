@@ -92,7 +92,7 @@ function makeMarkers(data) {
                     size: new naver.maps.Size(30, 30),
                     scaledSize: new naver.maps.Size(30, 30),
                     origin: new naver.maps.Point(0, 0),
-                    anchor: new naver.maps.Point(15, 30)
+                    anchor: new naver.maps.Point(15, 15)
                 },
                 title: o.footprint_id
             });
@@ -105,11 +105,19 @@ function makeMarkers(data) {
                 $.each(contentsData, function (index, item) {
                     $.each(item, function (key, value) {
                         if (key == 'footprint_id' && value == id) {
-                            if( $("#popUp").css("display") == "flex" ) {
-                                cancel();
+
+                            if( $("#popUp").data("change") == "true" ){
+                                if( id == $("#popUp").data("save") ){
+                                    cancel();
+                                }
+                                else {
+                                    popUp(contentsData[index]);
+                                    $("#popUp").data("save", id);
+                                }
                             }
                             else {
                                 popUp(contentsData[index]);
+                                $("#popUp").data("save", id);
                             }
                         }
                     });
@@ -123,11 +131,6 @@ function makeMarkers(data) {
     }
 }
 
-function showMarker(map, marker) {
-    if (marker.setMap()) return;
-    marker.setMap(map);
-}
-
 function makePage(data) {
     // var myJSON = JSON.stringify(data);
     var $list = $('<div id="content-wrapper"></div>').appendTo($('#contents'));
@@ -136,16 +139,28 @@ function makePage(data) {
     if(data.length > 0) {
         var fnAppendPage = function(start){
             $('#content-wrapper').html("");
-            var end = Math.min(data.length, start+5);
+            var end = Math.min(data.length, start+10);
+
+            <!-- 게시판 -->
+            var $board = $('<div id="board"></div>').appendTo($list);
+            $('<div id="board-title">제목</div>').appendTo($board);
+            $('<div id="board-author">작성자</div>').appendTo($board);
+            $('<div id="board-date">날짜</div>').appendTo($board);
+            $('<div id="board-hits">조회수</div>').appendTo($board);
+
+
             for(var i=start; i<end; i++) {
                 var o = data[i];
                 var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($list).click(function(){
                     popUp($(this).data('data'));
+                    $("#popUp").data("save", o.id);
                 });
-                var $top_content = $('<div class="top-content"></div>').appendTo($content);
-                var $top_content_img = $('<div class="top-content-img"></div>').appendTo($top_content);
-                var $top_content_title = $('<div class="top-content-title"></div>').text(o.title).appendTo($top_content);
-                var $down_content = $('<div class="down-content"></div>').appendTo($content).text(o.content);
+                $content_img = $('<div class="content-img"></div>').appendTo($content);
+                $('<div class="content-title"></div>').text(o.title).appendTo($content);
+                $('<div class="content-author"></div>').text(o.id).appendTo($content);
+                $('<div class="content-date"></div>').text(o.modified_date.substring(5,10)).appendTo($content);
+                $('<div class="content-hits"></div>').text(o.countView).appendTo($content);
+
                 var icon_key = o.icon_key;
                 var $icon;
                 $.each( allIcon, function( key, value ) {
@@ -153,7 +168,7 @@ function makePage(data) {
                         $icon = '<img src='+value+'>';
                     }
                 });
-                $($icon).prependTo($top_content_img);
+                $($icon).prependTo($content_img);
                 // var $post = $('<div class="post""></div>').appendTo($content).text(o.content).data('data', o).click(function(){
                 //     popUp($(this).data('data'));
                 // });
@@ -163,11 +178,11 @@ function makePage(data) {
         var $page = $('<div id="contents-page"></div>').appendTo($('#contents'));
         console.log("asdfas"+data.length);
         console.log(data);
-        var pageCnt = data.length / 5;
+        var pageCnt = data.length / 10;
         for(i=0; i<pageCnt; i++) {
             $('<span class="page"></span>').data('page', i).text(i+1).appendTo($page).click(function(){
                 var pageIdx = $(this).data('page');
-                fnAppendPage(pageIdx * 5);
+                fnAppendPage(pageIdx * 10);
             });
         }
         makeMarkers(data);
@@ -180,16 +195,27 @@ function renderPage(data) {
         $('#contents-page').html("");
         var fnAppendPage = function(start){
             $('#content-wrapper').html("");
-            var end = Math.min(data.length, start+5);
+            var end = Math.min(data.length, start+10);
+
+            <!-- 게시판 -->
+            var $board = $('<div id="board"></div>').appendTo($("#content-wrapper"));
+            $('<div id="board-title">제목</div>').appendTo($board);
+            $('<div id="board-author">작성자</div>').appendTo($board);
+            $('<div id="board-date">날짜</div>').appendTo($board);
+            $('<div id="board-hits">조회수</div>').appendTo($board);
+
             for(var i=start; i<end; i++) {
                 var o = data[i];
                 var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($("#content-wrapper")).click(function(){
                     popUp($(this).data('data'));
+                    $("#popUp").data("save", o.id);
                 });
-                var $top_content = $('<div class="top-content"></div>').appendTo($content);
-                var $top_content_img = $('<div class="top-content-img"></div>').appendTo($top_content);
-                var $top_content_title = $('<div class="top-content-title"></div>').text(o.title).appendTo($top_content);
-                var $down_content = $('<div class="down-content"></div>').appendTo($content).text(o.content);
+                $content_img = $('<div class="content-img"></div>').appendTo($content);
+                $('<div class="content-title"></div>').text(o.title).appendTo($content);
+                $('<div class="content-author"></div>').text(o.id).appendTo($content);
+                $('<div class="content-date"></div>').text(o.modified_date.substring(5,10)).appendTo($content);
+                $('<div class="content-hits"></div>').text(o.countView).appendTo($content);
+
                 var icon_key = o.icon_key;
                 var $icon;
                 $.each( allIcon, function( key, value ) {
@@ -197,18 +223,18 @@ function renderPage(data) {
                         $icon = '<img src='+value+'>';
                     }
                 });
-                $($icon).prependTo($top_content_img);
+                $($icon).prependTo($content_img);
                 // var $post = $('<div class="post""></div>').appendTo($content).text(o.content).data('data', o).click(function(){
                 //     popUp($(this).data('data'));
                 // });
             }
         };
 
-        var pageCnt = data.length / 5;
+        var pageCnt = data.length / 10;
         for(i=0; i<pageCnt; i++) {
             $('<span class="page"></span>').data('page', i).text(i+1).appendTo($("#contents-page")).click(function(){
                 var pageIdx = $(this).data('page');
-                fnAppendPage(pageIdx * 5);
+                fnAppendPage(pageIdx * 10);
             });
         }
         makeMarkers(data);
@@ -245,6 +271,9 @@ function getMarkers(Bounds) {
 }
 
 function write_button_click() {
+    // $("#add-button").replaceWith( $("#add-button2") );
+    // $("#add-button2").css("display", "block");
+
     $("#contents-area").html("<div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div>");
 
     $(".emoticon img").draggable({
@@ -310,23 +339,26 @@ function writeHere(here) {
         position:  new naver.maps.LatLng(here.y, here.x),
         map: map,
         icon: {
-            url: 'https://image.flaticon.com/icons/png/128/45/45873.png'
+            url: 'https://image.flaticon.com/icons/png/128/45/45873.png',
+            size: new naver.maps.Size(30, 30),
+            scaledSize: new naver.maps.Size(30, 30),
+            origin: new naver.maps.Point(0, 0),
+            anchor: new naver.maps.Point(15, 15)
         }
     };
 
-    var marker11 = new naver.maps.Marker(markerOptions);
+    var marker = new naver.maps.Marker(markerOptions);
     $("#contents-area .footprint-new #icon_url").val('/img/layout/travel.png');
     $("#contents-area .footprint-new #latitude").val(here.x);
     $("#contents-area .footprint-new #longitude").val(here.y);
 }
 
 function popUp(data) {
-    $("#popUp").html('<div id="detail-cancel"><button type="button" class="close" onclick="cancel();">&times;</button></div><div id="detail-post"><div id = "detail-top"><div id = "detail-icon"></div><div id = "detail-title"></div></div><div id = "detail-data"><div id = "detail-id"></div><div id = "detail-modified_date"></div></div><div id = "detail-images"><div id = "detail-image"></div></div><div id = "detail-content"></div><div id = "detail-cmt-count"></div></div>');
-    $("#popUp").css("width", "35vw");
-    $("#popUp").css("height", "100vh");
-    $("#popUp").css("top", "0");
-    $("#popUp").css("left", "65vw");
     $("#popUp").css("display", "flex");
+    $("#popUp").data("change", "true");
+
+    $("#popUp").find($(".change")).text("");
+
     var icon_key = data.icon_key;
     var $icon;
     $.each( allIcon, function( key, value ) {
@@ -358,10 +390,12 @@ function popUp(data) {
             }
         }
     });
+    $("#popUp").animate({left: "65vw"});
 }
 
 function cancel(){
-    $("#popUp").css("display", "none");
+    $("#popUp").animate({left: "100vw"});
+    $("#popUp").data("change", "false");
 }
 
 function saveIcons(data){
