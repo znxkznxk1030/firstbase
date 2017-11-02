@@ -4,17 +4,40 @@ var async = require('async');
 var follow = function(req, res){
 
     const id = req.user.id,
-        followId = req.body.targetId;
+        targetDisplayName = req.body.targetDisplayName;
 
     const sqlFollow =
         "INSERT INTO follow (follower_id, target_id) " +
         "VALUES (?, ?) ";
 
-    connection.query(sqlFollow, [id, followId],
-        function(err, result){
-            if(err) return res.status(400).json({code: -1, message: err});
+    const sqlGetId =
+        "SELECT id FROM user WHERE displayName = ?";
 
+    var task = [
+        function(cb){
+            connection.query(sqlGetId, [targetDisplayName], function(err, targetId){
+                if(err) return cb(err, null);
+
+                return cb(null, targetId);
+            });
+        },
+        function(targetId, cb){
+            connection.query(sqlFollow, [id, followId],
+                function(err, result){
+                    if(err) return cb(err, null);
+
+                    return cb(null);
+                });
+        }
+    ];
+
+
+    async.waterfall(task, function(err, result){
+        if(err) return res.status(400).json({code: -1, message: err});
+        else{
             return res.status(200).json({code: 1, message:'팔로우 시작'});
+        }
+
     });
 };
 
