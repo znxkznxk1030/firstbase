@@ -28,7 +28,7 @@ var getFollowerList = function(req, res){
     }
 
     const sqlGetFollowerList =
-        "SELECT follower_id AS followId, target_id AS targetId " +
+        "SELECT user.displayName " +
         "FROM user INNER JOIN follow " +
         "ON user.id = follow.target_id " +
         "WHERE user.displayName = ? ";
@@ -52,7 +52,7 @@ var getFollowingList = function(req, res){
     }
 
     const sqlGetFollowerList =
-        "SELECT follower_id AS followId, target_id AS targetId " +
+        "SELECT user.displayName " +
         "FROM user INNER JOIN follow " +
         "ON user.id = follow.follower_id " +
         "WHERE user.displayName = ? ";
