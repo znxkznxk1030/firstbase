@@ -66,6 +66,56 @@ $(document).ready(function(){
         getMarkers(bounds);
     });
 
+
+    var ActivateWriteHere = false;
+
+
+    $(document).on('mousedown', '.write-icon img', function(){
+        /* lock icon in map. user could drag icon only in map */
+        ActivateWriteHere = true;
+    });
+//
+// $(document).on('mouseup', '.write-icon img', function(event){
+//     x = event.pageX;
+//     y = event.pageY;
+//     calCoord(x,y);
+// });
+
+    naver.maps.Event.addListener(map, 'write', function(e) {
+        if(ActivateWriteHere == true){
+            var here = e.coord;
+            alert(here);
+            writeHere(here);
+            /*naver.maps.Event.removeListener(listener);*/
+            ActivateWriteHere = false;
+        }
+        else {
+            return;
+        }
+    });
+
+    $(document).on('mouseup', '.write-icon img', function(){
+        /* lock icon in map. user could drag icon only in map */
+        naver.maps.Event.trigger(map, 'write', function(e) {
+            if(ActivateWriteHere == true){
+                var here = e.coord;
+                alert(here);
+                writeHere(here);
+                /*naver.maps.Event.removeListener(listener);*/
+                ActivateWriteHere = false;
+            }
+            else {
+                return;
+            }
+        });
+
+
+
+        $( ".write-icon img" ).draggable({
+            disabled: true
+        });
+    });
+
 });
 
 function makeMarkers(data) {
@@ -108,7 +158,7 @@ function makeMarkers(data) {
 
                             if( $("#popUp").data("change") == "true" ){
                                 if( id == $("#popUp").data("save") ){
-                                    cancel();
+                                    cancel($("#popUp"));
                                 }
                                 else {
                                     popUp(contentsData[index]);
@@ -273,37 +323,31 @@ function getMarkers(Bounds) {
 function write_button_click() {
     // $("#add-button").replaceWith( $("#add-button2") );
     // $("#add-button2").css("display", "block");
+    $("#writePage").css("display", "flex");
+    $('#write-change').html("");
 
-    $("#contents-area").html("<div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div><div class='emoticon'><img src='/img/layout/travel.png'></div>");
+    var $write_icon;
+    var $icon;
 
-    $(".emoticon img").draggable({
-        containment: "body"
+    $.each(allIcon, function( key, value ) {
+        $write_icon = $('<div class="write-icon"></div>');
+        $write_icon.appendTo( $('#write-change') );
+        $icon = '<img src='+value+'>';
+        $($icon).prependTo($write_icon);
     });
+
+    // $(".write-icon img").draggable({
+    //     containment: "body"
+    // });
+    $( ".write-icon img" ).draggable({
+        containment: "#main-area"
+    });
+    $("#writePage").animate({left: "65vw"});
 }
 
-var ActivateWriteHere = false;
-
-$(document).on('mousedown', '.emoticon img', function(){
-    $( ".emoticon img" ).draggable({
-        containment: "#map"
-    });
-    /* lock icon in map. user could drag icon only in map */
-});
-
-$(document).on('mouseup', '.emoticon img', function(event){
-    x = event.pageX;
-    y = event.pageY;
-    calCoord(x,y);
-});
-
-function calCoord(x,y){
-
-    ActivateWriteHere = true;
-
-    $( ".emoticon img" ).draggable({
-        disabled: true
-    });
-
+// function calCoord(x,y){
+//
+//     ActivateWriteHere = true;
     /*
     a = $("#map").outerWidth();
     b = $("#map").outerHeight();
@@ -314,27 +358,54 @@ function calCoord(x,y){
     }
     */
 
-    $.ajax({
-        type: 'GET',
-        data: "",
-        url: '/footprint/new',
-        success: function(data) {
-            $("#contents-area").html(data);
-        }
-    });
-}
+    // $.ajax({
+    //     type: 'GET',
+    //     data: "",
+    //     url: '/footprint/new',
+    //     success: function(data) {
+    //         $("#contents-area").html(data);
+    //     }
+    // });
 
 
-var listener = naver.maps.Event.addListener(map, 'mousemove', function(e) {
-    if(ActivateWriteHere == true){
-        var here = e.coord;
-        writeHere(here);
-        /*naver.maps.Event.removeListener(listener);*/
-        ActivateWriteHere = false
-    }
-});
+// <div class='footprint-new'>
+//         <form action="/footprint/create" method="post" enctype="application/json">
+//         <h2>닉네임: <%= user.displayName %></h2>
+//         <div>
+//         <input type="text" class="form-control" name="title" id="title" placeholder="제목"/>
+//         </div>
+//         <div>
+//         <img src='/img/layout/travel.png'>
+//         <input type="text" class="form-control" name="icon_url" id="icon_url" placeholder="아이콘 주소"/>
+//         </div>
+//         <div>
+//         <input type="textarea" class="form-control" name="content" id="content" placeholder="내용"/>
+//         </div>
+//
+//         <div>
+//         <input type="number" step="any" class="form-control" name="latitude" id="latitude" placeholder="latitude"/>
+//         </div>
+//
+//         <div>
+//         <input type="number" step="any" class="form-control" name="longitude" id="longitude" placeholder="longitude"/>
+//         </div>
+//
+//         <div>
+//         <button type="submit" class="btn btn-success btn-block">글 쓰기</button>
+//     </div>
+//     </form>
+//     <form  action="/files/upload" enctype="multipart/form-data"  method="post">
+//         <input  type="file" name="image" accept="image/*">
+//         <button type="submit" class="btn btn-success btn-block">사진 제출</button>
+//     </form>
+//     </div>
+// }
+
 
 function writeHere(here) {
+
+    $('#write-change').html("");
+
     var markerOptions = {
         position:  new naver.maps.LatLng(here.y, here.x),
         map: map,
@@ -352,6 +423,7 @@ function writeHere(here) {
     $("#contents-area .footprint-new #latitude").val(here.x);
     $("#contents-area .footprint-new #longitude").val(here.y);
 }
+
 
 function popUp(data) {
     $("#popUp").css("display", "flex");
@@ -393,9 +465,9 @@ function popUp(data) {
     $("#popUp").animate({left: "65vw"});
 }
 
-function cancel(){
-    $("#popUp").animate({left: "100vw"});
-    $("#popUp").data("change", "false");
+function cancel(page){
+    page.animate({left: "100vw"});
+    page.data("change", "false");
 }
 
 function saveIcons(data){
