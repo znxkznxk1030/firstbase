@@ -405,7 +405,9 @@ var deleteFootprintByFootprintID = function(req, res){
             getAuthor(footprintId, function(err, author){
                 if(err) return cb(err, null);
 
-                if(author !== userId)
+                console.log(author);
+
+                if(JSON.parse(JSON.stringify(author))[0] !== userId)
                 {
                     return cb('작성자만 게시물을 삭제 할 수 있습니다.', null);
                 }else
