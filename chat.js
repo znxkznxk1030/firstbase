@@ -7,6 +7,12 @@ var SECRET = config.token_secret;
 
 mongoose.connect('mongodb://localhost:27017', {
     useMongoClient: true
+}, function(err){
+    if(err){
+        console.log('mongodb connection error');
+    }else{
+        console.log('mongodb connect');
+    }
 });
 
 var chatSchema = mongoose.Schema({
