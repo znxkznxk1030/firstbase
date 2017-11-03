@@ -36,14 +36,14 @@ var authMiddleware = function authMiddleware(req, res, next){
     {
         return res.status(401)
             .json({code: -2,
-                message: 'not logged in'});
+                message: '로그인 토큰이 없습니다'});
     }else
     {
         jwt.verify(req.cookies.jwt, SECRET, function(err, decoded){
             if(err) {
                 return res.status(401)
                     .json({code: -2,
-                        message:'token is wrong'});
+                        message:'토큰형식이 잘못 되었습니다'});
             }
 
             req.user = decoded;
