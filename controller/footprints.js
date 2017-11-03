@@ -488,7 +488,7 @@ var getFootprintByFootprintID = function(req, res){
             connection.query(sqlRetrieveFootprintByFootprintId, [footprintId],
                 function(err, footprint){
                     if(err)
-                        return cb(err, {message : "error to find footprint"});
+                        return cb({message : "error to find footprint"}, null);
                     else{
                         var objectFootprint = JSON.parse(JSON.stringify(footprint))[0];
 
@@ -512,7 +512,7 @@ var getFootprintByFootprintID = function(req, res){
                             return cb(null, _.extend(objectFootprint, {iconUrl: iconUrl}));
                         }
                         else
-                            return cb(err, {message : "error to find footprint"});
+                            return cb({message : "error to find footprint"}, null);
                     }
                 });
         },
