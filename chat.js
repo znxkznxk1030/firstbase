@@ -2,18 +2,15 @@ var mongoose = require('mongoose');
 
 var config = require("./config");
 var jwt = require("jsonwebtoken");
+
 var SECRET = config.token_secret;
-
-var AWS = require('aws-sdk');
-
-AWS.config.update({});
 
 mongoose.connect('mongodb://localhost:27017', {
     useMongoClient: true
 });
 
 var chatSchema = mongoose.Schema({
-    room: {type: String, default: "global"},
+    room: {type: String, default: 'global'},
 
     displayName: String,
     msg: String,
@@ -125,11 +122,13 @@ var startSocketIo = function(server){
             newMsg.save(function(err){
                 console.log(err);
                 if(err) throw err;
-
-                msg.isSelf = false;
-                socket.broadcast.emit('chat', msg);
-                msg.isSelf = true;
-                socket.emit('chat', msg);
+                else{
+                    console.log(msg);
+                    msg.isSelf = false;
+                    socket.broadcast.emit('chat', msg);
+                    msg.isSelf = true;
+                    socket.emit('chat', msg);
+                }
             });
         });
     });
