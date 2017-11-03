@@ -41,6 +41,7 @@
                 });
 
                 socket.on('chat', function(data){
+                    console.log(data);
                     $('#chatLogs').append("<div><h3>" + data.displayName + " : <strong>" + data.msg +"</strong>(" + data.time + ")</h3></div>");
                 });
 
