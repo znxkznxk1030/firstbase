@@ -30,7 +30,7 @@ var startSocketIo = function(server){
      */
     io.on('connection', function(socket){
 
-        Chat.find().limit(30).exec(function(err, docs){
+        Chat.find().limit(20).exec(function(err, docs){
             if(err) throw err;
             console.log(docs);
             socket.emit('load old msgs', docs);
@@ -76,8 +76,6 @@ var startSocketIo = function(server){
 
         socket.on('chat', function(data){
 
-            console.log(data);
-
             const token = data.token;
             var displayName;
 
@@ -91,7 +89,6 @@ var startSocketIo = function(server){
                     {
                         displayName = decoded.displayName;
                     }
-
                 });
             }else
             {
@@ -123,7 +120,7 @@ var startSocketIo = function(server){
                 console.log(err);
                 if(err) throw err;
                 else{
-                    console.log(msg);
+                    console.log('debug#' + msg);
                     msg.isSelf = false;
                     socket.broadcast.emit('chat', msg);
                     msg.isSelf = true;
