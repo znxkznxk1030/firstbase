@@ -9,7 +9,7 @@ mongoose.connect('mongodb://localhost:27017', {
     useMongoClient: true
 }, function(err){
     if(err){
-        console.log('mongodb connection error');
+        console.log(err);
     }else{
         console.log('mongodb connect');
     }
