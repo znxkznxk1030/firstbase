@@ -118,7 +118,7 @@ var getFootprintList = function(req, res){
             }, function(err, result){
                 if (err) return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
 
-                else res.status(200).json(util.message(1, result));
+                else res.status(200).json(result);
             });
         });
 };
@@ -208,7 +208,7 @@ var getFootprintListByLocation = function(req, res){
             }, function(err, result){
                 if (err) return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
 
-                else res.status(200).json(util.message(1, result));
+                else res.status(200).json(result);
             });
         });
 };
