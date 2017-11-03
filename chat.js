@@ -118,7 +118,10 @@ var startSocketIo = function(server){
 
             newMsg.save(function(err){
                 console.log(err);
-                if(err) throw err;
+                if(err){
+                    console.log(err);
+                    throw err;
+                }
                 else{
                     console.log('debug#' + msg);
                     msg.isSelf = false;
