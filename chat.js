@@ -79,7 +79,7 @@ var startSocketIo = function(server){
             const token = data.token;
             var displayName = "비회원";
 
-            if(typeof data.displayName === 'undefined')
+            if(typeof data.displayName !== 'undefined')
             {
                 displayName = data.displayName;
             }
