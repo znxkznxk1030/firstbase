@@ -112,6 +112,8 @@ var startSocketIo = function(server){
                 time : (date.getHours() + 9) + '시 ' + date.getMinutes() + '분'
             };
 
+            console.log(msg);
+
             var newMsg = new Chat({
                 msg : data.msg,
                 displayName: displayName,
