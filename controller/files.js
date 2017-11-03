@@ -35,11 +35,11 @@ if(err){
 
 var createItemObject = function(files, cb){
     console.log(files.image.name);
-    var iconKey = guid.raw();
+    var imageKey = 'firstbase-image-' + guid.raw();
 
     const params = {
         Bucket: bucketName,
-        Key : iconKey,
+        Key : imageKey,
         ACL : 'public-read',
         Body : fs.createReadStream(files.image.path)
     };
@@ -49,8 +49,8 @@ var createItemObject = function(files, cb){
             console.log("Error uploading image : ", err);
             return cb(err, null);
         }else{
-            console.log("Successfully uploaded image on S3", iconKey);
-            return cb(null, iconKey);
+            console.log("Successfully uploaded image on S3", imageKey);
+            return cb(null, imageKey);
         }
     });
 };

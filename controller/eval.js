@@ -42,7 +42,7 @@ var evalFootprint = function(req, res){
             {
                 connection.query(sqlEval, [footprintId, id, state],
                     function(err){
-                        if(err) return res.status(400).json({code: -1, message: err});
+                        if(err) return res.status(400).json({code: -1, message: '평가 오류'});
                         return res.status(200).json({code: 1, message: "평가하였습니다."});
                     });
             }else{
@@ -51,14 +51,14 @@ var evalFootprint = function(req, res){
 
                     connection.query(sqlChangeEval, [0, footprintId, id],
                         function(err){
-                            if(err) return res.status(400).json({code: -1, message: err});
+                            if(err) return res.status(400).json({code: -1, message: '평가 오류'});
                             return res.status(200).json({code: 1, message: "평가 취소하였습니다."});
                         });
                 }else
                 {
                     connection.query(sqlChangeEval, [state, footprintId, id],
                         function(err){
-                            if(err) return res.status(400).json({code: -1, message: err});
+                            if(err) return res.status(400).json({code: -1, message: '평가 오류'});
                             return res.status(200).json({code: 1, message: "마음을 바꾸셨습니다."});
                         });
                 }

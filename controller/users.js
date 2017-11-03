@@ -318,7 +318,7 @@ var updateUserImage = function(req, res){
             function(err, userUpdated){
                 if(err) return res.status(400)
                     .json({code: -1,
-                        message: err});
+                        message: '프로필 업데이트 오류'});
 
                 if(userUpdated)
                 {

@@ -30,7 +30,7 @@ var unfollow = function(req, res){
     ];
 
     async.waterfall(task, function(err, result){
-        if(err) return res.status(400).json({code: -1, message: err});
+        if(err) return res.status(400).json({code: -1, message: '팔로우 오류'});
         else{
             return res.status(200).json({code: 1, message:'팔로우 시작'});
         }
@@ -70,7 +70,7 @@ var follow = function(req, res){
     ];
 
     async.waterfall(task, function(err, result){
-        if(err) return res.status(400).json({code: -1, message: err});
+        if(err) return res.status(400).json({code: -1, message: '팔로우 오류'});
         else{
             return res.status(200).json({code: 1, message:'팔로우 시작'});
         }
@@ -94,7 +94,7 @@ var getFollowerList = function(req, res){
         "WHERE user.displayName = ? ";
 
     connection.query(sqlGetFollowerList, displayName, function(err, followers){
-        if(err) return res.status(400).json({code: -1, message: err});
+        if(err) return res.status(400).json({code: -1, message: '팔로워 리스트 불러오기 오류'});
 
         return res.status(200).json({code: 1, followers : followers, message: '팔로워 찾기 성공'});
     })
@@ -118,7 +118,7 @@ var getFollowingList = function(req, res){
         "WHERE user.displayName = ? ";
 
     connection.query(sqlGetFollowerList, displayName, function(err, followers){
-        if(err) return res.status(400).json({code: -1, message: err});
+        if(err) return res.status(400).json({code: -1, message: '팔로잉 리스트 불러오기 오류'});
 
         return res.status(200).json({code: 1, followers : followers, message: '팔로잉한 유저들 찾기 성공'});
     })

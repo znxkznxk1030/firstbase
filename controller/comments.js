@@ -23,7 +23,7 @@ var createComment = function(req, res){
         if(err)
             return res.status(400)
                 .json({code: -1,
-                    message: err});
+                    message: '댓글 생성 오류'});
 
         return res.status(200)
             .json({code: 1,
@@ -76,7 +76,7 @@ var updateComment = function(req, res){
     async.series(task, function(err, result){
         if(err) {
             return res.status(400)
-                .json(util.message(-1, err));
+                .json(util.message(-1, '댓글 수정 오류'));
         }else{
             return res.status(200)
                 .json(util.message(1, result));
@@ -122,7 +122,7 @@ var deleteCommentTemporary = function(req, res){
     async.series(task, function(err, result){
         if(err) {
             return res.status(400)
-                .json(util.message(-1, err));
+                .json(util.message(-1, '댓글 삭제 오류'));
         }else{
             return res.status(200)
                 .json(util.message(1, result));
@@ -139,7 +139,7 @@ var deleteComment = function(req, res){
         res.status(400).json({code: -1, message:"comment id가 잘못 들어왔습니다."});
     }
 
-    const sqlGetAuthor = "SELECT id FROM comment WHERE comment_id = ?";
+    const sqlGetAuthor = "SELECT id FROM comment WHERE comment_id = ? ";
     const sqlDeleteComment = "DELETE FROM comment WHERE comment_id = ?";
 
     var task = [
@@ -169,7 +169,7 @@ var deleteComment = function(req, res){
     async.series(task, function(err, result){
         if(err) {
             return res.status(400)
-                .json(util.message(-1, err));
+                .json(util.message(-1, '댓글 삭제 오류'));
         }else{
             return res.status(200)
                 .json(util.message(1, result));
@@ -186,7 +186,7 @@ var getCommentsByFootprintId = function(req, res){
         if(err)
             return res.status(400)
                     .json({code: -1,
-                        message: err});
+                        message: '에러'});
         if(rows)
         {
             return res.status(200)

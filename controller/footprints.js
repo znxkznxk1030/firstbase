@@ -45,7 +45,7 @@ var getFootprintListByUserDisplayName = function(req, res){
         if (err)
             return res.status(400)
                         .json({code: -1,
-                            message:err});
+                            message:'게시글을 찾는데 오류가 생겼습니다.'});
 
         return res.status(200)
             .json(footprintList);
@@ -68,7 +68,7 @@ var getFootprintListByUserId = function(req, res){
         if (err)
             return res.status(400)
                 .json({code: -1,
-                    message: err});
+                    message: '게시물을 찾는데 오류가 생겼습니다.'});
 
         return res.status(200)
             .json(footprintList);
@@ -86,7 +86,7 @@ var getFootprintList = function(req, res){
         "GROUP BY footprint_id ";
 
     connection.query(sql, [], function(err, footprintList){
-        if(err) res.json({code: -1, message: err});
+        if(err) res.json({code: -1, message: '리스트를 찾는데 오류가 있습니다.'});
 
         var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
 
@@ -160,7 +160,7 @@ var getFootprintListByLocation = function(req, res){
             if(err)
                 return res.status(400)
                     .json({code: -1,
-                    message: err});
+                    message: '해당 게시물을 찾을 수 없습니다.'});
 
             var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
 
@@ -366,7 +366,7 @@ var createFootprint = function(req, res){
                         {
                             return res.status(400)
                                 .json({code: -1,
-                                message: err});
+                                message: '게시글을 생성하는데 오류가 생겼습니다.'});
                         }
 
                         if(result)
@@ -433,7 +433,7 @@ var deleteFootprintByFootprintID = function(req, res){
 
 
     async.series(task, function(err, result){
-        if(err) return res.status(400).json({code: -1, message: err});
+        if(err) return res.status(400).json({code: -1, message: '게시글 삭제 오류'});
         else{
             return res.status(200).json({code: 1, message: result});
         }
@@ -640,7 +640,7 @@ var getFootprintByFootprintID = function(req, res){
             if(err)
                 return res.status(400)
                     .json({ code: -1,
-                        message : err});
+                        message : '게시글 불러오기 오류'});
             else{
                 var output = Object.assign({code: 1}, result[0], result[2], result[3], result[4], result[5]);
                 return res.status(200)
@@ -762,7 +762,7 @@ var getSubFootprintByFootprintID = function(req, res){
             if(err)
                 return res.status(400)
                         .json({code: -1,
-                                message: err});
+                                message: '서브마커 불러오기 오류'});
 
             if(result)
             {
