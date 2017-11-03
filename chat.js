@@ -103,9 +103,7 @@ var startSocketIo = function(server){
             var date = new Date(Date.now());
 
             var msg = {
-                from:{
-                    displayName : displayName
-                },
+                displayName : displayName,
                 msg : data.msg,
 
                 date : date.toLocaleDateString(),
