@@ -41,7 +41,7 @@
                 });
 
                 socket.on('chat', function(data){
-                    $('#chatLogs').append("<div><h3>" + data.from.displayName + " : <strong>" + data.msg +"</strong>(" + data.time + ")</h3></div>");
+                    $('#chatLogs').append("<div><h3>" + data.displayName + " : <strong>" + data.msg +"</strong>(" + data.time + ")</h3></div>");
                 });
 
                 $("form").submit(function(e){
