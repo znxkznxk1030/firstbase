@@ -143,6 +143,8 @@ var getFootprintListByLocation = function(req, res){
         startLng = data.startlng,
         endLat = data.endlat,
         endLng = data.endlng;
+    //todo: between
+    //todo: mysql 반경검색
 
     const sqlRetrieveFootprint =
         "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
@@ -392,7 +394,8 @@ var deleteFootprintByFootprintID = function(req, res){
     console.log(userId);
     console.log(footprintId);
 
-    if(footprintId === null || typeof footprintId === 'undefined' || footprintId === ''){
+    // if(footprintId === null || typeof footprintId === 'undefined' || footprintId === ''){
+    if(!footprintId){
         return res.status(400).json({code: -1, message: "footprint 가 없습니다."});
     }
 
@@ -436,8 +439,6 @@ var deleteFootprintByFootprintID = function(req, res){
         }
 
     });
-
-
 };
 
 var getFootprintByFootprintID = function(req, res){
@@ -488,30 +489,31 @@ var getFootprintByFootprintID = function(req, res){
                 function(err, footprint){
                     if(err)
                         return cb(err, {message : "error to find footprint"});
+                    else{
+                        var objectFootprint = JSON.parse(JSON.stringify(footprint))[0];
 
-                    var objectFootprint = JSON.parse(JSON.stringify(footprint))[0];
-
-                    if(objectFootprint)
-                    {
-
-                        var iconKey = objectFootprint.icon_key;
-
-                        if(iconKey === null)
+                        if(objectFootprint)
                         {
-                            iconKey = 'profiledefault.png';
+
+                            var iconKey = objectFootprint.icon_key;
+
+                            if(iconKey === null)
+                            {
+                                iconKey = 'profiledefault.png';
+                            }
+
+                            var params = {
+                                Bucket: bucketName,
+                                Key: iconKey
+                            };
+
+                            const iconUrl = s3.getSignedUrl('getObject', params);
+
+                            return cb(null, _.extend(objectFootprint, {iconUrl: iconUrl}));
                         }
-
-                        var params = {
-                            Bucket: bucketName,
-                            Key: iconKey
-                        };
-
-                        const iconUrl = s3.getSignedUrl('getObject', params);
-
-                        return cb(null, _.extend(objectFootprint, {iconUrl: iconUrl}));
+                        else
+                            return cb(err, {message : "error to find footprint"});
                     }
-                    else
-                        return cb(err, {message : "error to find footprint"});
                 });
         },
         /**
