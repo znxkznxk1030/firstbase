@@ -399,7 +399,13 @@ var registrateUser = function registrateUser(formData, cb){
             Check DisplayName's validation.
             1. length (5 < && < 25)
          */
-var isDisplayNameVaild = function(displayName){
+var isDisplayNameVaild = function(displayName , oldDisplayName){
+
+    if(!oldDisplayName && displayName === oldDisplayName)
+    {
+        return null;
+    }
+
     if(displayName === null || displayName === '' || displayName === 'undefined')
         return '닉네임 입력 칸이 비어있습니다.';
 
