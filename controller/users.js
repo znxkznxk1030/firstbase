@@ -296,25 +296,28 @@ var updateUserInfo = function(req, res){
         description = " ";
     }
 
-    isDisplayNameVaild(displayName, function(err){
-        if(err) if(err)
-            return res.status(400)
-                .json({code:-1,
-                    message:err});
-
-        else{
+    var task = [
+        function(cb){
+            return cb(isDisplayNameVaild(displayName, user.displayName));
+        },
+        function(cb){
             connection.query(sql, [displayName, description, user.id],
-                function(err, userUpdated){
-                    if(err)
-                        return res.status(400)
-                            .json({code:-1,
-                                message:'sql error'});
-
-                    return res.status(200)
-                        .json({code: 1,
-                            message:'success to update profile'});
+                function(err, userUpdated) {
+                    if(err) cb(err);
+                    else cb(null);
                 });
         }
+    ];
+
+    async.series(task, function(err){
+        if(err)
+            return res.status(400)
+                .json({code:-1,
+                    message:'sql error'});
+
+        return res.status(200)
+            .json({code: 1,
+                message:'success to update profile'});
     });
 };
 
