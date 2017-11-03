@@ -28,6 +28,14 @@
                     displayName: '<%= displayName %>'
                 });
 
+                socket.on('load old msgs', function(docs){
+                    console.log(docs);
+                    docs.forEach(function(doc){
+                        $('#chatLogs').append("<div><h3>" + doc.displayName + " : <strong>" + doc.msg +"</strong>(" + doc.time + ")</h3></div>");
+                    });
+
+                });
+
                 socket.on('login', function(data){
                    $('#chatLogs').append('<div><h3>' + data + '님이 왔어요~!</h3></div>');
                 });
