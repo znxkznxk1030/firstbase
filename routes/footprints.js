@@ -9,7 +9,6 @@ router.get('/listbyid', controller.getFootprintListByUserId);
 router.get('/listbyDisplayName', controller.getFootprintListByUserDisplayName);
 
 
-
 /**
  * display functions
  */

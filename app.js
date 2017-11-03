@@ -22,11 +22,7 @@ var http = require('http');
 var https = require('https');
 
 var passport = require('./auth/index');
-var flash = require('connect-flash');
 var config = require("./config");
-var jwt = require("jsonwebtoken");
-
-var SECRET = config.token_secret;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -98,105 +94,9 @@ var server = http.createServer(app).listen(config.port, function(){
     console.log('server running port : ' + config.port);
 });
 
-var io = require('socket.io')(server);
 
 
-/**
- * chat (socket.io)
- */
-io.on('connection', function(socket){
 
-    socket.on('login', function(data){
-        //console.log('Client logged-in\n name : ' + data.id + '\n userid: ' + data.displayName);
-        socket.displayName = data.displayName;
-
-        io.emit('login', data.displayName);
-
-    });
-
-    socket.on('login-android', function(data){
-
-        const token = data.token;
-        var displayName;
-
-        console.log(token);
-
-        if(token !== null && token !== '' && token !== 'undefined')
-        {
-            jwt.verify(token, SECRET, function(err, decoded){
-                if(err)
-                {
-                    displayName = "비회원";
-                }else
-                {
-                    displayName = decoded.displayName;
-                }
-
-            });
-        }else
-        {
-            displayName = "비회원";
-        }
-
-        socket.displayName = displayName;
-
-        io.emit('login', displayName);
-
-    });
-
-    socket.on('disconnect', function(){
-        console.log(socket.displayName + '님이 나가셨습니다.');
-    });
-
-    socket.on('chat', function(data){
-
-        console.log(data);
-
-        const token = data.token;
-        var displayName;
-
-        if(token !== null && token !== '' && token !== 'undefined')
-        {
-            jwt.verify(token, SECRET, function(err, decoded){
-                if(err)
-                {
-                    displayName = "비회원";
-                }else
-                {
-                    displayName = decoded.displayName;
-                }
-
-            });
-        }else
-        {
-            displayName = "비회원";
-        }
-
-        socket.displayName = displayName;
-
-        var date = new Date(Date.now());
-
-        var msg = {
-          from : {
-            displayName : displayName
-          },
-            msg : data.msg,
-
-            date : date.toLocaleDateString(),
-            time : (date.getHours() + 9) + '시 ' + date.getMinutes() + '분'
-        };
-
-        console.log('Message from %s: %s', socket.displayName, msg);
-
-        msg.from.isSelf = false;
-        //console.log(msg);
-        socket.broadcast.emit('chat', msg);
-        msg.from.isSelf = true;
-        //console.log(msg);
-        socket.emit('chat', msg);
-
-    });
-
-});
+require('./chat').startSocketIO(server);
 
 module.exports = app;

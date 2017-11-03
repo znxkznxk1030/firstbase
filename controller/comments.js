@@ -41,7 +41,7 @@ var updateComment = function(req, res){
         res.status(400).json({code: -1, message:"comment id가 잘못 들어왔습니다."});
     }
 
-    if(content !== null || typeof content !== 'undefine' && content.length > 500)
+    if(content !== null || typeof content !== 'undefined' && content.length > 500)
     {
         res.status(400).json(util.message(-1, '댓글의 길이가 너무 깁니다.'));
     }
