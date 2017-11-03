@@ -77,22 +77,21 @@ var startSocketIo = function(server){
         socket.on('chat', function(data){
 
             const token = data.token;
-            var displayName;
+            var displayName = "비회원";
+
+            if(typeof data.displayName === 'undefined')
+            {
+                displayName = data.displayName;
+            }
 
             if(token !== null && token !== '' && token !== 'undefined')
             {
                 jwt.verify(token, SECRET, function(err, decoded){
-                    if(err)
-                    {
-                        displayName = "비회원";
-                    }else
+                    if(!err)
                     {
                         displayName = decoded.displayName;
                     }
                 });
-            }else
-            {
-                displayName = "비회원";
             }
 
             socket.displayName = displayName;
