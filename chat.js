@@ -126,9 +126,9 @@ var startSocketIo = function(server){
                 console.log(err);
                 if(err) throw err;
 
-                msg.from.isSelf = false;
+                msg.isSelf = false;
                 socket.broadcast.emit('chat', msg);
-                msg.from.isSelf = true;
+                msg.isSelf = true;
                 socket.emit('chat', msg);
             });
         });
