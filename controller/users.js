@@ -293,20 +293,29 @@ var updateUserInfo = function(req, res){
 
     if(!description)
     {
-        description = "Say Something About Me";
+        description = " ";
     }
 
-    connection.query(sql, [displayName, description, user.id],
-        function(err, userUpdated){
-            if(err)
-                return res.status(400)
-                    .json({code:-1,
-                        message:'sql error'});
+    isDisplayNameVaild(displayName, function(err){
+        if(err) if(err)
+            return res.status(400)
+                .json({code:-1,
+                    message:err});
 
-            return res.status(200)
-                .json({code: 1,
-                    message:'success to update profile'});
-        });
+        else{
+            connection.query(sql, [displayName, description, user.id],
+                function(err, userUpdated){
+                    if(err)
+                        return res.status(400)
+                            .json({code:-1,
+                                message:'sql error'});
+
+                    return res.status(200)
+                        .json({code: 1,
+                            message:'success to update profile'});
+                });
+        }
+    });
 };
 
 var updateUserImage = function(req, res){
