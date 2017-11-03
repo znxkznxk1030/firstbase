@@ -4,7 +4,11 @@ const locationUtil = require('../utils/locationUtil');
 const async = require('async');
 const bucketName = 'firstbase-bucket';
 const AWS = require('aws-sdk');
+const profileDefaultKey = 'profiledefault.png';
+
 const _=require('underscore');
+var util = require("../utils/util");
+var retrieveByKey = require("./files").retrieveByKey;
 
 AWS.config.loadFromPath('s3config.json');
 
@@ -77,21 +81,46 @@ var getFootprintListByUserId = function(req, res){
 
 var getFootprintList = function(req, res){
 
-    var sql = "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
-        "FROM footprint " +
-        "LEFT JOIN view " +
+    const data = req.query;
+
+    //todo: between
+    //todo: mysql 반경검색
+
+    const sqlRetrieveFootprint =
+        "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
+        "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
         "ON footprint.footprint_id = comment.footprint_id " +
         "GROUP BY footprint_id ";
 
-    connection.query(sql, [], function(err, footprintList){
-        if(err) res.json({code: -1, message: '리스트를 찾는데 오류가 있습니다.'});
+    const sqlFindUser = "SELECT profile_key " +
+        "FROM user " +
+        "WHERE user.id = ? ";
 
-        var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
+    connection.query(sqlRetrieveFootprint,[],
+        function(err, footprintList){
+            if(err)
+                return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
 
-        res.json(footprintListJSON);
-    });
+            var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
+
+            async.map(footprintListJSON, function(footprint, cb){
+                connection.query(sqlFindUser, footprint.id, function(err, profile_key){
+                    if (err) cb(err);
+
+                    var profileUrl, profileKey = JSON.parse(JSON.stringify(profile_key))[0].profile_key;
+                    if(profileKey) profileUrl = retrieveByKey(profileKey);
+                    else profileUrl = retrieveByKey(profileDefaultKey);
+
+                    return cb(null, _.extend(footprint, { profileUrl: profileUrl }));
+                });
+            }, function(err, result){
+                if (err) return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
+
+                else res.status(200).json(util.message(1, result));
+            });
+        });
 };
 
 var getFootprintListByCurrentLocationAndViewLevel = function(req, res){
@@ -155,18 +184,33 @@ var getFootprintListByLocation = function(req, res){
         "WHERE footprint.latitude <= ? AND footprint.longitude >= ? AND footprint.latitude >= ? AND footprint.longitude <= ? " +
         "GROUP BY footprint_id ";
 
-    connection.query(sqlRetrieveFootprint, [startLat, startLng, endLat, endLng],
+    const sqlFindUser = "SELECT profile_key " +
+        "FROM user " +
+        "WHERE user.id = ? ";
+
+    connection.query(sqlRetrieveFootprint,[startLat, startLng, endLat, endLng],
         function(err, footprintList){
             if(err)
-                return res.status(400)
-                    .json({code: -1,
-                    message: '해당 게시물을 찾을 수 없습니다.'});
+                return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
 
             var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
 
-            return res.status(200)
-                .json(footprintListJSON);
-    });
+            async.map(footprintListJSON, function(footprint, cb){
+                connection.query(sqlFindUser, footprint.id, function(err, profile_key){
+                    if (err) cb(err);
+
+                    var profileUrl, profileKey = JSON.parse(JSON.stringify(profile_key))[0].profile_key;
+                    if(profileKey) profileUrl = retrieveByKey(profileKey);
+                    else profileUrl = retrieveByKey(profileDefaultKey);
+
+                    return cb(null, _.extend(footprint, { profileUrl: profileUrl }));
+                });
+            }, function(err, result){
+                if (err) return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
+
+                else res.status(200).json(util.message(1, result));
+            });
+        });
 };
 
 
