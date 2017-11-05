@@ -98,6 +98,14 @@ var getFootprintList = function(req, res){
         "FROM user " +
         "WHERE user.id = ? ";
 
+    const sqlCountLike =
+        "SELECT count(*) AS countLike " +
+        "FROM eval WHERE footprint_id = ? AND state = 1";
+
+    const sqlCountDislike =
+        "SELECT count(*) AS countDisLike " +
+        "FROM eval WHERE footprint_id = ? AND state = 2";
+
     connection.query(sqlRetrieveFootprint,[],
         function(err, footprintList){
             if(err)
@@ -116,7 +124,7 @@ var getFootprintList = function(req, res){
 
                             footprint.displayName = profile.displayName;
 
-                            var profileUrl, profileKey = profile[0].profile_key;
+                            var profileUrl, profileKey = profile.profile_key;
                             if(profileKey) profileUrl = retrieveByKey(profileKey);
                             else profileUrl = retrieveByKey(profileDefaultKey);
 
@@ -124,7 +132,7 @@ var getFootprintList = function(req, res){
                         });
                     },
                     function(tails, callback){
-                        connection.query(sqlCountLike, [footprintId],
+                        connection.query(sqlCountLike, [footprint.footprint_id],
                             function(err, countLike){
                                 if(err) return callback(err);
 
@@ -134,7 +142,7 @@ var getFootprintList = function(req, res){
                             });
                     },
                     function(tails, callback){
-                        connection.query(sqlCountDislike, [footprintId],
+                        connection.query(sqlCountDislike, [footprint.footprint_id],
                             function(err, Dislike){
                                 if(err) return callback(err);
 
@@ -249,7 +257,7 @@ var getFootprintListByLocation = function(req, res){
 
                             footprint.displayName = profile.displayName;
 
-                            var profileUrl, profileKey = profile[0].profile_key;
+                            var profileUrl, profileKey = profile.profile_key;
                             if(profileKey) profileUrl = retrieveByKey(profileKey);
                             else profileUrl = retrieveByKey(profileDefaultKey);
 
@@ -257,7 +265,7 @@ var getFootprintListByLocation = function(req, res){
                         });
                     },
                     function(tails, callback){
-                        connection.query(sqlCountLike, [footprintId],
+                        connection.query(sqlCountLike, [footprint.footprint_id],
                             function(err, countLike){
                                 if(err) return callback(err);
 
@@ -267,7 +275,7 @@ var getFootprintListByLocation = function(req, res){
                             });
                     },
                     function(tails, callback){
-                        connection.query(sqlCountDislike, [footprintId],
+                        connection.query(sqlCountDislike, [footprint.footprint_id],
                             function(err, Dislike){
                                 if(err) return callback(err);
 
