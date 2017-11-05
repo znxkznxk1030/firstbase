@@ -64,7 +64,7 @@ var follow = function(req, res){
                 return cb(null, JSON.parse(JSON.stringify(targetId))[0].id);
             });
         },
-        function(cb){
+        function(targetId, cb){
             connection.query(sqlIsFollow, [id, targetId], function(err, isFollow){
                 if(err) return cb('팔로우 오류', null);
 
@@ -72,7 +72,7 @@ var follow = function(req, res){
                     return cb('이미 팔로우한 상대 입니다.');
                 }
 
-                return cb(null);
+                return cb(null, targetId);
 
             });
         },
