@@ -517,7 +517,7 @@ var getFootprintByFootprintID = function(req, res){
         "FROM eval WHERE footprint_id = ? AND state = 2";
 
     const sqlRetrieveComments =
-        "SELECT comment.is_ban AS isBAN, comment.comment_id AS commentId, comment.content ,comment.modified_date AS date, user.displayName, user.profile_key " +
+        "SELECT comment.is_ban AS isBan, comment.comment_id AS commentId, comment.content ,comment.modified_date AS date, user.displayName, user.profile_key " +
         "FROM comment LEFT JOIN user " +
         "ON comment.id = user.id " +
         "WHERE comment.footprint_id = ? ";
