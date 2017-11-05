@@ -31,13 +31,20 @@ var findOneMiddleware = function (req, res, next){
     const sqlFindOne =
         "SELECT id FROM user WHERE displayName = ?";
 
+    if(!req.query.displayName)
+        return res.status(400)
+            .json({code: -1,
+                message: '닉네임이 비어있습니다.'});
+
+
     connection.query(sqlFindOne, req.query.displayName, function(err, user){
         if(err) return res.status(400)
             .json({code: -1,
                 message: '해당 닉네임이 없습니다.'});
-
-        req.author = JSON.parse(JSON.stringify(user))[0];
-        next();
+        else{
+            req.author = JSON.parse(JSON.stringify(user))[0];
+            next();
+        }
     });
 };
 
