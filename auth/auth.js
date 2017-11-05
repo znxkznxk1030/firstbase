@@ -1,6 +1,7 @@
 var jwt = require('jsonwebtoken');
 var compose = require('composable-middleware');
 var config = require('../config');
+const connection = require('../database/db');
 var SECRET = config.token_secret;
 var EXPIRES = 60*60*24;
 
@@ -24,6 +25,20 @@ var isAuthenticated = function isAuthenticated(){
             };
             next();
         });
+};
+
+var findOneMiddleware = function (req, res, next){
+    const sqlFindOne =
+        "SELECT id FROM user WHERE id = ?";
+
+    connection.query(sqlFindOne, req.query.displayName, function(err, user){
+        if(err) return res.status(400)
+            .json({code: -1,
+                message: '해당 닉네임이 없습니다.'});
+
+        req.author.id = JSON.parse(JSON.stringify(user))[0].id;
+        next();
+    });
 };
 
 var authMiddleware = function authMiddleware(req, res, next){
@@ -89,3 +104,4 @@ exports.testAuthenticated = testAuthenticated;
 exports.authMiddleware = authMiddleware;
 exports.clearCookieClear = clearCookieClear;
 exports.passMiddleware = passMiddleware;
+exports.findOneMiddleware = findOneMiddleware;
