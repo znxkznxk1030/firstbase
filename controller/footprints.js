@@ -593,6 +593,7 @@ var getFootprintByFootprintID = function(req, res){
         "GROUP BY footprint_id ";
 
     const sqlWatch =  "UPDATE footprint SET view_count = view_count + 1 WHERE footprint_id = ? ";
+
     const sqlImageLoad = "SELECT * FROM image WHERE footprint_id = ?";
     const sqlCountLike =
         "SELECT count(*) AS countLike " +
@@ -606,6 +607,10 @@ var getFootprintByFootprintID = function(req, res){
         "FROM comment LEFT JOIN user " +
         "ON comment.id = user.id " +
         "WHERE comment.footprint_id = ? ";
+
+
+    const sqlGetProfileImage =
+        "SELECT profile_key, displayName FROM user WHERE id = ?";
 
     const task = [
         /**
@@ -652,12 +657,12 @@ var getFootprintByFootprintID = function(req, res){
          * @param cb
          * @returns {*}
          */
-        function(cb){
+        function(footprint, cb){
                 connection.query(sqlWatch, [footprintId],
                     function(err){
                         if(err)
                             return cb(err);
-                        return cb(null);
+                        return cb(null, footprint);
                 });
         },
         /**
@@ -665,7 +670,7 @@ var getFootprintByFootprintID = function(req, res){
          *
          * @public
          */
-        function(cb){
+        function(footprint, cb){
             connection.query(sqlImageLoad, [footprintId],
                 function(err, imageInfo){
                     if(err) return cb(err);
@@ -686,10 +691,10 @@ var getFootprintByFootprintID = function(req, res){
                         imageUrls.push(imageUrl);
                     });
 
-                    return cb(null, {imageUrls: imageUrls});
+                    return cb(null, _.extend(footprint, {imageUrls: imageUrls}));
                 });
         },
-        function(cb){
+        function(footprint, cb){
             connection.query(sqlRetrieveComments, [footprintId],
                 function(err, comments){
                     if(err) return cb(err);
@@ -721,41 +726,64 @@ var getFootprintByFootprintID = function(req, res){
                     });
 
                     console.log(ret);
-                    return cb(null, {comments: ret});
+                    return cb(null, _.extend(footprint, {comments: ret}));
                 });
         },
-        function(cb){
+        function(footprint, cb){
             connection.query(sqlCountLike, [footprintId],
                 function(err, countLike){
                     if(err) return cb(err);
 
-                    const ret = JSON.parse(JSON.stringify(countLike))[0];
-
-                    return cb(null, ret);
+                    return cb(null, _.extend(footprint, JSON.parse(JSON.stringify(countLike))[0]));
                 });
         },
-        function(cb){
+        function(footprint, cb){
             connection.query(sqlCountDislike, [footprintId],
                 function(err, Dislike){
                     if(err) return cb(err);
 
-                    const ret = JSON.parse(JSON.stringify(Dislike))[0];
+                    return cb(null, _.extend(footprint, JSON.parse(JSON.stringify(Dislike))[0]));
+                });
+        },
+        function(footprint, cb){
+            connection.query(sqlGetProfileImage, [footprint.id],
+                function(err, profile){
+                    if(err) return cb(err);
 
-                    return cb(null, ret);
+
+                    footprint.displayName = JSON.parse(JSON.stringify(profile))[0].displayName;
+
+
+                    var profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
+
+                    if(profileKey === null)
+                    {
+                        profileKey = 'profiledefault.png';
+                    }
+
+                    const params = {
+                        Bucket: bucketName,
+                        Key: profileKey
+                    };
+
+                    const profileUrl = s3.getSignedUrl('getObject', params);
+
+                    delete footprint.id;
+                    console.log(profileUrl);
+                    return cb(null, _.extend(footprint, {profileUrl : profileUrl}));
                 });
         }
     ];
 
-    async.series(task,
+    async.waterfall(task,
         function(err, result){
             if(err)
                 return res.status(400)
                     .json({ code: -1,
                         message : '게시글 불러오기 오류'});
             else{
-                var output = Object.assign({code: 1}, result[0], result[2], result[3], result[4], result[5]);
                 return res.status(200)
-                    .json(output);
+                    .json(_.extend(result, {code:1}));
             }
         });
 };
