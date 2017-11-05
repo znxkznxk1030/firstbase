@@ -77,7 +77,7 @@ var follow = function(req, res){
                             function (err, result) {
                                 if (err) return cb('팔로우 오류', null);
 
-                                return cb(null, false);
+                                return cb(null, 0);
                             });
                     }else{
                         connection.query(sqlFollow, [id, targetId],
@@ -86,7 +86,7 @@ var follow = function(req, res){
 
                                 return cb(null);
                             });
-                        return cb(null, true);
+                        return cb(null, 1);
                     }
                 }
             });
