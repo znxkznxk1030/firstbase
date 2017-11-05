@@ -73,14 +73,17 @@ var follow = function(req, res){
                 if(err) return cb('팔로우 오류', null);
 
                 if(JSON.parse(JSON.stringify(isFollow))[0]){
+
                     connection.query(sqlUnFollow, [id, targetId],
                         function(err, result){
-                            if(err) return cb(err, null);
+                            if(err) return cb('팔로우 오류', null);
 
-                            return cb(null);
+                            return cb('팔로우를 취소 했습니다');
                         });
                 }
+
                 return cb(null, targetId);
+
             });
         },
         function(targetId, cb){
@@ -94,7 +97,7 @@ var follow = function(req, res){
     ];
 
     async.waterfall(task, function(err, result){
-        if(err) return res.status(400).json({code: -1, message: err});
+        if(err) return res.status(200).json({code: -1, message: err});
         else{
             return res.status(200).json({code: 1, message:'팔로우 시작'});
         }
