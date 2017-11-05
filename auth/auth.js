@@ -36,7 +36,7 @@ var findOneMiddleware = function (req, res, next){
             .json({code: -1,
                 message: '해당 닉네임이 없습니다.'});
 
-        req.author.id = JSON.parse(JSON.stringify(user))[0].id;
+        req.author = JSON.parse(JSON.stringify(user))[0];
         next();
     });
 };
