@@ -979,6 +979,5 @@ module.exports = {
     deleteFootprintByFootprintID : deleteFootprintByFootprintID,
     getFootprintListByCurrentLocationAndViewLevel : getFootprintListByCurrentLocationAndViewLevel,
     createSubFootprint : createSubFootprint,
-    getSubFootprintByFootprintID: getSubFootprintByFootprintID,
-    getFootprintListByUserDisplayName : getFootprintListByUserDisplayName
+    getSubFootprintByFootprintID: getSubFootprintByFootprintID
 };
