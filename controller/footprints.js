@@ -87,7 +87,7 @@ var getFootprintList = function(req, res){
     //todo: mysql 반경검색
 
     const sqlRetrieveFootprint =
-        "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
+        "SELECT footprint.*, count(comment.comment_id) AS countComments " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
@@ -219,7 +219,7 @@ var getFootprintListByLocation = function(req, res){
     //todo: mysql 반경검색
 
     const sqlRetrieveFootprint =
-        "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
+        "SELECT footprint.*, count(comment.comment_id) AS countComments " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
