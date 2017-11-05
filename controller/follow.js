@@ -48,21 +48,38 @@ var follow = function(req, res){
         "INSERT INTO follow (follower_id, target_id) " +
         "VALUES (?, ?) ";
 
+    const sqlIsFollow =
+        "SELECT * " +
+        "FROM follow " +
+        "WHERE follower_id = ? AND target_id = ? ";
+
     const sqlGetId =
         "SELECT id FROM user WHERE displayName = ?";
 
     var task = [
         function(cb){
             connection.query(sqlGetId, [targetDisplayName], function(err, targetId){
-                if(err) return cb(err, null);
+                if(err) return cb('해당 아이디가 없습니다.', null);
 
-                return cb(null, targetId);
+                return cb(null, JSON.parse(JSON.stringify(targetId))[0].id);
+            });
+        },
+        function(cb){
+            connection.query(sqlIsFollow, [id, targetId], function(err, isFollow){
+                if(err) return cb('팔로우 오류', null);
+
+                if(JSON.parse(JSON.stringify(isFollow))[0]){
+                    return cb('이미 팔로우한 상대 입니다.');
+                }
+
+                return cb(null);
+
             });
         },
         function(targetId, cb){
             connection.query(sqlFollow, [id, targetId],
                 function(err, result){
-                    if(err) return cb(err, null);
+                    if(err) return cb('팔로우 오류', null);
 
                     return cb(null);
                 });
@@ -70,7 +87,7 @@ var follow = function(req, res){
     ];
 
     async.waterfall(task, function(err, result){
-        if(err) return res.status(400).json({code: -1, message: '팔로우 오류'});
+        if(err) return res.status(400).json({code: -1, message: err});
         else{
             return res.status(200).json({code: 1, message:'팔로우 시작'});
         }
