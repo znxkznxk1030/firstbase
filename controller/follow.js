@@ -9,7 +9,7 @@ var unfollow = function(req, res){
         "SELECT id FROM user WHERE displayName = ?";
 
     const sqlUnFollow =
-        "DELETE FROM follow WHERE follower_id = ? AND target_id = ?"
+        "DELETE FROM follow WHERE follower_id = ? AND target_id = ?";
 
     var task = [
         function(cb){
@@ -56,6 +56,10 @@ var follow = function(req, res){
     const sqlGetId =
         "SELECT id FROM user WHERE displayName = ?";
 
+    const sqlUnFollow =
+        "DELETE FROM follow WHERE follower_id = ? AND target_id = ?";
+
+
     var task = [
         function(cb){
             connection.query(sqlGetId, [targetDisplayName], function(err, targetId){
@@ -69,11 +73,14 @@ var follow = function(req, res){
                 if(err) return cb('팔로우 오류', null);
 
                 if(JSON.parse(JSON.stringify(isFollow))[0]){
-                    return cb('이미 팔로우한 상대 입니다.');
+                    connection.query(sqlUnFollow, [id, targetId],
+                        function(err, result){
+                            if(err) return cb(err, null);
+
+                            return cb(null);
+                        });
                 }
-
                 return cb(null, targetId);
-
             });
         },
         function(targetId, cb){
