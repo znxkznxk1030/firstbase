@@ -37,7 +37,7 @@ var startSocketIo = function(server){
      */
     io.on('connection', function(socket){
 
-        Chat.find({ $gt: Date.now() - ONEDAY}).exec(function(err, docs){
+        Chat.find({ timeStamp : {$gt: Date.now() - ONEDAY}}).exec(function(err, docs){
             if(err) {
                 console.log(err);
                 throw err;
