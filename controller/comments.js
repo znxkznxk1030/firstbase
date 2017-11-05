@@ -38,12 +38,12 @@ var updateComment = function(req, res){
         content = req.body.content;
 
     if(commentId === null || typeof commentId === 'undefined' || commentId === ''){
-        res.status(400).json({code: -1, message:"comment id가 잘못 들어왔습니다."});
+        return res.status(400).json({code: -1, message:"comment id가 잘못 들어왔습니다."});
     }
 
     if(content !== null || typeof content !== 'undefined' && content.length > 500)
     {
-        res.status(400).json(util.message(-1, '댓글의 길이가 너무 깁니다.'));
+        return res.status(400).json(util.message(-1, '댓글의 길이가 너무 깁니다.'));
     }
 
     const sqlUpdateComment = "UPDATE comment SET content = ? WHERE comment_id = ? AND id = ?";
@@ -76,7 +76,7 @@ var deleteCommentTemporary = function(req, res){
     const sqlDeleteComment = "UPDATE comment SET isBan = 1 WHERE comment_id = ? AND id = ?";
 
     if(commentId === null || typeof commentId === 'undefined' || commentId === ''){
-        res.status(400).json({code: -1, message:"comment id가 잘못 들어왔습니다."});
+        return res.status(400).json({code: -1, message:"comment id가 잘못 들어왔습니다."});
     }
 
     var task = [
@@ -106,7 +106,7 @@ var deleteComment = function(req, res){
         commentId = req.body.commentId;
 
     if(commentId === null || typeof commentId === 'undefined' || commentId === ''){
-        res.status(400).json({code: -1, message:"comment id가 잘못 들어왔습니다."});
+        return res.status(400).json({code: -1, message:"comment id가 잘못 들어왔습니다."});
     }
 
     const sqlGetAuthor = "SELECT id FROM comment WHERE comment_id = ? ";
@@ -163,7 +163,7 @@ var getCommentsByFootprintId = function(req, res){
                 .json(JSON.parse(JSON.stringify(rows)));
         }else
         {
-            res.status(400)
+            return res.status(400)
                 .json({code: -1,
                     message: 'rows not exist'});
         }
