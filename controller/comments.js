@@ -53,7 +53,7 @@ var updateComment = function(req, res){
             connection.query(sqlUpdateComment, [content, commentId, id], function(err, result){
                 if(err) return cb(err, null);
 
-                return cb(result);
+                return cb(null);
             });
         }
     ];
@@ -86,7 +86,7 @@ var deleteCommentTemporary = function(req, res){
             connection.query(sqlDeleteComment, [commentId, id], function(err, result){
                 if(err) return cb(err, null);
 
-                return cb(result);
+                return cb(null);
             });
         }
     ];
