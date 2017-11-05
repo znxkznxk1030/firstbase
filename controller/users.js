@@ -136,7 +136,7 @@ var getUserInfoByReqHeader = function(req, res){
                 delete profile.id;
 
                 return res.status(200)
-                    .json(profile);
+                    .json(_.extend(profile, {isFollow: false}););
             }
         });
 };
@@ -205,7 +205,6 @@ var getUserInfoByUserDisplayName = function(req, res){
                     isFollow = true;
                 }
                 return cb(null, _.extend(profile, {isFollow: isFollow}));
-
             });
         }
     ];
