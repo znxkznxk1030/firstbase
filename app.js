@@ -16,6 +16,7 @@ var traces = require('./routes/traces');
 var chat = require('./routes/chat');
 var eval = require('./routes/eval');
 var follow = require('./routes/follow');
+var version = require('./routes/version');
 
 var app = express();
 var http = require('http');
@@ -57,6 +58,7 @@ app.use('/traces', traces);
 app.use('/chat', chat);
 app.use('/eval', eval);
 app.use('/follow', follow);
+app.use('/version', version);
 
 //swagger
 app.use('/swagger-ui', express.static(path.join('./node_modules/swagger-ui/dist')));
@@ -93,8 +95,6 @@ console.log("start2 : " + config.port);
 var server = http.createServer(app).listen(config.port, function(){
     console.log('server running port : ' + config.port);
 });
-
-
 
 
 require('./chat').startSocketIO(server);

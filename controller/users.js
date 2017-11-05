@@ -425,7 +425,7 @@ var isDisplayNameVaild = function(displayName , oldDisplayName){
     {
         return null;
     }
-
+    //todo: 띄어쓰기 방지, 영문, 숫자
     if(displayName === null || displayName === '' || displayName === 'undefined')
         return '닉네임 입력 칸이 비어있습니다.';
 
