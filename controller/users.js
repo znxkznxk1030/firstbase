@@ -152,7 +152,12 @@ var getUserInfoByUserDisplayName = function(req, res){
     const sqlGetFollowingCount =
         "SELECT count(*) AS countFollowing FROM follow WHERE follow.follower_id = ? ";
 
+    const sqlIsFollow =
+        "SELECT * FROM follow WHERE follower_id = ? AND target_id = ?";
+
     const displayName = req.query.displayName;
+
+    const id = req.user.id;
 
     const task = [
         function(cb){
@@ -180,14 +185,28 @@ var getUserInfoByUserDisplayName = function(req, res){
         function(profile, cb){
             console.log(profile.id);
             connection.query(sqlGetFollowerCount, [profile.id], function(err, countFollower){
-                if (err) return cb({code: -1, message: err}, null);
+                if (err) return cb(err, null);
                 return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollower[0]))));
             });
         },
         function(profile, cb){
             connection.query(sqlGetFollowingCount, [profile.id], function(err, countFollowing){
-                if (err) return cb({code: -1, message: err}, null);
+                if (err) return cb(err, null);
                 return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollowing[0]))));
+            });
+        },
+        function (profile, cb) {
+            connection.query(sqlIsFollow, [id, profile.id], function(err, isFollow){
+                if (err) return cb(err, null);
+
+                var isFollow = false;
+
+                if(JSON.parse(JSON.stringify(isFollow))[0]){
+                    isFollow = true;
+                }
+
+                return cb(null, _.extend(profile, {isFollow: isFollow}));
+
             });
         }
     ];
@@ -196,7 +215,7 @@ var getUserInfoByUserDisplayName = function(req, res){
         function(err, profile){
             if(err) return res.status(400)
                 .json({code: -1,
-                    message:err});
+                    message:'유저 정보 가져오기 실패'});
 
             else{
                 delete profile.id;
