@@ -77,16 +77,15 @@ var follow = function(req, res){
                             function (err, result) {
                                 if (err) return cb('팔로우 오류', null);
 
-                                return cb(null, 0);
+                                return cb(null, false);
                             });
                     }else{
                         connection.query(sqlFollow, [id, targetId],
                             function(err, result){
                                 if(err) return cb('팔로우 오류', null);
 
-                                return cb(null);
+                                return cb(null, true);
                             });
-                        return cb(null, 1);
                     }
                 }
             });
