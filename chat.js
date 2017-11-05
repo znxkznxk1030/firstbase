@@ -5,6 +5,7 @@ var jwt = require("jsonwebtoken");
 
 var SECRET = config.token_secret;
 var ONEDAY = 1000 * 60 * 60;
+var ONEWEEK = ONEDAY * 7;
 
 mongoose.connect('mongodb://127.0.0.1:27017', {
     useMongoClient: true
@@ -37,7 +38,7 @@ var startSocketIo = function(server){
      */
     io.on('connection', function(socket){
 
-        Chat.find({ timeStamp : {$gt: Date.now() - ONEDAY}}).exec(function(err, docs){
+        Chat.find({ timeStamp : {$gt: Date.now() - ONEWEEK}}).exec(function(err, docs){
             if(err) {
                 console.log(err);
                 throw err;
