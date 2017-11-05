@@ -77,28 +77,26 @@ var follow = function(req, res){
                             function (err, result) {
                                 if (err) return cb('팔로우 오류', null);
 
-                                return cb('팔로우를 취소 했습니다');
+                                return cb(null, false);
                             });
                     }else{
-                        return cb(null, targetId);
+                        connection.query(sqlFollow, [id, targetId],
+                            function(err, result){
+                                if(err) return cb('팔로우 오류', null);
+
+                                return cb(null);
+                            });
+                        return cb(null, true);
                     }
                 }
             });
-        },
-        function(targetId, cb){
-            connection.query(sqlFollow, [id, targetId],
-                function(err, result){
-                    if(err) return cb('팔로우 오류', null);
-
-                    return cb(null);
-                });
         }
     ];
 
     async.waterfall(task, function(err, result){
         if(err) return res.status(200).json({code: -1, message: err});
         else{
-            return res.status(200).json({code: 1, message:'팔로우 시작'});
+            return res.status(200).json({code: 1, isFollow: result, message: '팔로우를 한건지 안한건지 모르겠습니다.'});
         }
 
     });
