@@ -43,7 +43,6 @@ var startSocketIo = function(server){
                 console.log(err);
                 throw err;
             }
-            console.log(docs);
             socket.emit('load old msgs', docs);
         });
 
@@ -57,7 +56,6 @@ var startSocketIo = function(server){
             const token = data.token;
             var displayName;
 
-            console.log(token);
 
             if(token !== null && token !== '' && token !== 'undefined')
             {
@@ -117,8 +115,6 @@ var startSocketIo = function(server){
                 time : (date.getHours() + 9) + '시 ' + date.getMinutes() + '분'
             };
 
-            console.log(msg);
-
             var newMsg = new Chat({
                 msg : data.msg,
                 displayName: displayName,
@@ -127,9 +123,7 @@ var startSocketIo = function(server){
             });
 
             newMsg.save(function(err){
-                console.log(err);
                 if(err){
-                    console.log(err);
                     throw err;
                 }
                 else{
