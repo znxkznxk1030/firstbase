@@ -95,6 +95,7 @@ var follow = function(req, res){
     async.waterfall(task, function(err, result){
         if(err) return res.status(200).json({code: -1, message: err});
         else{
+            console.log(result);
             return res.status(200).json({code: 1, isFollow: result, message: '팔로우를 한건지 안한건지 모르겠습니다.'});
         }
 
