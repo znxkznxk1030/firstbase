@@ -136,7 +136,7 @@ var getUserInfoByReqHeader = function(req, res){
                 delete profile.id;
 
                 return res.status(200)
-                    .json(_.extend(profile, {isFollow: false}););
+                    .json(_.extend(profile, {isFollow: false}));
             }
         });
 };
