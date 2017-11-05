@@ -71,19 +71,18 @@ var follow = function(req, res){
         function(targetId, cb){
             connection.query(sqlIsFollow, [id, targetId], function(err, isFollow){
                 if(err) return cb('팔로우 오류', null);
+                else{
+                    if(JSON.parse(JSON.stringify(isFollow))[0]) {
+                        connection.query(sqlUnFollow, [id, targetId],
+                            function (err, result) {
+                                if (err) return cb('팔로우 오류', null);
 
-                if(JSON.parse(JSON.stringify(isFollow))[0]){
-
-                    connection.query(sqlUnFollow, [id, targetId],
-                        function(err, result){
-                            if(err) return cb('팔로우 오류', null);
-
-                            return cb('팔로우를 취소 했습니다');
-                        });
+                                return cb('팔로우를 취소 했습니다');
+                            });
+                    }else{
+                        return cb(null, targetId);
+                    }
                 }
-
-                return cb(null, targetId);
-
             });
         },
         function(targetId, cb){
