@@ -76,7 +76,7 @@ var deleteCommentTemporary = function(req, res){
     console.log(req.body);
     console.log(req.user);
 
-    const sqlDeleteComment = "UPDATE comment SET isBan = 1 WHERE comment_id = ? AND id = ?";
+    const sqlDeleteComment = "UPDATE comment SET is_ban = 1 WHERE comment_id = ? AND id = ?";
 
     if(commentId === null || typeof commentId === 'undefined' || commentId === ''){
         return res.status(400).json({code: -1, message:"comment id가 잘못 들어왔습니다."});
