@@ -73,6 +73,8 @@ var deleteCommentTemporary = function(req, res){
     const id = req.user.id,
         commentId = req.body.commentid;
 
+    console.log(req.body);
+
     const sqlDeleteComment = "UPDATE comment SET isBan = 1 WHERE comment_id = ? AND id = ?";
 
     if(commentId === null || typeof commentId === 'undefined' || commentId === ''){
