@@ -29,7 +29,7 @@ var isAuthenticated = function isAuthenticated(){
 
 var findOneMiddleware = function (req, res, next){
     const sqlFindOne =
-        "SELECT id FROM user WHERE id = ?";
+        "SELECT id FROM user WHERE displayName = ?";
 
     connection.query(sqlFindOne, req.query.displayName, function(err, user){
         if(err) return res.status(400)
