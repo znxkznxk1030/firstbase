@@ -71,7 +71,7 @@ var updateComment = function(req, res){
 
 var deleteCommentTemporary = function(req, res){
     const id = req.user.id,
-        commentId = req.body.commentid;
+        commentId = req.body.commentId;
 
     console.log(req.body);
 
