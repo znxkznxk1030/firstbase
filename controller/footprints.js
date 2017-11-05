@@ -479,7 +479,7 @@ var deleteFootprintByFootprintID = function(req, res){
     async.series(task, function(err, result){
         if(err) return res.status(400).json({code: -1, message: '게시글 삭제 오류'});
         else{
-            return res.status(200).json({code: 1, message: result});
+            return res.status(200).json({code: 1, message: '게시글 삭제 성공'});
         }
 
     });

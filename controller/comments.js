@@ -27,7 +27,7 @@ var createComment = function(req, res){
 
         return res.status(200)
             .json({code: 1,
-                message: result});
+                message: '댁글 작성 완료'});
     });
 };
 
@@ -46,26 +46,11 @@ var updateComment = function(req, res){
         res.status(400).json(util.message(-1, '댓글의 길이가 너무 깁니다.'));
     }
 
-    const sqlGetAuthor = "SELECT id FROM comment WHERE comment_id = ?";
-    const sqlUpdateComment = "UPDATE comment SET content = ? WHERE comment_id = ?";
+    const sqlUpdateComment = "UPDATE comment SET content = ? WHERE comment_id = ? AND id = ?";
 
     var task = [
         function(cb){
-            connection.query(sqlGetAuthor, [commentId], function(err, author) {
-                if(err) return cb(err, null);
-
-                const objectAuthor = JSON.parse(JSON.stringify(author))[0];
-
-                if(objectAuthor === id)
-                {
-                    return cb(null);
-                }else{
-                    return cb('작성자만 댓글 수정이 가능합니다.', null);
-                }
-            });
-        },
-        function(cb){
-            connection.query(sqlUpdateComment, [content, commentId], function(err, result){
+            connection.query(sqlUpdateComment, [content, commentId, id], function(err, result){
                 if(err) return cb(err, null);
 
                 return cb(result);
@@ -76,10 +61,10 @@ var updateComment = function(req, res){
     async.series(task, function(err, result){
         if(err) {
             return res.status(400)
-                .json(util.message(-1, '댓글 수정 오류'));
+                .json(util.message(-1, '댓글 수정 권한이 없습니다.'));
         }else{
             return res.status(200)
-                .json(util.message(1, result));
+                .json(util.message(1, '댓글 수정 완료'));
         }
     });
 };
@@ -88,8 +73,7 @@ var deleteCommentTemporary = function(req, res){
     const id = req.user.id,
         commentId = req.body.commentid;
 
-    const sqlGetAuthor = "SELECT id FROM comment WHERE comment_id = ?";
-    const sqlDeleteComment = "UPDATE comment SET isBan = 1 WHERE comment_id = ?";
+    const sqlDeleteComment = "UPDATE comment SET isBan = 1 WHERE comment_id = ? AND id = ?";
 
     if(commentId === null || typeof commentId === 'undefined' || commentId === ''){
         res.status(400).json({code: -1, message:"comment id가 잘못 들어왔습니다."});
@@ -97,21 +81,7 @@ var deleteCommentTemporary = function(req, res){
 
     var task = [
         function(cb){
-            connection.query(sqlGetAuthor, [commentId], function(err, author) {
-                if(err) return cb(err, null);
-
-                const objectAuthor = JSON.parse(JSON.stringify(author))[0];
-
-                if(objectAuthor === id)
-                {
-                    return cb(null);
-                }else{
-                    return cb('작성자만 댓글 삭제가 가능합니다.', null);
-                }
-            });
-        },
-        function(cb){
-            connection.query(sqlDeleteComment, [commentId], function(err, result){
+            connection.query(sqlDeleteComment, [commentId, id], function(err, result){
                 if(err) return cb(err, null);
 
                 return cb(result);
@@ -122,10 +92,10 @@ var deleteCommentTemporary = function(req, res){
     async.series(task, function(err, result){
         if(err) {
             return res.status(400)
-                .json(util.message(-1, '댓글 삭제 오류'));
+                .json(util.message(-1, '댓글 삭제 권한이 없습니다'));
         }else{
             return res.status(200)
-                .json(util.message(1, result));
+                .json(util.message(1, '댓글 삭제 완료'));
         }
     });
 
@@ -172,7 +142,7 @@ var deleteComment = function(req, res){
                 .json(util.message(-1, '댓글 삭제 오류'));
         }else{
             return res.status(200)
-                .json(util.message(1, result));
+                .json(util.message(1, '댓글 삭제 완료'));
         }
     });
 };
