@@ -654,8 +654,8 @@ var getFootprintByFootprintID = function(req, res){
          * @returns {*}
          */
         function(cb){
-                connection.query(sqlIsWatched, [footprintId],
-                    function(err, view_id){
+                connection.query(sqlWatch, [footprintId],
+                    function(err){
                         if(err)
                             return cb(err);
                         return cb(null);
