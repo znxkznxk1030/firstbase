@@ -592,8 +592,7 @@ var getFootprintByFootprintID = function(req, res){
         "WHERE footprint.footprint_id = ? " +
         "GROUP BY footprint_id ";
 
-    const sqlIsWatched = "SELECT * FROM view WHERE id = ? AND footprint_id = ?";
-    const sqlWatch =  "UPDATE footprint SET view_count = ? WHERE footprint_id = ? ";
+    const sqlWatch =  "UPDATE footprint SET view_count = view_count + 1 WHERE footprint_id = ? ";
     const sqlImageLoad = "SELECT * FROM image WHERE footprint_id = ?";
     const sqlCountLike =
         "SELECT count(*) AS countLike " +
