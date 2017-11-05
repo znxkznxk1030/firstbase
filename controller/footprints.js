@@ -106,14 +106,49 @@ var getFootprintList = function(req, res){
             var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
 
             async.map(footprintListJSON, function(footprint, cb){
-                connection.query(sqlFindUser, footprint.id, function(err, profile_key){
-                    if (err) cb(err);
 
-                    var profileUrl, profileKey = JSON.parse(JSON.stringify(profile_key))[0].profile_key;
-                    if(profileKey) profileUrl = retrieveByKey(profileKey);
-                    else profileUrl = retrieveByKey(profileDefaultKey);
+                var task = [
+                    function(callback){
+                        connection.query(sqlFindUser, footprint.id, function(err, profile){
+                            if (err) return callback(err);
 
-                    return cb(null, _.extend(footprint, { profileUrl: profileUrl }));
+                            profile = JSON.parse(JSON.stringify(profile))[0];
+
+                            footprint.displayName = profile.displayName;
+
+                            var profileUrl, profileKey = profile[0].profile_key;
+                            if(profileKey) profileUrl = retrieveByKey(profileKey);
+                            else profileUrl = retrieveByKey(profileDefaultKey);
+
+                            return callback(null, { profileUrl: profileUrl });
+                        });
+                    },
+                    function(tails, callback){
+                        connection.query(sqlCountLike, [footprintId],
+                            function(err, countLike){
+                                if(err) return callback(err);
+
+                                const ret = JSON.parse(JSON.stringify(countLike))[0];
+
+                                return callback(null, _.extend(tails, ret));
+                            });
+                    },
+                    function(tails, callback){
+                        connection.query(sqlCountDislike, [footprintId],
+                            function(err, Dislike){
+                                if(err) return callback(err);
+
+                                const ret = JSON.parse(JSON.stringify(Dislike))[0];
+
+                                return callback(null, _.extend(tails, ret));
+                            });
+                    }
+
+                ];
+
+                async.waterfall(task, function(err, tails){
+                    if (err) return cb(err);
+                    return cb(null, _.extend(footprint, tails));
                 });
             }, function(err, result){
                 if (err) return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
@@ -184,9 +219,17 @@ var getFootprintListByLocation = function(req, res){
         "WHERE footprint.latitude <= ? AND footprint.longitude >= ? AND footprint.latitude >= ? AND footprint.longitude <= ? " +
         "GROUP BY footprint_id ";
 
-    const sqlFindUser = "SELECT profile_key " +
+    const sqlFindUser = "SELECT profile_key, displayName " +
         "FROM user " +
         "WHERE user.id = ? ";
+
+    const sqlCountLike =
+        "SELECT count(*) AS countLike " +
+        "FROM eval WHERE footprint_id = ? AND state = 1";
+
+    const sqlCountDislike =
+        "SELECT count(*) AS countDisLike " +
+        "FROM eval WHERE footprint_id = ? AND state = 2";
 
     connection.query(sqlRetrieveFootprint,[startLat, startLng, endLat, endLng],
         function(err, footprintList){
@@ -196,15 +239,51 @@ var getFootprintListByLocation = function(req, res){
             var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
 
             async.map(footprintListJSON, function(footprint, cb){
-                connection.query(sqlFindUser, footprint.id, function(err, profile_key){
-                    if (err) cb(err);
 
-                    var profileUrl, profileKey = JSON.parse(JSON.stringify(profile_key))[0].profile_key;
-                    if(profileKey) profileUrl = retrieveByKey(profileKey);
-                    else profileUrl = retrieveByKey(profileDefaultKey);
+                var task = [
+                    function(callback){
+                        connection.query(sqlFindUser, footprint.id, function(err, profile){
+                            if (err) return callback(err);
 
-                    return cb(null, _.extend(footprint, { profileUrl: profileUrl }));
+                            profile = JSON.parse(JSON.stringify(profile))[0];
+
+                            footprint.displayName = profile.displayName;
+
+                            var profileUrl, profileKey = profile[0].profile_key;
+                            if(profileKey) profileUrl = retrieveByKey(profileKey);
+                            else profileUrl = retrieveByKey(profileDefaultKey);
+
+                            return callback(null, { profileUrl: profileUrl });
+                        });
+                    },
+                    function(tails, callback){
+                        connection.query(sqlCountLike, [footprintId],
+                            function(err, countLike){
+                                if(err) return callback(err);
+
+                                const ret = JSON.parse(JSON.stringify(countLike))[0];
+
+                                return callback(null, _.extend(tails, ret));
+                            });
+                    },
+                    function(tails, callback){
+                        connection.query(sqlCountDislike, [footprintId],
+                            function(err, Dislike){
+                                if(err) return callback(err);
+
+                                const ret = JSON.parse(JSON.stringify(Dislike))[0];
+
+                                return callback(null, _.extend(tails, ret));
+                            });
+                    }
+
+                ];
+
+                async.waterfall(task, function(err, tails){
+                    if (err) return cb(err);
+                    return cb(null, _.extend(footprint, tails));
                 });
+
             }, function(err, result){
                 if (err) return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
 
@@ -498,16 +577,15 @@ var getFootprintByFootprintID = function(req, res){
     }
 
     const sqlRetrieveFootprintByFootprintId =
-        "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
-        "FROM footprint LEFT JOIN view " +
-        "ON footprint.footprint_id = view.footprint_id " +
+        "SELECT footprint.*, view_count AS countView, count(comment.comment_id) AS countComments " +
+        "FROM footprint " +
         "LEFT JOIN comment " +
         "ON footprint.footprint_id = comment.footprint_id " +
         "WHERE footprint.footprint_id = ? " +
         "GROUP BY footprint_id ";
 
     const sqlIsWatched = "SELECT * FROM view WHERE id = ? AND footprint_id = ?";
-    const sqlWatch = "INSERT INTO view (id, footprint_id) VALUES (?, ?)";
+    const sqlWatch =  "UPDATE footprint SET view_count = ? WHERE footprint_id = ? ";
     const sqlImageLoad = "SELECT * FROM image WHERE footprint_id = ?";
     const sqlCountLike =
         "SELECT count(*) AS countLike " +
@@ -532,7 +610,7 @@ var getFootprintByFootprintID = function(req, res){
             connection.query(sqlRetrieveFootprintByFootprintId, [footprintId],
                 function(err, footprint){
                     if(err)
-                        return cb({message : "error to find footprint"}, null);
+                        return cb(err);
                     else{
                         var objectFootprint = JSON.parse(JSON.stringify(footprint))[0];
 
@@ -568,30 +646,12 @@ var getFootprintByFootprintID = function(req, res){
          * @returns {*}
          */
         function(cb){
-            if(user){
-                connection.query(sqlIsWatched, [user.id, footprintId],
+                connection.query(sqlIsWatched, [footprintId],
                     function(err, view_id){
                         if(err)
-                            return cb(err, { message: "id not found"});
-
-                        if(view_id[0])
-                        {
-                            return cb(null, { message: "already watched"});
-                        }else
-                        {
-                            connection.query(sqlWatch, [user.id, footprintId],
-                                function(err, result){
-                                    if(err)
-                                        return cb(err, { message: "not found"});
-
-                                    return cb(null, { message : "insert"});
-                                });
-                        }
-                    });
-            }else
-            {
-                return cb(null, { message : "not logged in"});
-            }
+                            return cb(err);
+                        return cb(null);
+                });
         },
         /**
          *  Get images by footprint Id
@@ -601,7 +661,7 @@ var getFootprintByFootprintID = function(req, res){
         function(cb){
             connection.query(sqlImageLoad, [footprintId],
                 function(err, imageInfo){
-                    if(err) return cb(err, { message: 'error'});
+                    if(err) return cb(err);
 
                     console.log(imageInfo);
                     imageInfo = JSON.parse(JSON.stringify(imageInfo));
@@ -625,7 +685,7 @@ var getFootprintByFootprintID = function(req, res){
         function(cb){
             connection.query(sqlRetrieveComments, [footprintId],
                 function(err, comments){
-                    if(err) return cb(err, { message: 'error'});
+                    if(err) return cb(err);
 
                     var ret = JSON.parse(JSON.stringify(comments));
 
@@ -660,7 +720,7 @@ var getFootprintByFootprintID = function(req, res){
         function(cb){
             connection.query(sqlCountLike, [footprintId],
                 function(err, countLike){
-                    if(err) return cb(err, { message: err});
+                    if(err) return cb(err);
 
                     const ret = JSON.parse(JSON.stringify(countLike))[0];
 
@@ -670,7 +730,7 @@ var getFootprintByFootprintID = function(req, res){
         function(cb){
             connection.query(sqlCountDislike, [footprintId],
                 function(err, Dislike){
-                    if(err) return cb(err, { message: err});
+                    if(err) return cb(err);
 
                     const ret = JSON.parse(JSON.stringify(Dislike))[0];
 
