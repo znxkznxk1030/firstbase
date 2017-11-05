@@ -39,12 +39,12 @@ passport.use('local-login', new LocalStrategy({
                             return done(null, profile);
                         }else{
                             // console.log('login fail');
-                            return done(null, false, { message: 'Wrong Password'});
+                            return done(null, false, { message: '패스워드가 틀렸습니다.'});
                         }
                     });
                 });
             }else{
-                return done(null, false, { message: 'Wrong Username' });
+                return done(null, false, { message: '입력한 아이디가 존재하지 않습니다.' });
             }
         });
 }));
