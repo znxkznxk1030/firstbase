@@ -196,15 +196,14 @@ var getUserInfoByUserDisplayName = function(req, res){
             });
         },
         function (profile, cb) {
-            connection.query(sqlIsFollow, [id, profile.id], function(err, isFollow){
+            connection.query(sqlIsFollow, [id, profile.id], function(err, Follow){
                 if (err) return cb(err, null);
 
                 var isFollow = false;
 
-                if(JSON.parse(JSON.stringify(isFollow))[0]){
+                if(JSON.parse(JSON.stringify(Follow))[0]){
                     isFollow = true;
                 }
-
                 return cb(null, _.extend(profile, {isFollow: isFollow}));
 
             });
