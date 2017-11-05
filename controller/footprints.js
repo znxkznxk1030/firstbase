@@ -33,8 +33,8 @@ var getAuthor = function(footprintId, cb){
     });
 };
 
-var getFootprintListByUserDisplayName = function(req, res){
-    const userDisplayName = req.params.userDisplayName;
+var getFootprintListByDisplayName = function(req, res){
+    const id = req.author.id;
 
     const sqlRetrieveFootprint =
         "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
@@ -45,38 +45,76 @@ var getFootprintListByUserDisplayName = function(req, res){
         "WHERE footprint.id = ? " +
         "GROUP BY footprint_id ";
 
-    connection.query(sqlRetrieveFootprint, [userDisplayName], function(err, footprintList){
-        if (err)
-            return res.status(400)
-                        .json({code: -1,
-                            message:'게시글을 찾는데 오류가 생겼습니다.'});
+    const sqlFindUser = "SELECT profile_key " +
+        "FROM user " +
+        "WHERE user.id = ? ";
 
-        return res.status(200)
-            .json(footprintList);
-    });
-};
+    const sqlCountLike =
+        "SELECT count(*) AS countLike " +
+        "FROM eval WHERE footprint_id = ? AND state = 1";
 
-var getFootprintListByUserId = function(req, res){
-    const userId = req.query.userId;
+    const sqlCountDislike =
+        "SELECT count(*) AS countDisLike " +
+        "FROM eval WHERE footprint_id = ? AND state = 2";
 
-    const sqlRetrieveFootprint =
-        "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
-        "FROM footprint LEFT JOIN view " +
-        "ON footprint.footprint_id = view.footprint_id " +
-        "LEFT JOIN comment " +
-        "ON footprint.footprint_id = comment.footprint_id " +
-        "WHERE footprint.id = ? " +
-        "GROUP BY footprint_id ";
+    connection.query(sqlRetrieveFootprint,[id],
+        function(err, footprintList){
+            if(err)
+                return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
 
-    connection.query(sqlRetrieveFootprint, [userId], function(err, footprintList){
-        if (err)
-            return res.status(400)
-                .json({code: -1,
-                    message: '게시물을 찾는데 오류가 생겼습니다.'});
+            var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
 
-        return res.status(200)
-            .json(footprintList);
-    });
+            async.map(footprintListJSON, function(footprint, cb){
+
+                var task = [
+                    function(callback){
+                        connection.query(sqlFindUser, footprint.id, function(err, profile){
+                            if (err) return callback(err);
+
+                            profile = JSON.parse(JSON.stringify(profile))[0];
+
+                            footprint.displayName = profile.displayName;
+
+                            var profileUrl, profileKey = profile.profile_key;
+                            if(profileKey) profileUrl = retrieveByKey(profileKey);
+                            else profileUrl = retrieveByKey(profileDefaultKey);
+
+                            return callback(null, { profileUrl: profileUrl });
+                        });
+                    },
+                    function(tails, callback){
+                        connection.query(sqlCountLike, [footprint.footprint_id],
+                            function(err, countLike){
+                                if(err) return callback(err);
+
+                                const ret = JSON.parse(JSON.stringify(countLike))[0];
+
+                                return callback(null, _.extend(tails, ret));
+                            });
+                    },
+                    function(tails, callback){
+                        connection.query(sqlCountDislike, [footprint.footprint_id],
+                            function(err, Dislike){
+                                if(err) return callback(err);
+
+                                const ret = JSON.parse(JSON.stringify(Dislike))[0];
+
+                                return callback(null, _.extend(tails, ret));
+                            });
+                    }
+
+                ];
+
+                async.waterfall(task, function(err, tails){
+                    if (err) return cb(err);
+                    return cb(null, _.extend(footprint, tails));
+                });
+            }, function(err, result){
+                if (err) return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
+
+                else res.status(200).json(result);
+            });
+        });
 };
 
 var getFootprintList = function(req, res){
@@ -934,7 +972,7 @@ var getSubFootprintByFootprintID = function(req, res){
 
 module.exports = {
     getFootprintListByLocation : getFootprintListByLocation,
-    getFootprintListByUserId : getFootprintListByUserId,
+    getFootprintListByDisplayName : getFootprintListByDisplayName,
     getFootprintByFootprintID : getFootprintByFootprintID,
     getFootprintList: getFootprintList,
     createFootprint : createFootprint,

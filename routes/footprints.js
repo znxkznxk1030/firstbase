@@ -5,8 +5,7 @@ var auth = require('../auth/auth');
 
 router.get('/list',controller.getFootprintList);
 
-router.get('/listbyid', controller.getFootprintListByUserId);
-router.get('/listbyDisplayName', controller.getFootprintListByUserDisplayName);
+router.get('/listbyDisplayName', auth.findOneMiddleware ,controller.getFootprintListByDisplayName);
 
 
 /**
