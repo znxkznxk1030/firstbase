@@ -4,7 +4,7 @@ var config = require("./config");
 var jwt = require("jsonwebtoken");
 
 var SECRET = config.token_secret;
-var ONEDAY = 1000 * 60 * 60;
+var ONEDAY = 1000 * 60 * 60 * 24;
 var ONEWEEK = ONEDAY * 7;
 
 mongoose.connect('mongodb://127.0.0.1:27017', {
