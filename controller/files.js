@@ -12,7 +12,7 @@ AWS.config.loadFromPath('s3config.json');
 const s3 = new AWS.S3({ region : 'ap-northeast-2' });
 
 var getImageUrl = function(key){
-    return "https://firstbase-bucket.s3.amazonaws.com/" + key;
+    return "http://d2w40mi5mo8vk7.cloudfront.net/" + key;
 };
 
 var createMainBucket = function(cb){
@@ -158,7 +158,7 @@ var retrieveIconAllFromDirectory = function(req, res){
         //
         // var iconUrl = s3.getSignedUrl('getObject', params);
         //
-        var iconUrl = "https://firstbase-bucket.s3.amazonaws.com/" + iconKey;
+        var iconUrl = getImageUrl(iconKey);
 
         iconUrls.push({key: iconKey,
                 value: iconUrl});
