@@ -145,16 +145,16 @@ var retrieveIconAllFromDirectory = function(req, res){
     //console.log("#debug retrieve All : " + iconKeys.iconKeys);
 
     iconKeys.iconKeys.forEach(function(iconKey){
-        var params = {
-            Bucket: bucketName,
-            Key: iconKey
-        };
-
-        //console.log("#debug retrieveAll : " + iconKey);
-
-        var iconUrl = s3.getSignedUrl('getObject', params);
-
-        // var iconUrl = "https://firstbase-bucket.s3.amazonaws.com" + iconKey;
+        // var params = {
+        //     Bucket: bucketName,
+        //     Key: iconKey
+        // };
+        //
+        // //console.log("#debug retrieveAll : " + iconKey);
+        //
+        // var iconUrl = s3.getSignedUrl('getObject', params);
+        //
+        var iconUrl = "https://firstbase-bucket.s3.amazonaws.com/" + iconKey;
 
         iconUrls.push({key: iconKey,
                 value: iconUrl});
