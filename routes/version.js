@@ -11,7 +11,7 @@ router.get('/', function(req, res){
 
         const appVersion = JSON.parse(JSON.stringify(appInfo))[0].version;
 
-        if(appVersion === version){
+        if(appVersion < version){
             return res.json({code: 1, isLastest : true, message:null});
         }else{
             return res.json({code: -1, isLastest: false, message:null});
