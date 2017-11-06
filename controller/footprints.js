@@ -667,6 +667,14 @@ var getFootprintByFootprintID = function(req, res){
 
                         if(objectFootprint)
                         {
+
+                            var iconKey = objectFootprint.icon_key;
+
+                            if(iconKey === null)
+                            {
+                                iconKey = 'profiledefault.png';
+                            }
+
                             const iconUrl = getImageUrl(iconKey);
 
                             return cb(null, _.extend(objectFootprint, {iconUrl: iconUrl}));
