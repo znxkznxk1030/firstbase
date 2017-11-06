@@ -11,6 +11,10 @@ AWS.config.loadFromPath('s3config.json');
 
 const s3 = new AWS.S3({ region : 'ap-northeast-2' });
 
+var getImageUrl = function(key){
+    return "https://firstbase-bucket.s3.amazonaws.com/" + key;
+};
+
 var createMainBucket = function(cb){
     const bucketParams = {
         Bucket : bucketName
@@ -174,3 +178,4 @@ exports.retrieveIcon = retrieveIcon;
 exports.retrieveIconAllFromDirectory = retrieveIconAllFromDirectory;
 exports.retrieveByKeyCategory = retrieveByKeyCategory;
 exports.uploadUserImage = uploadUserImage;
+exports.getImageUrl = getImageUrl;

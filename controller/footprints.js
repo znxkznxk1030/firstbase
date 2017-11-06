@@ -8,6 +8,7 @@ const profileDefaultKey = 'profiledefault.png';
 
 const _=require('underscore');
 var util = require("../utils/util");
+var getImageUrl = require("./files").getImageUrl;
 var retrieveByKey = require("./files").retrieveByKey;
 
 AWS.config.loadFromPath('s3config.json');
@@ -76,8 +77,8 @@ var getFootprintListByDisplayName = function(req, res){
                             footprint.displayName = profile.displayName;
 
                             var profileUrl, profileKey = profile.profile_key;
-                            if(profileKey) profileUrl = retrieveByKey(profileKey);
-                            else profileUrl = retrieveByKey(profileDefaultKey);
+                            if(profileKey) profileUrl = getImageUrl(profileKey);
+                            else profileUrl = getImageUrl(profileDefaultKey);
 
                             return callback(null, { profileUrl: profileUrl });
                         });
@@ -163,8 +164,8 @@ var getFootprintList = function(req, res){
                             footprint.displayName = profile.displayName;
 
                             var profileUrl, profileKey = profile.profile_key;
-                            if(profileKey) profileUrl = retrieveByKey(profileKey);
-                            else profileUrl = retrieveByKey(profileDefaultKey);
+                            if(profileKey) profileUrl = getImageUrl(profileKey);
+                            else profileUrl = getImageUrl(profileDefaultKey);
 
                             return callback(null, { profileUrl: profileUrl });
                         });
@@ -296,8 +297,8 @@ var getFootprintListByLocation = function(req, res){
                             footprint.displayName = profile.displayName;
 
                             var profileUrl, profileKey = profile.profile_key;
-                            if(profileKey) profileUrl = retrieveByKey(profileKey);
-                            else profileUrl = retrieveByKey(profileDefaultKey);
+                            if(profileKey) profileUrl = getImageUrl(profileKey);
+                            else profileUrl = getImageUrl(profileDefaultKey);
 
                             return callback(null, { profileUrl: profileUrl });
                         });
@@ -666,20 +667,7 @@ var getFootprintByFootprintID = function(req, res){
 
                         if(objectFootprint)
                         {
-
-                            var iconKey = objectFootprint.icon_key;
-
-                            if(iconKey === null)
-                            {
-                                iconKey = 'profiledefault.png';
-                            }
-
-                            var params = {
-                                Bucket: bucketName,
-                                Key: iconKey
-                            };
-
-                            const iconUrl = s3.getSignedUrl('getObject', params);
+                            const iconUrl = getImageUrl(iconKey);
 
                             return cb(null, _.extend(objectFootprint, {iconUrl: iconUrl}));
                         }
@@ -719,13 +707,13 @@ var getFootprintByFootprintID = function(req, res){
                     var imageUrls = [];
 
                     imageInfo.forEach(function(image){
-                        var params = {
-                            Bucket: bucketName,
-                            Key: image.image_key
-                        };
-
-                        console.log("#debug retrieveAll : " + image.image_key);
-                        var imageUrl = s3.getSignedUrl('getObject', params);
+                        // var params = {
+                        //     Bucket: bucketName,
+                        //     Key: image.image_key
+                        // };
+                        //
+                        // console.log("#debug retrieveAll : " + image.image_key);
+                        var imageUrl = getImageUrl(image.image_key);
                         imageUrls.push(imageUrl);
                     });
 
@@ -751,12 +739,12 @@ var getFootprintByFootprintID = function(req, res){
                             profileKey = 'profiledefault.png';
                         }
 
-                        const params = {
-                            Bucket: bucketName,
-                            Key: profileKey
-                        };
+                        // const params = {
+                        //     Bucket: bucketName,
+                        //     Key: profileKey
+                        // };
 
-                        const profileUrl = s3.getSignedUrl('getObject', params);
+                        const profileUrl = getImageUrl(profileKey);
 
                         console.log(_.extend(comment, {profileUrl : profileUrl}));
 
@@ -799,12 +787,12 @@ var getFootprintByFootprintID = function(req, res){
                         profileKey = 'profiledefault.png';
                     }
 
-                    const params = {
-                        Bucket: bucketName,
-                        Key: profileKey
-                    };
+                    // const params = {
+                    //     Bucket: bucketName,
+                    //     Key: profileKey
+                    // };
 
-                    const profileUrl = s3.getSignedUrl('getObject', params);
+                    const profileUrl = getImageUrl(profileKey);
 
                     delete footprint.id;
                     console.log(profileUrl);
