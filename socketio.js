@@ -28,18 +28,8 @@ var chatSchema = mongoose.Schema({
     timeStamp: {type: Date, default: Date.now}
 });
 
-var posSchema = mongoose.Schema({
-    room: {type: String, default: 'global'},
-
-    displayName: String,
-    lat: Number,
-    lng: Number,
-
-    timeStamp: {type: Date, default: Date.now}
-});
 
 var Chat = mongoose.model('Message', chatSchema);
-var Pos = mongoose.model('Position', posSchema);
 
 var startSocketIo = function (server) {
     var io = require('socket.io')(server);
@@ -137,63 +127,6 @@ var startSocketIo = function (server) {
                     msg.isSelf = true;
                     socket.emit('chat', msg);
                 }
-            });
-        });
-
-        socket.on('join to team-map', function (data) {
-            //socket.teamId = data.teamId;
-            console.log('displayName : ' + data.displayName);
-            socket.displayName = data.displayName;
-            //Pos.collection.drop();
-        });
-
-        socket.on('send position', function (data) {
-            // console.log('send position : ' + data.coord.lat);
-            // socket.broadcast.to(data).emit('team-map', 'test');
-
-            var newPos = new Pos({
-                displayName: socket.displayName,
-                lat: data.coord.lat,
-                lng: data.coord.lng
-            });
-
-            Pos.find({displayName: socket.displayName}).exec(function (err, docs) {
-                console.log(docs);
-
-                if (err) throw err;
-                else {
-                    if (!docs[0]) {
-                        newPos.save(function (err) {
-                            if (err) {
-                                throw err;
-                            }
-                        });
-                    }
-                    else {
-                        Pos.update({displayName: socket.displayName},
-                            {
-                                $set: {
-                                    lat: data.coord.lat,
-                                    lng: data.coord.lng,
-                                    timeStamp: Date.now()
-                                }
-                            }, function (err) {
-                                if (err) throw err;
-                            });
-                    }
-                }
-            });
-        });
-
-        socket.on('get position', function () {
-            Pos.find().exec(function (err, docs) {
-                if (err) {
-                    console.log(err);
-                    throw err;
-                }
-
-                console.log(docs);
-                io.emit('show', docs);
             });
         });
     });

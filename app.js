@@ -3,6 +3,8 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 
+var fs = require('fs');
+
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
@@ -19,11 +21,20 @@ var follow = require('./routes/follow');
 var version = require('./routes/version');
 
 var app = express();
+var config = require("./config");
 var http = require('http');
+
+
+
+var options = {
+    host : config.host,
+    key: fs.readFileSync('./server.key'),
+    cert: fs.readFileSync('./server.crt'),
+    agent: false
+};
 var https = require('https');
 
 var passport = require('./auth/index');
-var config = require("./config");
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -96,7 +107,14 @@ var server = http.createServer(app).listen(config.port, function () {
     console.log('server running port : ' + config.port);
 });
 
-
 require('./socketio').startSocketIO(server);
+
+server = https.createServer(options, app).listen(config.ssl, function(err){
+    if(err) throw err;
+
+    console.log('https server running port : ' + config.ssl);
+});
+
+require('./teamMap').startSocketIO(server);
 
 module.exports = app;
