@@ -33,12 +33,12 @@ app.set('view engine', 'ejs');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname + '/node_modules'));
 
-app.all('/*', function(req, res, next) {
+app.all('/*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     next();
@@ -62,41 +62,41 @@ app.use('/version', version);
 
 //swagger
 app.use('/swagger-ui', express.static(path.join('./node_modules/swagger-ui/dist')));
-app.use('/v1/swagger.json', function(req, res) {
+app.use('/v1/swagger.json', function (req, res) {
     res.json(require('./swagger.json'));
 });
 
-app.use('/swagger', function(req, res){
-  res.redirect('/swagger-ui?url=/v1/swagger.json');
+app.use('/swagger', function (req, res) {
+    res.redirect('/swagger-ui?url=/v1/swagger.json');
 });
 
 passport.routes(app);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+app.use(function (req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 console.log("start2 : " + config.port);
 
-var server = http.createServer(app).listen(config.port, function(){
+var server = http.createServer(app).listen(config.port, function () {
     console.log('server running port : ' + config.port);
 });
 
 
-require('./chat').startSocketIO(server);
+require('./socketio').startSocketIO(server);
 
 module.exports = app;
