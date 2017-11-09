@@ -2,10 +2,17 @@ var express = require('express');
 var router = express.Router();
 var auth = require('../auth/auth');
 
-router.get('/', function(req, res){
+router.get('/', function (req, res) {
     res.render('socket', {
-        id : 'ddd',
-        displayName : 'ddd'
+        id: 'ddd',
+        displayName: 'ddd'
+    });
+});
+
+
+router.get('/team', auth.authMiddleware, function(req, res){
+    res.render('teammap', {
+        displayName: req.user.displayName
     });
 });
 

@@ -1,0 +1,148 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>FistBase Chat Monitoring</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script type="text/javascript"
+            src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=3WGB6rDBj4WmIKeoAuDG&submodules=geocoder"></script>
+
+</head>
+<body>
+<div class="container">
+    <h3>Team View</h3>
+    <div>
+        <button type="submit" id="refresh" class="btn btn-primary">Set</button>
+    </div>
+    <div>
+        <button type="submit" id="send" class="btn btn-primary">Send</button>
+        <button type="submit" id="get" class="btn btn-primary">Get</button>
+        <p id="explanation"></p>
+    </div>
+    <div id="map" style="width:100%;height:100%;"></div>
+</div>
+<script>
+    var explanation = $('#explanation');
+
+    var setPosition = function () {
+        console.log('call!');
+        explanation.html('find your position...');
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(setMarker);
+        } else {
+            explanation.html('현재 브라우저는 Geolocation 을 지원하지 않습니다.');
+        }
+    };
+
+    $("#refresh").click(setPosition);
+
+    var mapOptions = {
+        center: new naver.maps.LatLng(37, 127),
+        zoom: 10
+    };
+
+    var map = new naver.maps.Map('map', mapOptions);
+    var coords;
+
+    var markers = [];
+
+
+    //    var marker = new naver.maps.Marker({
+    //        position: new naver.maps.LatLng(37, 127),
+    //        map: map
+    //    });
+    //
+    //    function setMarker(position) {
+    //        console.log(position);
+    //
+    //        coords = position.coords;
+    //
+    //        console.log(coords);
+    //        mapOptions.center = new naver.maps.LatLng(coords.latitude, coords.longitude);
+    //        mapOptions.zoom = 15;
+    //        mapOptions.typeControl = true;
+    //
+    //        map.setOptions(mapOptions);
+    //
+    //        marker.setPosition(mapOptions.center);
+    //
+    //        marker.onRemove();
+    //        explanation.html('load complete!');
+    //    }
+
+    var getPosition = function (cb) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+
+                return cb(null, {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                });
+            });
+        } else {
+            return cb('err');
+        }
+    };
+
+    $(function () {
+        var socket = io();
+
+        var sendPosition = function () {
+            console.log('send');
+            explanation.html('sending....');
+
+            getPosition(function (err, coord) {
+
+                var position = {
+                    teamId: 1,
+                    displayName: 'znxkznxk1030'
+                };
+
+                if (err) position.coord = err;
+                else {
+                    position.coord = {
+                        lat: coord.lat,
+                        lng: coord.lng
+                    };
+                }
+
+                socket.emit('send position', position);
+                explanation.html('send complete!');
+            });
+        };
+
+        socket.emit('join to team-map', {
+            displayName: '<%= displayName %>'
+        });
+
+        $("#send").click(sendPosition);
+
+        $("#get").click(function () {
+            socket.emit('get position');
+        });
+
+        socket.on('show', function (pos) {
+            //console.log(markers);
+
+            markers.forEach(function (marker) {
+                marker.onRemove();
+            });
+            markers = [];
+            //console.log(markers);
+
+            pos.forEach(function (p) {
+                markers.push(new naver.maps.Marker({
+                    position: new naver.maps.LatLng(p.lat, p.lng),
+                    map: map
+                }));
+            });
+
+            //console.log(markers);
+        });
+    });
+</script>
+</body>
+</html>
