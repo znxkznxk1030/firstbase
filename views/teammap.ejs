@@ -91,14 +91,13 @@
         var socket = io();
 
         var sendPosition = function () {
-            console.log('send');
             explanation.html('sending....');
 
             getPosition(function (err, coord) {
 
                 var position = {
                     teamId: 1,
-                    displayName: 'znxkznxk1030'
+                    displayName: '<%= displayName %>'
                 };
 
                 if (err) position.coord = err;
@@ -108,6 +107,8 @@
                         lng: coord.lng
                     };
                 }
+
+                console.log(coord);
 
                 socket.emit('send position', position);
                 explanation.html('send complete!');
