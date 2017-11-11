@@ -26,19 +26,22 @@
 </head>
 
 <body>
+<div id = "load-area"></div>
 <div id = "main">
     <div id = "nav-area">
         <div id = "top-left-area">
             <div id = "logo-img">
                 <a href="/"><img src="/img/layout/logo.png"></a>
             </div>
-            <a id="brand" href="#">FirstBase</a>
+            <div id = "logo-img-letter">
+            <a id="brand" href="#"><img src="/img/layout/logo-letter.png"></a>
+            </div>
             <div id="navbar-nav">
                 <div id="nav-item">
-                    <a class="nav-link" href="#">About us</a>
+                    <a class="nav-link" href="#">서비스 소개</a>
                 </div>
                 <div id="nav-item">
-                    <a class="nav-link" href="#">Start Map</a>
+                    <a class="nav-link" href="#">사용법</a>
                 </div>
                 <div id = "top-search">
                     <input type="search" class="form-control" name="search" id="search" placeholder="Search"/>
@@ -57,7 +60,7 @@
                 </div>
             </div>
             <div id = "login-register-button">
-                <button type="button" class="btn" data-toggle="modal" data-target="#myModal">LOG IN</button>
+                <button type="button" class="btn" data-toggle="modal" data-target="#myModal">로그인</button>
             </div>
         </div>
     </div>
@@ -68,10 +71,7 @@
             <div id = "add-button" onclick="write_button_click();">
                 <img src="/img/layout/write-button.png">
             </div>
-            <div id = "add-button2" style="display: none;">
-                <img src="/img/layout/search.png">
-            </div>
-            <div id = "radar-button" onclick="search_positon();">
+            <div id = "radar-button" onclick="search_position();">
                 <img src="/img/layout/radar.png">
             </div>
         </div>
