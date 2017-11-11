@@ -27,7 +27,6 @@ var http = require('http');
 
 
 var options = {
-    host : config.host,
     key: fs.readFileSync('./server.key'),
     cert: fs.readFileSync('./server.crt'),
     agent: false

@@ -1,5 +1,3 @@
-var mongoose = require('mongoose');
-
 var config = require("./config");
 var jwt = require("jsonwebtoken");
 
@@ -7,29 +5,7 @@ var SECRET = config.token_secret;
 var ONEDAY = 1000 * 60 * 60 * 24;
 var ONEWEEK = ONEDAY * 7;
 
-mongoose.connect('mongodb://127.0.0.1:27017', {
-    useMongoClient: true
-}, function (err) {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log('mongodb connect');
-    }
-});
-
-var chatSchema = mongoose.Schema({
-    room: {type: String, default: 'global'},
-
-    displayName: String,
-    msg: String,
-
-    date: String,
-    time: String,
-    timeStamp: {type: Date, default: Date.now}
-});
-
-
-var Chat = mongoose.model('Message', chatSchema);
+var Chat = require('./model').Chat;
 
 var startSocketIo = function (server) {
     var io = require('socket.io')(server);
