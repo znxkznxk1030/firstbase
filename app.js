@@ -107,13 +107,13 @@ var server = http.createServer(app).listen(config.port, function () {
 });
 
 require('./socketio').startSocketIO(server);
-
-server = https.createServer(options, app).listen(config.ssl, function(err){
-    if(err) throw err;
-
-    console.log('https server running port : ' + config.ssl);
-});
-
 require('./teamMap').startSocketIO(server);
+
+// server = https.createServer(options, app).listen(config.ssl, function(err){
+//     if(err) throw err;
+//
+//     console.log('https server running port : ' + config.ssl);
+// });
+
 
 module.exports = app;
