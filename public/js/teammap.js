@@ -1,5 +1,4 @@
 var explanation = $('#explanation');
-
 var setPosition = function () {
     console.log('call!');
     explanation.html('find your position...');
@@ -9,6 +8,8 @@ var setPosition = function () {
         explanation.html('현재 브라우저는 Geolocation 을 지원하지 않습니다.');
     }
 };
+
+console.log(displayName, profileUrl);
 
 $("#set").click(function () {
     if (navigator.geolocation) {
@@ -29,12 +30,11 @@ var mapOptions = {
 var map = new naver.maps.Map('map', mapOptions);
 var coords;
 var markers = [];
+var siteMarkers = [];
 var pingMarker;
 
-var marker = new naver.maps.Marker({
-    position: new naver.maps.LatLng(37, 127),
-    map: map
-});
+const pingImgUrl = 'http://d2w40mi5mo8vk7.cloudfront.net/thinking-man.png';
+const foodImgUrl = 'http://d2w40mi5mo8vk7.cloudfront.net/foodpin.png';
 
 function setMarker(position) {
     console.log(position);
@@ -73,7 +73,7 @@ $(function () {
 
             var position = {
                 teamId: 1,
-                displayName: '<%= displayName %>'
+                displayName: displayName
             };
 
             if (err) position.coord = err;
@@ -84,40 +84,20 @@ $(function () {
                 };
             }
 
-            // console.log(coord);
-
             socket.emit('send position', position);
             explanation.html('send complete!');
         });
     };
 
-    map.addListener('click', function(e){
+    map.addListener('click', function (e) {
 
         // console.log(e.coord.y, e.coord.x);
 
-        socket.emit('emit ping', {
-            lat: e.coord.y,
-            lng: e.coord.x,
-            time: Date.now()
-        });
-    });
-
-    socket.on('get ping', function(data){
-        // console.log(data);
-        if(pingMarker){
-            pingMarker.onRemove();
-        }
-
-        pingMarker = new naver.maps.Marker({
-            position: new naver.maps.LatLng(data.lat, data.lng),
-            map: map
-        });
-
-        map.panTo(new naver.maps.LatLng(data.lat, data.lng));
+        //console.log(tm128);
 
         naver.maps.Service.reverseGeocode({
-            location: new naver.maps.LatLng(data.lat, data.lng),
-        }, function(status, response) {
+            location: new naver.maps.LatLng(e.coord.y, e.coord.x),
+        }, function (status, response) {
             if (status !== naver.maps.Service.Status.OK) {
                 return alert('Something wrong!');
             }
@@ -125,17 +105,68 @@ $(function () {
             var result = response.result, // 검색 결과의 컨테이너
                 items = result.items; // 검색 결과의 배열
 
-            $('#notification-ping').html('<PING>' + items[0].address);
+            var tm128 = naver.maps.TransCoord.fromLatLngToTM128(e.coord);
 
+            socket.emit('emit ping', {
+                lat: e.coord.y,
+                lng: e.coord.x,
+                tm128: tm128,
+                detail: items[0],
+                time: Date.now()
+            });
 
-            // do Something
         });
+    });
+
+    socket.on('get ping', function (data) {
+        // console.log(data);
+        if (pingMarker) {
+            pingMarker.onRemove();
+        }
+
+        pingMarker = new naver.maps.Marker({
+            position: new naver.maps.LatLng(data.lat, data.lng),
+            icon: {
+                url: pingImgUrl,
+                size: new naver.maps.Size(60, 60),
+                scaledSize: new naver.maps.Size(60, 60),
+                origin: new naver.maps.Point(0, 0),
+                anchor: new naver.maps.Point(30, 30)
+            },
+            map: map
+        });
+
+        $('#notification-ping').html(data.detail.address);
+
+        siteMarkers.forEach(function (marker) {
+            marker.onRemove();
+        });
+
+        var sites = data.sites;
+
+        console.log(sites);
+
+        for (var i = 0; i < data.total; i++) {
+            siteMarkers.push(new naver.maps.Marker({
+                position: new naver.maps.LatLng(sites[i].y, sites[i].x),
+                icon: {
+                    url: foodImgUrl,
+                    size: new naver.maps.Size(30, 30),
+                    scaledSize: new naver.maps.Size(30, 30),
+                    origin: new naver.maps.Point(0, 0),
+                    anchor: new naver.maps.Point(15, 15)
+                },
+                map: map
+            }));
+        }
+
+        map.panTo(new naver.maps.LatLng(data.lat, data.lng));
 
     });
 
-    //socket.emit('join to team-map', {
-    //    displayName: 'User'
-    //});
+    socket.emit('join to team-map', {
+        displayName: displayName
+    });
 
     $("#send").click(sendPosition);
 
@@ -162,28 +193,33 @@ $(function () {
 
     });
 
-    socket.emit('login', {
-        id: 'test',
-        displayName: 'test'
+    getProfile(function (data) {
+        displayName = data.displayName;
+        profileUrl = data.profileUrl;
+        console.log(displayName, profileUrl);
+
+        socket.emit('login', {
+            displayName: displayName
+        });
     });
 
     socket.on('load old msgs', function (docs) {
         console.log(docs);
         docs.forEach(function (doc) {
-            $('#chatLogs').append("<div><h3>" + doc.displayName + " : <strong>" + doc.msg + "</strong>(" + doc.time + ")</h3></div>");
+            $('#chatLogs').append("<div><h3>" + doc.displayName + " : <strong>" + doc.msg + "</strong></h3>" + doc.date + "</div>");
         });
-        $('#chatLogs').animate({ scrollTop : $('#chatLogs')[0].scrollHeight});
+        $('#chatLogs').animate({scrollTop: $('#chatLogs')[0].scrollHeight});
     });
 
     socket.on('login', function (data) {
         $('#chatLogs').append('<div><h3>' + data + '님이 왔어요~!</h3></div>');
-        $('#chatLogs').animate({ scrollTop : $('#chatLogs')[0].scrollHeight});
+        $('#chatLogs').animate({scrollTop: $('#chatLogs')[0].scrollHeight});
     });
 
     socket.on('chat', function (data) {
         console.log(data);
-        $('#chatLogs').append("<div><h3>" + data.displayName + " : <strong>" + data.msg + "</strong>(" + data.time + ")</h3></div>");
-        $('#chatLogs').animate({ scrollTop : $('#chatLogs')[0].scrollHeight});
+        $('#chatLogs').append("<div><h3>" + data.displayName + " : <strong>" + data.msg + "</strong></h3>" + data.date + "</div>");
+        $('#chatLogs').animate({scrollTop: $('#chatLogs')[0].scrollHeight});
     });
 
     $("form").submit(function (e) {
@@ -191,7 +227,26 @@ $(function () {
 
         var $msgForm = $('#msgForm');
 
-        socket.emit('chat', {msg: $msgForm.val()});
+        socket.emit('chat', {
+            msg: $msgForm.val(),
+            displayName: displayName
+        });
         $msgForm.val("");
     });
 });
+
+/* Set the width of the side navigation to 250px and the left margin of the page content to 250px and add a black background color to body */
+function openNav() {
+    var windowWidth = $(window).width();
+    console.log(windowWidth);
+    if (windowWidth < 1000) {
+        document.getElementById("mySidenav").style.width = "100%";
+    } else {
+        document.getElementById("mySidenav").style.width = "20%";
+    }
+}
+
+/* Set the width of the side navigation to 0 and the left margin of the page content to 0, and the background color of body to white */
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+}
