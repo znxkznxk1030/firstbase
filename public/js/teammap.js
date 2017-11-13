@@ -227,8 +227,22 @@ $(function () {
 
         var $msgForm = $('#msgForm');
 
+        console.log($msgForm);
+
+        var $msgForm = $('#msgForm');
+        var msg = $msgForm.val();
+
+
+        msg = msg.replace('script', '고마해라 마이묵었다');
+        msg = msg.replace('<', ' ');
+        msg = msg.replace('>', ' ');
+        msg = msg.replace('{', ' ');
+        msg = msg.replace('}', ' ');
+        msg = msg.replace('$', ' ');
+        msg = msg.replace('null', '널');
+
         socket.emit('chat', {
-            msg: $msgForm.val(),
+            msg: msg,
             displayName: displayName
         });
         $msgForm.val("");
