@@ -10,7 +10,7 @@ router.get('/', function (req, res) {
 });
 
 
-router.get('/team', function(req, res){
+router.get('/team', auth.authMiddleware, function(req, res){
     res.render('teammap', {
         displayName: req.user.displayName
     });
