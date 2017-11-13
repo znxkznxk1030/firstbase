@@ -19,7 +19,7 @@ var startSocketIo = function (server) {
     io.on('connection', function (socket) {
 
 
-        Chat.collection.drop();
+        //Chat.collection.drop();
 
         Chat.find({timeStamp: {$gt: Date.now() - ONEWEEK}}).exec(function (err, docs) {
             if (err) {
