@@ -32,6 +32,7 @@
     "passport-local": "^1.0.0",
     "react": "^16.0.0",
     "redis": "^2.8.0",
+    "request": "^2.83.0",
     "safe-buffer": "^5.1.1",
     "scmp": "^2.0.0",
     "serve-favicon": "~2.4.2",
