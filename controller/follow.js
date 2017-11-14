@@ -103,7 +103,7 @@ var follow = function(req, res){
     });
 };
 
-var getFollowingList = function(req, res){
+var getFollowerList = function(req, res){
     const displayName = req.query.displayName;
 
     if(displayName === null || displayName === '' || displayName === 'undefined')
@@ -114,7 +114,7 @@ var getFollowingList = function(req, res){
     const sqlGetId =
         "SELECT id FROM user WHERE displayName = ?";
 
-    const sqlGetFollowingList =
+    const sqlGetFollowerList =
         "SELECT user.* " +
         "FROM user INNER JOIN follow " +
         "ON user.id = follow.follower_id " +
@@ -136,19 +136,19 @@ var getFollowingList = function(req, res){
             });
         },
         function(id, cb){
-            connection.query(sqlGetFollowingList, id, function(err, followings){
+            connection.query(sqlGetFollowerList, id, function(err, followers){
                 if(err) return cb('팔로잉 리스트 불러오기 오류');
 
-                followings = JSON.parse(JSON.stringify(followings));
+                followers = JSON.parse(JSON.stringify(followers));
 
-                followings.map(function(following){
-                    delete following.id;
-                    following.profileUrl = getImageUrl(following.profile_key);
-                    delete following.profile_key;
-                    return following;
+                followers.map(function(follower){
+                    delete follower.id;
+                    follower.profileUrl = getImageUrl(follower.profile_key);
+                    delete follower.profile_key;
+                    return follower;
                 });
 
-                return cb(null, followings);
+                return cb(null, followers);
 
             });
         }
@@ -157,14 +157,14 @@ var getFollowingList = function(req, res){
     async.waterfall(task, function(err, followers){
         if(err) return res.status(400).json({code: -1, message: err});
         else {
-            return res.status(200).json({code: 1, followings: followers, message: '팔로잉 찾기 성공'});
+            return res.status(200).json({code: 1, followers: followers, message: '팔로잉 찾기 성공'});
         }
     });
 
 
 };
 
-var getFollowerList = function(req, res){
+var getFollowingList = function(req, res){
 
     const displayName = req.query.displayName;
 
@@ -176,7 +176,7 @@ var getFollowerList = function(req, res){
     const sqlGetId =
         "SELECT id FROM user WHERE displayName = ?";
 
-    const sqlGetFollowerList =
+    const sqlGetFollowingList =
         "SELECT user.* " +
         "FROM user INNER JOIN follow " +
         "ON user.id = follow.target_id " +
@@ -198,27 +198,27 @@ var getFollowerList = function(req, res){
             });
         },
         function(id, cb){
-            connection.query(sqlGetFollowerList, id, function(err, followers){
+            connection.query(sqlGetFollowingList, id, function(err, followings){
                 if(err) return cb('팔로잉 리스트 불러오기 오류');
 
-                followers = JSON.parse(JSON.stringify(followers));
-                followers.map(function(follower){
-                    delete follower.id;
-                    follower.profileUrl = getImageUrl(follower.profile_key);
-                    delete follower.profile_key;
-                    return follower;
+                followings = JSON.parse(JSON.stringify(followings));
+                followings.map(function(following){
+                    delete following.id;
+                    following.profileUrl = getImageUrl(following.profile_key);
+                    delete following.profile_key;
+                    return following;
                 });
 
-                return cb(null, followers);
+                return cb(null, followings);
 
             });
         }
     ];
 
-    async.waterfall(task, function(err, followers){
+    async.waterfall(task, function(err, followings){
         if(err) return res.status(400).json({code: -1, message: err});
         else {
-            return res.status(200).json({code: 1, followers: followers, message: '팔로잉 찾기 성공'});
+            return res.status(200).json({code: 1, followings: followings, message: '팔로잉 찾기 성공'});
         }
     });
 
