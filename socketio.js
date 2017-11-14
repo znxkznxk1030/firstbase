@@ -82,14 +82,14 @@ var startSocketIo = function (server) {
                 msg: data.msg,
 
                 date: date.toLocaleDateString(),
-                time: (date.getHours() + 9) + '시 ' + date.getMinutes() + '분'
+                time: ((date.getHours() + 9)%24) + '시 ' + date.getMinutes() + '분'
             };
 
             var newMsg = new Chat({
                 msg: data.msg,
                 displayName: displayName,
                 date: date.toLocaleDateString(),
-                time: (date.getHours() + 9) + '시 ' + date.getMinutes() + '분'
+                time: ((date.getHours() + 9)%24) + '시 ' + date.getMinutes() + '분'
             });
 
             newMsg.save(function (err) {
