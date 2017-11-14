@@ -157,7 +157,7 @@ var getFollowingList = function(req, res){
     async.waterfall(task, function(err, followers){
         if(err) return res.status(400).json({code: -1, message: err});
         else {
-            return res.status(200).json({code: 1, followings: followings, message: '팔로잉 찾기 성공'});
+            return res.status(200).json({code: 1, followings: followers, message: '팔로잉 찾기 성공'});
         }
     });
 
