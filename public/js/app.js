@@ -603,8 +603,9 @@ function popUp(data) {
     console.log(data);
     console.log(data.image);
     $("#detail-title").text(data.title);
-    $("#detail-id").text(data.id);
-    $("#detail-modified_date").text(data.modified_date.substring(5,10));
+    $("#detail-id").text("API수정");
+    $("#detail-modified_date").text(data.modified_date.substring(2,10));
+    $("#detail-title-plus-left-bot").text("조회수: "+data.view_count +"    댓글수: "+data.countComments);
     $("#detail-image").text(data.image);
     $("#detail-content").text(data.content);
     $("#detail-cmt-count").text(data.commentCount);
@@ -619,7 +620,7 @@ function popUp(data) {
             var $img;
             for(i=0;i<data.imageUrls.length;i++){
                 $img = '<img src='+data.imageUrls[i]+'>';
-                $($img).appendTo($("#detail-image"));
+                $($img).appendTo($("#detail-images"));
             }
         }
     });
