@@ -102,7 +102,7 @@ var follow = function(req, res){
     });
 };
 
-var getFollowerList = function(req, res){
+var getFollowingList = function(req, res){
 
     const displayName = req.query.displayName;
 
@@ -160,7 +160,7 @@ var getFollowerList = function(req, res){
 
 };
 
-var getFollowingList = function(req, res){
+var getFollowerList = function(req, res){
 
     const displayName = req.query.displayName;
 
