@@ -25,6 +25,73 @@ header h2{
     color: #FFFFFF;
 }
 
+
+#board{
+    display: flex;
+    flex : 0 1 auto;
+    width: 100%;
+    height: 6%;
+    font-size: 14px;
+    color: #FFFFFF;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#board-title{
+    display: flex;
+    flex : 0 1 auto;
+    width: 50%;
+    height: 100%;
+    justify-content: flex-start;
+    padding-left: 20px;
+    align-items: center;
+    background-color: #000000;
+    /*border-top: 1px solid #B1D4FF;*/
+    /*border-top-left-radius: .5rem;*/
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#board-author{
+    display: flex;
+    flex : 0 1 auto;
+    width: 18%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #587FB2;
+    /*border-top: 1px solid #B1D4FF;*/
+}
+
+#board-date{
+    display: flex;
+    flex : 0 1 auto;
+    width: 16%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #587FB2;
+    /*border-top: 1px solid #B1D4FF;*/
+}
+
+#board-hits{
+    display: flex;
+    flex : 0 1 auto;
+    width: 16%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #587FB2;
+    /*border-top: 1px solid #B1D4FF;*/
+    /*border-top-right-radius: .5rem;*/
+}
+
 .container{
     padding: 16px;
     margin-top: 160px;
@@ -76,7 +143,7 @@ footer {
     z-index: 999; /* Stay on top */
     top: 0;
     left: 0;
-    background-color: #111; /* Black*/
+    background-color: #FFFFFF; /* Black*/
     overflow-x: hidden; /* Disable horizontal scroll */
     padding-top: 60px; /* Place content 60px from the top */
     transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
@@ -108,14 +175,52 @@ footer {
 
 /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
 #main {
-    transition: margin-left .5s;
+    transition: padding-left .5s;
     padding: 20px;
 }
+
+.content{
+    display: flex;
+    flex : 0 1 auto;
+    width: 100%;
+    height: calc(9.4% - 5px);
+    margin: 0;
+    font-size: 14px;
+    color: #252525;
+    align-items: center;
+    background-color: white;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.content-title{
+    display: flex;
+    flex: 0 1 auto;
+    width: calc(50% - 24px - 10px);
+    height: 100%;
+    margin-left: 5px;
+    justify-content: flex-start;
+    align-items: center;
+    overflow:hidden;
+    white-space: nowrap;
+}
+
+.content-author{
+    display: flex;
+    flex: 0 1 auto;
+    width: 18%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+
 
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {
     .sidenav {padding-top: 15px;}
     .sidenav a {font-size: 18px;}
-
-
 }

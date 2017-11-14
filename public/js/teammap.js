@@ -119,7 +119,7 @@ $(function () {
     });
 
     socket.on('get ping', function (data) {
-        // console.log(data);
+        //console.log(data);
         if (pingMarker) {
             pingMarker.onRemove();
         }
@@ -144,7 +144,11 @@ $(function () {
 
         var sites = data.sites;
 
-        console.log(sites);
+        //console.log(data);
+
+        //JSON.parse(sites);
+
+        makePage(data);
 
         for (var i = 0; i < data.total; i++) {
             siteMarkers.push(new naver.maps.Marker({
@@ -256,11 +260,47 @@ function openNav() {
     if (windowWidth < 1000) {
         document.getElementById("mySidenav").style.width = "100%";
     } else {
-        document.getElementById("mySidenav").style.width = "20%";
+        document.getElementById("mySidenav").style.width = "400px";
+        document.getElementById("main").style.paddingLeft = "400px";
     }
 }
 
 /* Set the width of the side navigation to 0 and the left margin of the page content to 0, and the background color of body to white */
 function closeNav() {
     document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.paddingLeft = "0";
+}
+
+function makePage(data) {
+    console.log(data);
+
+    $('#contents').html("");
+    $('#content-wrapper').html("");
+
+    var $list = $('<div id="content-wrapper"></div>').appendTo($('#contents'));
+
+    var sites = data.sites;
+    var fnAppendPage = function (start) {
+        $('#content-wrapper').html("");
+        var end = data.total;
+
+        <!-- 게시판 -->
+        var $board = $('<div id="board"></div>').appendTo($list);
+        $('<div id="board-title">식당 이름</div>').appendTo($board);
+        $('<div id="board-author">거리</div>').appendTo($board);
+
+
+        for (var i = start; i < end; i++) {
+            var o = sites[i];
+            var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($list).click(function () {
+                popUp($(this).data('data'));
+                $("#popUp").data("save", o.id);
+            });
+            $content_img = $('<div class="content-img"></div>').appendTo($content);
+            $('<div class="content-title"></div>').text(o.name).appendTo($content);
+            $('<div class="content-dist"></div>').text(parseInt(o.dist * 100000) + 'm').appendTo($content);
+        }
+    };
+
+    fnAppendPage(0);
 }
