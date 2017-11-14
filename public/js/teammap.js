@@ -136,8 +136,6 @@ $(function () {
             map: map
         });
 
-        $('#notification-ping').html(data.detail.address);
-
         siteMarkers.forEach(function (marker) {
             marker.onRemove();
         });
@@ -165,6 +163,7 @@ $(function () {
         }
 
         map.panTo(new naver.maps.LatLng(data.lat, data.lng));
+        $('#notification-ping').html(data.detail.address);
 
     });
 
