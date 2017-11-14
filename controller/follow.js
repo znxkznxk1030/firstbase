@@ -118,7 +118,7 @@ var getFollowerList = function(req, res){
         "SELECT user.* " +
         "FROM user INNER JOIN follow " +
         "ON user.id = follow.target_id " +
-        "WHERE user.displayName = ? ";
+        "WHERE user.id = ? ";
 
     var task = [
         function(cb){
@@ -173,7 +173,7 @@ var getFollowingList = function(req, res){
         "SELECT user.* " +
         "FROM user INNER JOIN follow " +
         "ON user.id = follow.follower_id " +
-        "WHERE user.displayName = ? ";
+        "WHERE user.id = ? ";
 
     var task = [
         function(cb){
