@@ -142,20 +142,29 @@
     <div id="detail-cancel" class="page-cancel">
         <button type="button" class="close" onclick="cancel($('#popUp'));">&times;</button>
     </div>
+    <div id ="detail-plus-menu">  </div>
     <div id="detail-post">
         <div id = "detail-top">
             <div id = "detail-icon" class="change"></div>
-            <div id = "detail-title" class="change"></div>
+            <div id = "detail-top-right">
+                <div id = "detail-title" class="change"></div>
+                <div id = "detail-title-plus">
+                    <div id = "detail-title-plus-left">
+                        <div id = "detail-title-plus-left-top">
+                            <div id = "detail-id" class="change"></div>
+                            <div id = "detail-modified_date" class="change"></div>
+                        </div>
+                        <div id = "detail-title-plus-left-bot">
+                        </div>
+                    </div>
+                    <div id = "detail-title-plus-right">
+                        <button type="submit" class="btn" id = "detail-follow">팔로우</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id = "detail-data">
-            <div id = "detail-id" class="change"></div>
-            <div id = "detail-modified_date" class="change"></div>
-        </div>
-        <div id = "detail-images">
-            <div id = "detail-image" class="change"></div>
-        </div>
+        <div id = "detail-images" class="change"></div>
         <div id = "detail-content" class="change"></div>
-        <div id = "detail-cmt-count" class="change"></div>
     </div>
 </div>
 
