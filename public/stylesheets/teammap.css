@@ -36,7 +36,7 @@ header h2{
     flex-flow: row nowrap;
     justify-content: flex-start;
     align-items: center;
-    padding: 0;
+    padding: 0 0 0 20px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -184,12 +184,11 @@ footer {
     flex : 0 1 auto;
     width: 100%;
     height: calc(9.4% - 5px);
-    margin: 0;
     font-size: 14px;
     color: #252525;
     align-items: center;
     background-color: white;
-    padding: 0;
+    padding: 0 0 0 20px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
