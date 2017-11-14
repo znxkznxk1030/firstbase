@@ -1,0 +1,226 @@
+@charset "UTF-8";
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    overflow: scroll;
+    background-color:#00251a;
+}
+
+header {
+    z-index: 10;
+    margin-top: 0;
+    height:120px;
+    width:100%;
+    top:0;
+    background-color:#004d40;
+    position:fixed;
+    overflow: hidden;
+}
+
+header h2{
+
+    text-align: center;
+    color: #FFFFFF;
+}
+
+
+#board{
+    display: flex;
+    flex : 0 1 auto;
+    width: 100%;
+    height: 6%;
+    font-size: 14px;
+    color: #FFFFFF;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#board-title{
+    display: flex;
+    flex : 0 1 auto;
+    width: 50%;
+    height: 100%;
+    justify-content: flex-start;
+    padding-left: 20px;
+    align-items: center;
+    background-color: #000000;
+    /*border-top: 1px solid #B1D4FF;*/
+    /*border-top-left-radius: .5rem;*/
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#board-author{
+    display: flex;
+    flex : 0 1 auto;
+    width: 18%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #587FB2;
+    /*border-top: 1px solid #B1D4FF;*/
+}
+
+#board-date{
+    display: flex;
+    flex : 0 1 auto;
+    width: 16%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #587FB2;
+    /*border-top: 1px solid #B1D4FF;*/
+}
+
+#board-hits{
+    display: flex;
+    flex : 0 1 auto;
+    width: 16%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: #587FB2;
+    /*border-top: 1px solid #B1D4FF;*/
+    /*border-top-right-radius: .5rem;*/
+}
+
+.container{
+    padding: 16px;
+    margin-top: 160px;
+}
+
+#map {
+    margin-bottom: 5%;
+    width:100%;
+    height:60%;
+    border: 1px solid #4bcbcc;
+}
+
+#buttons {
+    margin-left:3%;
+}
+
+#profile-image {
+    float:right;
+    margin-right: 1%;
+    height: 80px;
+    width: 80px;
+}
+
+#explanation {
+    text-align: center;
+    color: #FFFFFF;
+}
+
+#notification-ping{
+    text-align: center;
+    color: yellow;
+}
+
+#chatLogs{
+    overflow:scroll;
+    height:25%;
+    background-color:#96ceb4;
+}
+
+footer {
+    height:auto;
+}
+
+/* The side navigation menu */
+.sidenav {
+    height: 100%; /* 100% Full-height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 999; /* Stay on top */
+    top: 0;
+    left: 0;
+    background-color: #FFFFFF; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
+/* The navigation menu links */
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover, .offcanvas a:focus{
+    color: #f1f1f1;
+}
+
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+#main {
+    transition: padding-left .5s;
+    padding: 20px;
+}
+
+.content{
+    display: flex;
+    flex : 0 1 auto;
+    width: 100%;
+    height: calc(9.4% - 5px);
+    margin: 0;
+    font-size: 14px;
+    color: #252525;
+    align-items: center;
+    background-color: white;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.content-title{
+    display: flex;
+    flex: 0 1 auto;
+    width: calc(50% - 24px - 10px);
+    height: 100%;
+    margin-left: 5px;
+    justify-content: flex-start;
+    align-items: center;
+    overflow:hidden;
+    white-space: nowrap;
+}
+
+.content-author{
+    display: flex;
+    flex: 0 1 auto;
+    width: 18%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}
