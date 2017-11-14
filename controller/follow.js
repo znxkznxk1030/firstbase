@@ -1,5 +1,6 @@
 var connection = require('../database/db');
 var async = require('async');
+var getImageUrl = require("./files").getImageUrl;
 
 var unfollow = function(req, res){
     const id = req.user.id,
@@ -142,6 +143,8 @@ var getFollowingList = function(req, res){
 
                 followers.map(function(follower){
                     delete follower.id;
+                    follower.profileUrl = getImageUrl(follower.profile_key);
+                    delete follower.profile_key;
                     return follower;
                 });
 
@@ -199,9 +202,11 @@ var getFollowerList = function(req, res){
                 if(err) return cb('팔로잉 리스트 불러오기 오류');
 
                 followings = JSON.parse(JSON.stringify(followings));
-                followings.map(function(followings){
-                    delete followings.id;
-                    return followings;
+                followings.map(function(following){
+                    delete following.id;
+                    following.profileUrl = getImageUrl(following.profile_key);
+                    delete following.profile_key;
+                    return following;
                 });
 
                 return cb(null, followings);
@@ -216,7 +221,7 @@ var getFollowerList = function(req, res){
             return res.status(200).json({code: 1, followings: followings, message: '팔로잉 찾기 성공'});
         }
     });
-    
+
 };
 
 exports.follow = follow;
