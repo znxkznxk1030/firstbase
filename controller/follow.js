@@ -118,7 +118,7 @@ var getFollowerList = function(req, res){
         "SELECT user.* " +
         "FROM user INNER JOIN follow " +
         "ON user.id = follow.target_id " +
-        "WHERE user.id = ? ";
+        "WHERE follow.target_id = ? ";
 
     var task = [
         function(cb){
@@ -139,7 +139,10 @@ var getFollowerList = function(req, res){
             connection.query(sqlGetFollowingList, id, function(err, followings){
                 if(err) return cb('팔로잉 리스트 불러오기 오류');
 
-                //followers = JSON.parse(JSON.stringify(id));
+                followings = JSON.parse(JSON.stringify(followings));
+                followings.map(function(followings){
+
+                });
 
                 return cb(null, followings);
 
@@ -173,7 +176,7 @@ var getFollowingList = function(req, res){
         "SELECT user.* " +
         "FROM user INNER JOIN follow " +
         "ON user.id = follow.follower_id " +
-        "WHERE user.id = ? ";
+        "WHERE follow.follower_id = ? ";
 
     var task = [
         function(cb){
@@ -194,8 +197,12 @@ var getFollowingList = function(req, res){
             connection.query(sqlGetFollowerList, id, function(err, followers){
                 if(err) return cb('팔로잉 리스트 불러오기 오류');
 
-                //followers = JSON.parse(JSON.stringify(id));
+                followers = JSON.parse(JSON.stringify(followers));
 
+                followers.map(function(follower){
+
+                });
+                
                 return cb(null, followers);
 
             });
