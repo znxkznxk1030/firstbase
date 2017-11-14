@@ -34,7 +34,7 @@ var http = require('http');
 // };
 
 
-var https = require('https');
+// var https = require('https');
 
 var passport = require('./auth/index');
 
@@ -109,8 +109,8 @@ var server = http.createServer(app).listen(config.port, function () {
     console.log('server running port : ' + config.port);
 });
 
-// require('./socketio').startSocketIO(server);
-// require('./teamMap').startSocketIO(server);
+require('./socketio').startSocketIO(server);
+require('./teamMap').startSocketIO(server);
 //
 // // server = https.createServer(options, app).listen(config.ssl, function(err){
 // //     if(err) throw err;
@@ -119,4 +119,4 @@ var server = http.createServer(app).listen(config.port, function () {
 // // });
 //
 //
-// module.exports = app;
+module.exports = app;
