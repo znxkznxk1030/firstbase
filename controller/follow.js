@@ -139,7 +139,7 @@ var getFollowingList = function(req, res){
             connection.query(sqlGetFollowingList, id, function(err, followings){
                 if(err) return cb('팔로잉 리스트 불러오기 오류');
 
-                followings = JSON.parse(JSON.stringify(followers));
+                followings = JSON.parse(JSON.stringify(followings));
 
                 followings.map(function(following){
                     delete following.id;
