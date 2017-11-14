@@ -79,7 +79,8 @@ $(document).on('click', '#load-area', function(){
 var temp_Markers = [];
 var marker_temp;
 var ActivateWriteHere = false;
-$(document).on('mousedown', '.write-icon img', function(){
+
+$(document).on('mousedown', '.write-icons img', function(){
     /* lock icon in map. user could drag icon only in map */
     // ActivateWriteHere = true;
 
@@ -93,7 +94,6 @@ $(document).on('mousedown', '.write-icon img', function(){
 
         if(ActivateWriteHere == true && e.coord != undefined){
             writeHere(e.coord, imgUrl);
-            ActivateWriteHere = false;
             naver.maps.Event.removeListener(writeListener);
         }
         else{
@@ -111,7 +111,7 @@ $(document).on('mousedown', '.write-icon img', function(){
 // });
 
 //$(".write-icon img").mouseup(function(e){                 //아직 아이콘 생성 안돼서 불가능.
-$(document).on('mouseup', '.write-icon img', function(e){  //document라서 중간에 아이콘 생성돼도 가능.
+$(document).on('mouseup', '.write-icons img', function(e){  //document라서 중간에 아이콘 생성돼도 가능.
 
     // for(i = 0; i<temp_Markers.length; i++){
     //     // temp_Markers[i]
@@ -126,25 +126,22 @@ $(document).on('mouseup', '.write-icon img', function(e){  //document라서 중�
         $('#write-change').html("");
         ActivateWriteHere = true;
 
-        //naver.maps.Event.trigger(map, 'mousemove', true); //function check(e) {
+        // naver.maps.Event.trigger(map, 'mousemove', function check(e) {
         //     var check = true;
         //     var here = e.coord;
-        // //     //writeHere(here);
-        // //
-        // //     // if(ActivateWriteHere == true){
-        // //
-        // //         /*naver.maps.Event.removeListener(listener);*/
-        // //         // ActivateWriteHere = false;
-        // //     // }
-        // //     // else {
-        // //     //     return;
-        // //     // }
+        //     writeHere(here);
+        //     if(ActivateWriteHere == true){
+        //         naver.maps.Event.removeListener(listener);
+        //         ActivateWriteHere = false;
+        //     }
+        //     else {
+        //         return;
+        //     }
         //  });
-
 
     }
     else {
-        //alert("지도에 아이콘을 놔주세요.");
+        alert("지도에 아이콘을 놔주세요.");
         write_button_click();
     }
 
@@ -152,8 +149,9 @@ $(document).on('mouseup', '.write-icon img', function(e){  //document라서 중�
 
 
 function writeHere(coord, imgUrl) {
-
+    ActivateWriteHere = false;
     $('#write-change').html("");
+    $('#writePage').css("overflow", "hidden");
     var markerOptions = {
         position: new naver.maps.LatLng(coord.y, coord.x),
         map: map,
@@ -168,16 +166,37 @@ function writeHere(coord, imgUrl) {
     marker_temp = new naver.maps.Marker(markerOptions);
     temp_Markers.push(marker_temp);
 
-    // $write_top_div = $('<div id="write-top-div"></div>');
-    // $write_mid_div = $('<div id="write-mid-div"></div>');
+    var write_form = '';
+
+    write_form+= '<form action="/footprint/create" method="post" enctype="application/json">';
+
+    write_form+= '<div id="write-top-div">';
+    write_form+= '<div id="write-div-icon"><img src='+ imgUrl +'></div>';
+    write_form+= '<div id="write-title"><input type="text" class="form-control" name="title" id="title" placeholder="제목"/></div>';
+    write_form+= '</div>';
+
+    write_form+= '<div id="write-mid-div">';
+    write_form+= '<div id="write-text-form"><textarea name="content" id="content" class="form-control" placeholder="내용" wrap="hard"></textarea></div>';
+    write_form+= '<div id="write-add-img"><img src="/img/layout/add-img.png">사진 첨부하기</div>';
+    write_form+= '</div>';
+
+    write_form+= '<div id="write-bot-div">';
+    write_form+= '<button type="button" class="btn" id = "wbx" onclick="cancel($(\'#writePage\'));">취소</button>';
+    write_form+= '<button type="submit" class="btn" id = "wbo">작성완료</button>';
+    write_form+= '</div>'
+
+    write_form+= '</form>';
+
+    $('#write-change').html(write_form);
+
+
+
+
     // $write_bot_div = $('<div id="write-bot-div"></div>');
     // $write_submit_div = $('<div id="write-submit-div"></div>');
-    // $write_form = $('<form action="/footprint/create" method="post" enctype="application/json">');
     //
-    // $write_icon = $('<div class="write-icon"></div>');
-    // $write_title = $('<div class="write-title"></div>');
-    // $write_title_form = $('<input type="text" class="form-control" name="title" id="title" placeholder="제목"/>');
-    // $write_icon.appendTo($('#write-change'));
+    //
+
     //
     // $write_add_img = $('<div class="write-add-img"></div>');
     // $add_img_button = $('<div class="add-img-button"></div>');
@@ -473,22 +492,27 @@ function write_button_click() {
 
     $("#writePage").css("display", "flex");
     $('#write-change').html("");
+    $('#writePage').css("overflow", "visible");
 
-    var $write_icon;
+    var $write_icons;
     var $icon;
-
+    var tempMax = 0;
     $.each(allIcon, function( key, value ) {
-        $write_icon = $('<div class="write-icon"></div>');
-        $write_icon.appendTo( $('#write-change') );
+        $write_icons = $('<div class="write-icons"></div>');
+        $write_icons.appendTo( $('#write-change') );
         $icon = $('<img src='+value+'>');
-        $icon.appendTo($write_icon);
+        $icon.appendTo($write_icons);
+        tempMax++;
+        if(tempMax == 10){
+            return false;
+        }
     });
 
     // $(".write-icon img").draggable({
     //     containment: "body"
     // });
 
-    $(".write-icon img").draggable({
+    $(".write-icons img").draggable({
         containment: "#main-area",
         revert: "invalid",
         helper: "clone",
@@ -609,7 +633,7 @@ function cancel(page){
 
 function saveIcons(data){
     var o = data.iconUrls;
-    for(i = 0; i<Math.min(o.length, 10); i++){
+    for(i = 0; i<o.length; i++){
         var key = o[i].key;
         var value = o[i].value;
         allIcon[key] = value;

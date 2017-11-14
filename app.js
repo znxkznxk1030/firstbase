@@ -25,13 +25,13 @@ var config = require("./config");
 var http = require('http');
 
 
-
-var options = {
-    host : config.host,
-    key: fs.readFileSync('./server.key'),
-    cert: fs.readFileSync('./server.crt'),
-    agent: false
-};
+//
+// var options = {
+//     host : config.host,
+//     key: fs.readFileSync('./server.key'),
+//     cert: fs.readFileSync('./server.crt'),
+//     agent: false
+// };
 var https = require('https');
 
 var passport = require('./auth/index');
@@ -107,14 +107,14 @@ var server = http.createServer(app).listen(config.port, function () {
     console.log('server running port : ' + config.port);
 });
 
-require('./socketio').startSocketIO(server);
-
-server = https.createServer(options, app).listen(config.ssl, function(err){
-    if(err) throw err;
-
-    console.log('https server running port : ' + config.ssl);
-});
-
-require('./teamMap').startSocketIO(server);
-
-module.exports = app;
+// require('./socketio').startSocketIO(server);
+// //
+// server = https.createServer(options, app).listen(config.ssl, function(err){
+//     if(err) throw err;
+//
+//     console.log('https server running port : ' + config.ssl);
+// });
+//
+// require('./teamMap').startSocketIO(server);
+//
+// module.exports = app;
