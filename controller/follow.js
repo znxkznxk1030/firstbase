@@ -111,17 +111,48 @@ var getFollowerList = function(req, res){
         return res.status(400).json({code: -1, message: '닉네임이 비어있습니다.'});
     }
 
-    const sqlGetFollowerList =
-        "SELECT user.displayName " +
+    const sqlGetId =
+        "SELECT id FROM user WHERE displayName = ?";
+
+    const sqlGetFollowingList =
+        "SELECT user.* " +
         "FROM user INNER JOIN follow " +
         "ON user.id = follow.target_id " +
         "WHERE user.displayName = ? ";
 
-    connection.query(sqlGetFollowerList, displayName, function(err, followers){
-        if(err) return res.status(400).json({code: -1, message: '팔로워 리스트 불러오기 오류'});
+    var task = [
+        function(cb){
+            connection.query(sqlGetId, displayName, function(err, id){
+                if(err) return cb('팔로워 리스트 불러오기 오류');
+                else{
+                    id = JSON.parse(JSON.stringify(id))[0].id;
 
-        return res.status(200).json({code: 1, followers : followers, message: '팔로워 찾기 성공'});
-    })
+                    if(!id){
+                        return cb('팔로워 리스트 불러오기 오류');
+                    }else{
+                        return cb(null, id);
+                    }
+                }
+            });
+        },
+        function(id, cb){
+            connection.query(sqlGetFollowingList, id, function(err, followings){
+                if(err) return cb('팔로잉 리스트 불러오기 오류');
+
+                //followers = JSON.parse(JSON.stringify(id));
+
+                return cb(null, followings);
+
+            });
+        }
+    ];
+
+    async.waterfall(task, function(err, followings){
+        if(err) return res.status(400).json({code: -1, message: err});
+        else {
+            return res.status(200).json({code: 1, followings: followings, message: '팔로잉 찾기 성공'});
+        }
+    });
 
 
 };
@@ -135,17 +166,48 @@ var getFollowingList = function(req, res){
         return res.status(400).json({code: -1, message: '닉네임이 비어있습니다.'});
     }
 
+    const sqlGetId =
+        "SELECT id FROM user WHERE displayName = ?";
+
     const sqlGetFollowerList =
-        "SELECT user.displayName " +
+        "SELECT user.* " +
         "FROM user INNER JOIN follow " +
         "ON user.id = follow.follower_id " +
         "WHERE user.displayName = ? ";
 
-    connection.query(sqlGetFollowerList, displayName, function(err, followers){
-        if(err) return res.status(400).json({code: -1, message: '팔로잉 리스트 불러오기 오류'});
+    var task = [
+        function(cb){
+            connection.query(sqlGetId, displayName, function(err, id){
+                if(err) return cb('팔로워 리스트 불러오기 오류');
+                else{
+                    id = JSON.parse(JSON.stringify(id))[0].id;
 
-        return res.status(200).json({code: 1, followers : followers, message: '팔로잉한 유저들 찾기 성공'});
-    })
+                    if(!id){
+                        return cb('팔로워 리스트 불러오기 오류');
+                    }else{
+                        return cb(null, id);
+                    }
+                }
+            });
+        },
+        function(id, cb){
+            connection.query(sqlGetFollowerList, id, function(err, followers){
+                if(err) return cb('팔로잉 리스트 불러오기 오류');
+
+                //followers = JSON.parse(JSON.stringify(id));
+
+                return cb(null, followers);
+
+            });
+        }
+    ];
+
+    async.waterfall(task, function(err, followers){
+        if(err) return res.status(400).json({code: -1, message: err});
+        else {
+            return res.status(200).json({code: 1, followers: followers, message: '팔로잉 찾기 성공'});
+        }
+    });
 
 };
 
