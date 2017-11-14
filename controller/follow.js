@@ -141,7 +141,8 @@ var getFollowingList = function(req, res){
 
                 followings = JSON.parse(JSON.stringify(followings));
                 followings.map(function(followings){
-
+                    delete followings.id;
+                    return followings;
                 });
 
                 return cb(null, followings);
@@ -200,7 +201,8 @@ var getFollowerList = function(req, res){
                 followers = JSON.parse(JSON.stringify(followers));
 
                 followers.map(function(follower){
-
+                    delete follower.id;
+                    return follower;
                 });
 
                 return cb(null, followers);
