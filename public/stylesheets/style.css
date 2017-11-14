@@ -6,6 +6,7 @@ body {
     margin: 0;
     font-family: "Noto Scans CJK KR", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     color : #252525;
+    overflow: hidden;
 }
 
 #load-area{
@@ -706,7 +707,7 @@ body {
     display: none;
     position: absolute;
     flex : 0 1 auto;
-    flex-flow: column wrap;
+    flex-flow: row wrap;
     width : 35vw;
     height : 100vh;
     top : 0;
@@ -743,7 +744,7 @@ body {
     flex: 0 1 auto;
     height: auto;
     width: 100%;
-    flex-flow: column wrap;
+    flex-flow: row wrap;
 }
 
 #detail-top {
