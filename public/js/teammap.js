@@ -259,8 +259,8 @@ function openNav() {
     if (windowWidth < 1000) {
         document.getElementById("mySidenav").style.width = "100%";
     } else {
-        document.getElementById("mySidenav").style.width = "400px";
-        document.getElementById("main").style.paddingLeft = "400px";
+        document.getElementById("mySidenav").style.width = "500px";
+        document.getElementById("main").style.paddingLeft = "500px";
     }
 }
 

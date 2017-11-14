@@ -45,7 +45,7 @@ header h2{
 #board-title{
     display: flex;
     flex : 0 1 auto;
-    width: 50%;
+    width: 70%;
     height: 100%;
     justify-content: flex-start;
     padding-left: 20px;
@@ -61,7 +61,7 @@ header h2{
 #board-author{
     display: flex;
     flex : 0 1 auto;
-    width: 18%;
+    width: 30%;
     height: 100%;
     justify-content: center;
     align-items: center;
@@ -184,7 +184,7 @@ footer {
     flex : 0 1 auto;
     width: 100%;
     height: calc(9.4% - 5px);
-    font-size: 40px;
+    font-size: 30px;
     color: #252525;
     align-items: center;
     background-color: white;
@@ -197,7 +197,7 @@ footer {
 .content-title{
     display: flex;
     flex: 0 1 auto;
-    width: calc(50% - 24px - 10px);
+    width: 70%;
     height: 100%;
     margin-left: 5px;
     justify-content: flex-start;
@@ -206,10 +206,10 @@ footer {
     white-space: nowrap;
 }
 
-.content-author{
+.content-dist{
     display: flex;
     flex: 0 1 auto;
-    width: 18%;
+    width: 30%;
     height: 100%;
     justify-content: center;
     align-items: center;
