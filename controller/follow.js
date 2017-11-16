@@ -129,7 +129,7 @@ var follow = function(req, res){
             connection.query(sqlNumFollower, [result.targetId], function(err, numFollowers){
                 if(err) return cb(err, null);
 
-                return cb(null, _.extend(result,{numFollowers: JSON.parse(JSON.stringify(numFollowers))[0].numFollowers}));
+                return cb(null, _.extend(result,{numFollowings: JSON.parse(JSON.stringify(numFollowers))[0].numFollowers}));
             });
         },
         function(result, cb){
@@ -137,7 +137,7 @@ var follow = function(req, res){
                 if(err) return cb(err, null);
 
                 delete result.targetId;
-                return cb(null, _.extend(result, {numFollowings: JSON.parse(JSON.stringify(numFollowings))[0].numFollowings}));
+                return cb(null, _.extend(result, {numFollowers: JSON.parse(JSON.stringify(numFollowings))[0].numFollowings}));
             });
         }
     ];
