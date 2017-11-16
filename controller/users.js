@@ -1,6 +1,6 @@
 const connection = require('../database/db');
 const async = require('async');
-const retrieveByKey = require("./files").retrieveByKey;
+const getImageUrl = require("./files").getImageUrl;
 const profileDefaultKey = 'profiledefault.png';
 const _ = require('underscore');
 var passwordUtil = require("../auth/password");
@@ -107,8 +107,8 @@ var getUserInfoByReqHeader = function(req, res){
         function(profile, cb){
             var profileUrl, profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
             //console.log(profileKey);
-            if(profileKey) profileUrl = retrieveByKey(profileKey);
-            else profileUrl = retrieveByKey(profileDefaultKey);
+            if(profileKey) profileUrl = getImageUrl(profileKey);
+            else profileUrl = getImageUrl(profileDefaultKey);
 
             return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], { profileUrl: profileUrl }));
         },
@@ -177,8 +177,8 @@ var getUserInfoByUserDisplayName = function(req, res){
         function(profile, cb){
             var profileUrl, profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
             //console.log(profileKey);
-            if(profileKey) profileUrl = retrieveByKey(profileKey);
-            else profileUrl = retrieveByKey(profileDefaultKey);
+            if(profileKey) profileUrl = getImageUrl(profileKey);
+            else profileUrl = getImageUrl(profileDefaultKey);
 
             return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], { profileUrl: profileUrl }));
         },
@@ -254,8 +254,8 @@ var getUserInfoByUserId = function(req, res){
         function(profile, cb){
             var profileUrl, profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
             //console.log(profileKey);
-            if(profileKey) profileUrl = retrieveByKey(profileKey);
-            else profileUrl = retrieveByKey(profileDefaultKey);
+            if(profileKey) profileUrl = getImageUrl(profileKey);
+            else profileUrl = getImageUrl(profileDefaultKey);
 
             return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], { profileUrl: profileUrl }));
         },
@@ -386,21 +386,21 @@ var registrateUser = function registrateUser(formData, cb){
 
             var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
             connection.query(sql, [formData.id, formData.displayName, 'Local'], function(err, result){
-                if(err) return cb(err, false);
+                if(err) return cb('회원가입 에러 ', false);
 
                 connection.query('INSERT INTO password (id, password) VALUES(?,?)', [formData.id, password], function(err, result){
                     if(err) {
                         connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
-                            if(err) return cb(err, false);
+                            if(err) return cb('회원가입 에러 ', false);
                         });
-                        return cb(err, false);
+                        return cb('이미 있는 아이디 입니다.', false);
                     }
                     console.log(result);
                     if(result){
                         return cb(null, true);
                     }else {
                         connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
-                            if(err) return cb(err, false);
+                            if(err) return cb('회원가입 에러 ', false);
                         });
                     }
                 });
