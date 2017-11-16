@@ -17,7 +17,7 @@ var unfollow = function(req, res){
         "SELECT count(follower_id) AS numFollowers FROM follow WHERE follower_id = ?";
 
     const sqlNumFollowing =
-        "SELECT count(follower_id) AS numFollowings FROM follow WHERE following_id = ? ";
+        "SELECT count(follower_id) AS numFollowings FROM follow WHERE target_id = ? ";
 
     var task = [
         function(cb){
@@ -67,6 +67,10 @@ var follow = function(req, res){
     const id = req.user.id,
         targetDisplayName = req.body.targetDisplayName;
 
+    if(!targetDisplayName){
+        return res.status(400).json({code: -1, message: '닉네임 입력이 잘못 되었습니다.' });
+    }
+
     const sqlGetId =
         "SELECT id FROM user WHERE displayName = ?";
 
@@ -86,7 +90,7 @@ var follow = function(req, res){
         "SELECT count(follower_id) AS numFollowers FROM follow WHERE follower_id = ?";
 
     const sqlNumFollowing =
-        "SELECT count(follower_id) AS numFollowings FROM follow WHERE following_id = ? ";
+        "SELECT count(follower_id) AS numFollowings FROM follow WHERE target_id = ? ";
 
 
     var task = [
@@ -149,7 +153,7 @@ var follow = function(req, res){
 };
 
 var getFollowerList = function(req, res){
-    const displayName = req.query.displayName;
+    const displayName = req.body.displayName;
 
     if(displayName === null || displayName === '' || displayName === 'undefined')
     {
