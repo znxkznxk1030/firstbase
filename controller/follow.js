@@ -153,7 +153,7 @@ var follow = function(req, res){
 };
 
 var getFollowerList = function(req, res){
-    const displayName = req.body.displayName;
+    const displayName = req.query.displayName;
 
     if(displayName === null || displayName === '' || displayName === 'undefined')
     {
@@ -172,12 +172,12 @@ var getFollowerList = function(req, res){
     var task = [
         function(cb){
             connection.query(sqlGetId, displayName, function(err, id){
-                if(err) return cb('팔로워 리스트 불러오기 오류');
+                if(err) return cb('아이디가 존재하지 않습니다');
                 else{
                     id = JSON.parse(JSON.stringify(id))[0].id;
 
                     if(!id){
-                        return cb('팔로워 리스트 불러오기 오류');
+                        return cb('아이디가 존재하지 않습니다');
                     }else{
                         return cb(null, id);
                     }
@@ -251,6 +251,7 @@ var getFollowingList = function(req, res){
                 if(err) return cb('팔로잉 리스트 불러오기 오류');
 
                 followings = JSON.parse(JSON.stringify(followings));
+
                 followings.map(function(following){
                     delete following.id;
                     following.profileUrl = getImageUrl(following.profile_key);
@@ -259,6 +260,7 @@ var getFollowingList = function(req, res){
                 });
 
                 return cb(null, followings);
+
 
             });
         }
