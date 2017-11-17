@@ -36,6 +36,9 @@ var getAuthor = function (footprintId, cb) {
 
 var getFootprintListByDisplayName = function (req, res) {
     const id = req.author.id;
+    const displayName = req.query.displayName;
+
+    //console.log(displayName);
 
     const sqlRetrieveFootprint =
         "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
@@ -74,7 +77,10 @@ var getFootprintListByDisplayName = function (req, res) {
 
                             profile = JSON.parse(JSON.stringify(profile))[0];
 
-                            footprint.displayName = profile.displayName;
+                            delete footprint.id;
+                            footprint.displayName = displayName;
+
+                            //console.log(profile);
 
                             var profileUrl, profileKey = profile.profile_key;
                             if (profileKey) profileUrl = getImageUrl(profileKey);
@@ -112,8 +118,9 @@ var getFootprintListByDisplayName = function (req, res) {
                 });
             }, function (err, result) {
                 if (err) return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
-
-                else res.status(200).json(result);
+                else {
+                    res.status(200).json(result);
+                }
             });
         });
 };
