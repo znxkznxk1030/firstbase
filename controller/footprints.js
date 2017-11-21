@@ -655,6 +655,9 @@ var getFootprintByFootprintID = function (req, res) {
     const sqlGetProfileImage =
         "SELECT profile_key, displayName FROM user WHERE id = ?";
 
+    const sqlGetAllLinks =
+        "SELECT * FROM link_footprint WHERE footprint_id = ?";
+
     const task = [
         /**
          *  Get selected footprint data set
@@ -805,6 +808,18 @@ var getFootprintByFootprintID = function (req, res) {
                     delete footprint.id;
                     console.log(profileUrl);
                     return cb(null, _.extend(footprint, {profileUrl: profileUrl}));
+                });
+        },
+        function(footprint, cb){
+            connection.query(sqlGetAllLinks, [footprintId],
+                function(err, links){
+                if(err) return cb(err);
+
+                links = JSON.parse(JSON.stringify(links));
+
+                if(links) footprint = _.extend(footprint, {links : links});
+
+                return cb(null, footprint);
                 });
         }
     ];
