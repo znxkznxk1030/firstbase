@@ -4,6 +4,7 @@ var baseUrl = "http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:80
 var mapWidth = $("#map").outerWidth();
 var mapHeight = $("#map").outerHeight();
 var allIcon = {};
+var socket = io();
 
 $(window).resize(function() {
     mapWidth = $("#map").outerWidth();
@@ -151,7 +152,6 @@ $(document).on('mouseup', '.write-icons img', function(e){  //document라서 중
 function writeHere(coord, imgUrl) {
     ActivateWriteHere = false;
     $('#write-change').html("");
-    $('#writePage').css("overflow", "hidden");
     var markerOptions = {
         position: new naver.maps.LatLng(coord.y, coord.x),
         map: map,
@@ -175,9 +175,12 @@ function writeHere(coord, imgUrl) {
     write_form+= '<div id="write-title"><input type="text" class="form-control" name="title" id="title" placeholder="제목"/></div>';
     write_form+= '</div>';
 
+    write_form+= '<div id="write-images">';
+    write_form+= '</div>';
+
     write_form+= '<div id="write-mid-div">';
     write_form+= '<div id="write-text-form"><textarea name="content" id="content" class="form-control" placeholder="내용" wrap="hard"></textarea></div>';
-    write_form+= '<div id="write-add-img"><img src="/img/layout/add-img.png">사진 첨부하기</div>';
+    write_form+= '<div id="write-add-img"><input type="file" id="write-img" accept="image/*" multiple/><label for="write-img"><img src="/img/layout/add-img.png">사진 첨부하기</label></div>';
     write_form+= '</div>';
 
     write_form+= '<div id="write-bot-div">';
@@ -316,7 +319,7 @@ function makeMarkers(data) {
         }
 
         function getClickHandler(seq) {
-            return function(e) {
+            return function() {
                 var id = markers[seq].getTitle();
                 $.each(contentsData, function (index, item) {
                     $.each(item, function (key, value) {
@@ -587,8 +590,11 @@ if( (a>x) && (b>y) ){
 
 
 function popUp(data) {
-    $("#popUp").css("display", "flex");
-    $("#popUp").data("change", "true");
+    $("#popUp").modal()
+
+
+    // $("#popUp").css("display", "flex");
+    // $("#popUp").data("change", "true");
 
     $("#popUp").find($(".change")).text("");
 
@@ -624,7 +630,22 @@ function popUp(data) {
             }
         }
     });
-    $("#popUp").animate({left: "65vw"});
+    history.pushState(null,null,'footprint/detail?id=1');
+    var sideMap = new naver.maps.Map('sideMap', {
+        center: map.center, //지도의 초기 중심 좌표
+        zoom: 10, //지도의 초기 줌 레벨
+        minZoom: 2, //지도의 최소 줌 레벨 //축소
+        maxZoom: 14, //확대
+        zoomControl: true, //줌 컨트롤의 표시 여부
+        zoomControlOptions: { //줌 컨트롤의 옵션
+            style: naver.maps.ZoomControlStyle.SMALL, // 바가 아니라 확대 축소로.
+            position: naver.maps.Position.RIGHT_CENTER
+        },
+        logoControl: false, //네이버 로고 삭제
+        scaleControl: false, //거리 단위 표시 삭제
+        mapDataControl: false, //네이버 Corp. 삭제
+    });
+    // $("#popUp").animate({left: "65vw"});
 }
 
 function cancel(page){
@@ -652,4 +673,28 @@ function onSuccessGeolocation(position) {
     var location = new naver.maps.LatLng(position.coords.latitude, position.coords.longitude);
     map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.
     map.setZoom(10); // 지도의 줌 레벨을 변경합니다.
+}
+
+
+$(document).on('change', '#write-img', handleImgFileSelect);
+
+function handleImgFileSelect(e) {
+    var files = e.target.files;
+    var filesArr = Array.prototype.slice.call(files);
+
+    filesArr.forEach(function(f) {
+        if(!f.type.match("image.*")) {
+            alert("확장자는 이미지 확장자만 가능합니다.");
+            return false;
+        }else {
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var img_html = "<img src=\"" + e.target.result + "\" />";
+                $("#write-images").append(img_html);
+            }
+            reader.readAsDataURL(f);
+        }
+
+    });
 }

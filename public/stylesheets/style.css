@@ -703,18 +703,18 @@ body {
     flex-flow: row nowrap;
 }
 
-#popUp {
-    display: none;
-    position: absolute;
-    flex : 0 1 auto;
-    flex-flow: row wrap;
-    width : 35vw;
-    height : 100vh;
-    top : 0;
-    left : 100vw;
-    background-color: white;
-    overflow-y : scroll;
-}
+/*#popUp {*/
+    /*display: none;*/
+    /*position: absolute;*/
+    /*flex : 0 1 auto;*/
+    /*flex-flow: row wrap;*/
+    /*width : 35vw;*/
+    /*height : 100vh;*/
+    /*top : 0;*/
+    /*left : 100vw;*/
+    /*background-color: white;*/
+    /*overflow-y : scroll;*/
+/*}*/
 
 .page-cancel {
     display: flex;
@@ -733,7 +733,7 @@ body {
 #detail-plus-menu{
     display: flex;
     flex: 0 1 auto;
-    height: 30px;
+    height: 100px;
     width: 100%;
     justify-content: center;
     align-items: center;
@@ -890,11 +890,11 @@ body {
     align-items: center;
 }
 
-#writePage {
+#writePage, #chatPage {
     display: none;
     position: absolute;
     flex : 0 1 auto;
-    flex-flow: column wrap;
+    flex-flow: row wrap;
     width : 35vw;
     height : 100vh;
     top : 0;
@@ -902,14 +902,16 @@ body {
     background-color: white;
 }
 
-#write-change{
+#write-change, #chat-change {
     display: flex;
     flex: 0 1 auto;
     width: 100%;
-    height: calc(100% - 70px);
+    height: calc(100vh - 70px);
     justify-content: flex-start;
     align-items: center;
-    flex-flow: column wrap;
+    flex-flow: row wrap;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .write-icons{
@@ -978,7 +980,7 @@ body {
     display: flex;
     flex: 0 1 auto;
     width: calc( 100% - 10px );
-    height: calc( 100% - 34px );
+    height: calc( 100% - 36px );
     align-items: center;
     margin: 5px;
 }
@@ -994,8 +996,9 @@ body {
     flex: 0 1 auto;
     margin-left: 5px;
     width: 100%;
-    height: 24px;
+    height: 26px;
     color: #00bbd2;
+    font-weight: 500;
 }
 
 #write-add-img img{
@@ -1005,6 +1008,31 @@ body {
     width: 24px;
     height: 24px;
 }
+
+#write-add-img input{
+    display: flex;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+#write-add-img label {
+    display: flex;
+    flex: 0 1 auto;
+    cursor: pointer;
+    margin: 0;
+    padding-right: 8px;
+    align-items: center;
+}
+
+#write-add-img label:hover{
+    border: 1px solid #00bbd2;
+}
+
+
 
 #write-bot-div{
     display: flex;
@@ -1037,3 +1065,40 @@ body {
     border: 1px solid rgba(0,0,0,.15);
     border-radius: .25rem;
 }
+
+.modal-content{
+    display: flex;
+    flex : 0 1 auto;
+    width: 100%;
+    height: 100%;
+}
+
+#sideMap{
+    display: flex;
+    flex: 0 1 auto;
+    width: 100%;
+    height: 100%;
+}
+
+#write-images{
+    display: flex;
+    flex: 0 1 auto;
+    width: 100%;
+    height: auto;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column nowrap;
+}
+
+#write-images img{
+    display: flex;
+    flex: 0 1 auto;
+    margin-top: 10px;
+    width: 70%;
+    height: auto;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+
