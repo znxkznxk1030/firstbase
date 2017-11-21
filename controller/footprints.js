@@ -812,15 +812,15 @@ var getFootprintByFootprintID = function (req, res) {
                                 connection.query(sqlRetrieveFootprintByFootprintId, [link.end_footprint_id], function (err, end_footprint) {
                                     if (err) throw err;
 
-                                    end_footprint = JSON.parse(JSON.stringify(end_footprint));
-                                    _.extend(link, end_footprint);
+                                    end_footprint = JSON.parse(JSON.stringify(end_footprint))[0];
+
+                                    if(end_footprint) return _.extend(link, end_footprint);
                                 });
-                                return link;
                             });
                         } catch (err) {
                             return cb(err);
                         }
-                        
+
                         footprint = _.extend(footprint, {links: links});
                     }
 
