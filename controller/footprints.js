@@ -656,7 +656,9 @@ var getFootprintByFootprintID = function (req, res) {
         "SELECT profile_key, displayName FROM user WHERE id = ?";
 
     const sqlGetAllLinks =
-        "SELECT * FROM link_footprint WHERE footprint_id = ?";
+        "SELECT * " +
+        "FROM link_footprint, footprint " +
+        "WHERE footprint_id  = ? AND footprint.footprint_id = link_footprint.footprint_id";
 
     const task = [
         /**
@@ -720,12 +722,6 @@ var getFootprintByFootprintID = function (req, res) {
                     var imageUrls = [];
 
                     imageInfo.forEach(function (image) {
-                        // var params = {
-                        //     Bucket: bucketName,
-                        //     Key: image.image_key
-                        // };
-                        //
-                        // console.log("#debug retrieveAll : " + image.image_key);
                         var imageUrl = getImageUrl(image.image_key);
                         imageUrls.push(imageUrl);
                     });
@@ -750,11 +746,6 @@ var getFootprintByFootprintID = function (req, res) {
                         if (profileKey === null) {
                             profileKey = 'profiledefault.png';
                         }
-
-                        // const params = {
-                        //     Bucket: bucketName,
-                        //     Key: profileKey
-                        // };
 
                         const profileUrl = getImageUrl(profileKey);
 
@@ -798,11 +789,6 @@ var getFootprintByFootprintID = function (req, res) {
                         profileKey = 'profiledefault.png';
                     }
 
-                    // const params = {
-                    //     Bucket: bucketName,
-                    //     Key: profileKey
-                    // };
-
                     const profileUrl = getImageUrl(profileKey);
 
                     delete footprint.id;
@@ -817,10 +803,9 @@ var getFootprintByFootprintID = function (req, res) {
 
                 links = JSON.parse(JSON.stringify(links));
 
-
-
                 if(links){
                     links.map(function(link){
+                        delete link.link_footprint_id;
                         delete link.id;
                     });
                     footprint = _.extend(footprint, {links : links});
