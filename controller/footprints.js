@@ -651,12 +651,14 @@ var getFootprintByFootprintID = function (req, res) {
         "ON comment.id = user.id " +
         "WHERE comment.footprint_id = ? ";
 
-
     const sqlGetProfileImage =
         "SELECT profile_key, displayName FROM user WHERE id = ?";
 
     const sqlGetAllLinks =
-        "SELECT * FROM link_footprint WHERE link_footprint.footprint_id = ? ";
+        "SELECT * FROM link_footprint " +
+        "OUTER JOIN footprint " +
+        "ON footprint.footprint_id = link_footprint.end_footprint_id " +
+        "WHERE link_footprint.footprint_id = ? ";
 
     const task = [
         /**
