@@ -816,7 +816,6 @@ var getFootprintByFootprintID = function (req, res) {
 
                     if (links) {
                         links.map(function (link) {
-                            delete link.footprint_id;
                             delete link.link_footprint_id;
                             delete link.id;
                         });
