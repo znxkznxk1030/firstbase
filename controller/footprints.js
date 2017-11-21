@@ -660,7 +660,7 @@ var getFootprintByFootprintID = function (req, res) {
         "WHERE link_footprint.footprint_id = ? ";
 
     const sqlGetAllLinkFootprints =
-        "SELECT footprint.*, view_count AS countView, count(comment.comment_id) AS countComments " +
+        "SELECT DISTINCT footprint.*, view_count AS countView, count(comment.comment_id) AS countComments " +
         "FROM footprint " +
         "LEFT JOIN comment " +
         "ON footprint.footprint_id = comment.footprint_id " +
