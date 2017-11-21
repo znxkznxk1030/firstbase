@@ -835,7 +835,7 @@ var getFootprintByFootprintID = function (req, res) {
                     footprint.links.map(function(link){
                         linkFootprints.some(function(linkFootprint){
                             console.log(linkFootprint);
-                            if(link.end_footprint_id === linkFootprint.footprintId){
+                            if(link.end_footprint_id === linkFootprint.footprint_id){
                                 link = _.extend(link, linkFootprint);
                                 return true;
                             }
