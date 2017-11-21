@@ -657,8 +657,8 @@ var getFootprintByFootprintID = function (req, res) {
 
     const sqlGetAllLinks =
         "SELECT * " +
-        "FROM link_footprint " +
-        "LEFT JOIN footprint " +
+        "FROM footprint " +
+        "LEFT JOIN link_footprint " +
         "ON footprint.footprint_id = link_footprint.footprint_id" +
         "WHERE footprint_id = ? " +
         "GROUP BY footprint_id ";
@@ -808,8 +808,8 @@ var getFootprintByFootprintID = function (req, res) {
 
                 if(links){
                     links.map(function(link){
-                        delete link.link_footprint_id;
-                        delete link.id;
+                        //delete link.link_footprint_id;
+                        //delete link.id;
                     });
                     footprint = _.extend(footprint, {links : links});
                 }
