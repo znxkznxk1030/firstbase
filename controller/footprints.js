@@ -833,15 +833,15 @@ var getFootprintByFootprintID = function (req, res) {
                     linkFootprints = JSON.parse(JSON.stringify(linkFootprints));
 
                     footprint.links.map(function(link){
-
                         linkFootprints.some(function(linkFootprint){
                             if(link.end_footprint_id === linkFootprint.footprintId){
-
-                                _.extend(link, linkFootprint);
+                                link = _.extend(link, linkFootprint);
                                 return true;
                             }
                             return false;
                         });
+                        
+                        console.log(footprint.links);
                         return link;
                     });
                     return cb(null, footprint);
