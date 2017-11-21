@@ -657,8 +657,11 @@ var getFootprintByFootprintID = function (req, res) {
 
     const sqlGetAllLinks =
         "SELECT * " +
-        "FROM link_footprint, footprint " +
-        "WHERE footprint_id  = ? AND footprint.footprint_id = link_footprint.footprint_id";
+        "FROM link_footprint " +
+        "LEFT JOIN footprint " +
+        "ON footprint.footprint_id = link_footprint.footprint_id" +
+        "WHERE footprint_id = ? " +
+        "GROUP BY footprint_id ";
 
     const task = [
         /**
