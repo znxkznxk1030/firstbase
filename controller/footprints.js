@@ -659,6 +659,18 @@ var getFootprintByFootprintID = function (req, res) {
         "FROM link_footprint " +
         "WHERE link_footprint.footprint_id = ? ";
 
+    const sqlGetAllLinkFootprints =
+        "SELECT footprint.*, view_count AS countView, count(comment.comment_id) AS countComments " +
+        "FROM footprint " +
+        "LEFT JOIN comment " +
+        "ON footprint.footprint_id = comment.footprint_id " +
+        "WHERE footprint.footprint_id IN (" +
+        "SELECT link_footprint.end_footprint_id " +
+        "FROM link_footprint " +
+        "WHERE link_footprint.footprint_id = ?" +
+        ") " +
+        "GROUP BY footprint_id ";
+
     const task = [
         /**
          *  Get selected footprint data set
@@ -803,29 +815,35 @@ var getFootprintByFootprintID = function (req, res) {
                     links = JSON.parse(JSON.stringify(links));
 
                     if (links) {
-                        try {
-                            links.map(function (link) {
-                                delete link.footprint_id;
-                                delete link.link_footprint_id;
-                                delete link.id;
-
-                                connection.query(sqlRetrieveFootprintByFootprintId, [link.end_footprint_id], function (err, end_footprint) {
-                                    if (err) throw err;
-
-                                    end_footprint = JSON.parse(JSON.stringify(end_footprint))[0];
-
-                                    console.log(end_footprint);
-
-                                    if(end_footprint) return _.extend(link, end_footprint);
-                                });
-                            });
-                        } catch (err) {
-                            return cb(err);
-                        }
-
+                        links.map(function (link) {
+                            delete link.footprint_id;
+                            delete link.link_footprint_id;
+                            delete link.id;
+                        });
                         footprint = _.extend(footprint, {links: links});
                     }
+                    return cb(null, footprint);
+                });
+        },
+        function(footprint, cb){
+            connection.query(sqlGetAllLinkFootprints, [footprintId],
+                function (err, linkFootprints) {
+                    if (err) return cb(err);
 
+                    linkFootprints = JSON.parse(JSON.stringify(linkFootprints));
+
+                    footprint.links.map(function(link){
+
+                        linkFootprints.some(function(linkFootprint){
+                            if(link.end_footprint_id === linkFootprint.footprintId){
+
+                                _.extend(link, linkFootprint);
+                                return true;
+                            }
+                            return false;
+                        });
+                        return link;
+                    });
                     return cb(null, footprint);
                 });
         }
