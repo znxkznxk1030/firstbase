@@ -655,9 +655,8 @@ var getFootprintByFootprintID = function (req, res) {
         "SELECT profile_key, displayName FROM user WHERE id = ?";
 
     const sqlGetAllLinks =
-        "SELECT * FROM link_footprint " +
-        "OUTER JOIN footprint " +
-        "ON footprint.footprint_id = link_footprint.end_footprint_id " +
+        "SELECT * " +
+        "FROM link_footprint " +
         "WHERE link_footprint.footprint_id = ? ";
 
     const task = [
@@ -796,34 +795,50 @@ var getFootprintByFootprintID = function (req, res) {
                     return cb(null, _.extend(footprint, {profileUrl: profileUrl}));
                 });
         },
-        function(footprint, cb){
+        function (footprint, cb) {
             connection.query(sqlGetAllLinks, [footprintId],
-                function(err, links){
-                if(err) return cb(err);
+                function (err, links) {
+                    if (err) return cb(err);
 
-                links = JSON.parse(JSON.stringify(links));
+                    links = JSON.parse(JSON.stringify(links));
 
-                if(links){
-                    links.map(function(link){
-                        delete link.link_footprint_id;
-                        delete link.id;
-                    });
-                    footprint = _.extend(footprint, {links : links});
-                }
+                    if (links) {
+                        try {
+                            links.map(function (link) {
+                                delete link.footprint_id;
+                                delete link.link_footprint_id;
+                                delete link.id;
 
-                return cb(null, footprint);
+                                connection.query(sqlRetrieveFootprintByFootprintId, [link.end_footprint_id], function (err, end_footprint) {
+                                    if (err) throw err;
+
+                                    end_footprint = JSON.parse(JSON.stringify(end_footprint));
+                                    _.extend(link, end_footprint);
+                                });
+                                return link;
+                            });
+                        } catch (err) {
+                            return cb(err);
+                        }
+                        
+                        footprint = _.extend(footprint, {links: links});
+                    }
+
+                    return cb(null, footprint);
                 });
         }
     ];
 
     async.waterfall(task,
         function (err, result) {
-            if (err)
+            if (err) {
+                console.log(err);
                 return res.status(400)
                     .json({
                         code: -1,
                         message: '게시글 불러오기 오류'
                     });
+            }
             else {
                 return res.status(200)
                     .json(_.extend(result, {code: 1}));
