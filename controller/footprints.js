@@ -814,6 +814,8 @@ var getFootprintByFootprintID = function (req, res) {
 
                                     end_footprint = JSON.parse(JSON.stringify(end_footprint))[0];
 
+                                    console.log(end_footprint);
+
                                     if(end_footprint) return _.extend(link, end_footprint);
                                 });
                             });
