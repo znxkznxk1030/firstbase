@@ -665,7 +665,7 @@ var getFootprintByFootprintID = function (req, res) {
         "LEFT JOIN comment " +
         "ON footprint.footprint_id = comment.footprint_id " +
         "WHERE footprint.footprint_id IN (" +
-        "SELECT link_footprint.end_footprint_id " +
+        "SELECT end_footprint_id " +
         "FROM link_footprint " +
         "WHERE link_footprint.footprint_id = ?" +
         ") " +
@@ -834,13 +834,14 @@ var getFootprintByFootprintID = function (req, res) {
 
                     footprint.links.map(function(link){
                         linkFootprints.some(function(linkFootprint){
+                            console.log(linkFootprint);
                             if(link.end_footprint_id === linkFootprint.footprintId){
                                 link = _.extend(link, linkFootprint);
                                 return true;
                             }
                             return false;
                         });
-                        
+
                         console.log(footprint.links);
                         return link;
                     });
