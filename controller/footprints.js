@@ -817,7 +817,14 @@ var getFootprintByFootprintID = function (req, res) {
 
                 links = JSON.parse(JSON.stringify(links));
 
-                if(links) footprint = _.extend(footprint, {links : links});
+
+
+                if(links){
+                    links.map(function(link){
+                        delete link.id;
+                    });
+                    footprint = _.extend(footprint, {links : links});
+                }
 
                 return cb(null, footprint);
                 });
