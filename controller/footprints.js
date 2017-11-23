@@ -719,6 +719,7 @@ var createLinkMarker = function (req, res) {
     const id = req.user.id
         , title = req.body.title
         , iconKey = req.body.iconKey
+        , imageKeys = req.body.imageKeys
         , content = req.body.content
         , latitude = req.body.latitude
         , longitude = req.body.longitude;
@@ -726,6 +727,9 @@ var createLinkMarker = function (req, res) {
     const sqlCreateLinkMarker =
         "INSERT INTO link_marker (id, title, icon_key, content, latitude, longitude) "
         + " VALUES (?, ?, ?, ?, ?, ?)";
+    const sqlCreateLinkImage =
+        "INSERT INTO link_image (image_key, link_mark_id) " +
+        "VALUES (?, ?)";
     const sqlCreateLink =
         "INSERT INTO link (link_mark_id, footprint_id) " +
         "VALUES (?, ?)";
@@ -733,29 +737,40 @@ var createLinkMarker = function (req, res) {
     var task = [
         function (cb) {
             connection.query(sqlCreateLinkMarker, [id, title, iconKey, content, latitude, longitude], function (err, result) {
-                if (err)
+                if (err || !result)
                     return cb(true);
+                else return cb(null, result.insertId);
+            });
+        },
+        function (linkMarkerId, cb) {
+            const length = imageKeys.length;
 
-                if (result) {
-                    return cb(null, result.insertId);
-                }
-                return cb(true);
+            async.times(length, function (i, next) {
+                var imageKey = imageKey[i];
+
+                connection.query(sqlCreateLinkImage, [imageKey, linkMarkerId], function (err, result) {
+                    if (err) next(true);
+                    else return next();
+                });
+            }, function (err) {
+                if (err) cb(true);
+                cb(linkMarkerId);
             });
         },
         function (linkMarkerId, cb) {
             const length = footprintIdList.length;
 
-            async.times(length, function(i, next){
+            async.times(length, function (i, next) {
                 var footprintId = footprintIdList[i];
 
                 connection.query(sqlCreateLink, [linkMarkerId, footprintId], function (err, result) {
                     if (err) {
-                        next(true);
+                        return next(true);
                     }
-                    next();
+                    else return next();
                 });
-            }, function(err){
-                if(err) cb(true);
+            }, function (err) {
+                if (err) cb(true);
                 cb();
             });
         }
@@ -765,14 +780,15 @@ var createLinkMarker = function (req, res) {
         if (err) {
             return res.status(400).json({code: -1, message: 'link marker 생성 실패'});
         }
-
-        return res.status(200)
-            .json({code: 1,
-                message:'link marker 생성 성공'});
+        else return res.status(200)
+            .json({
+                code: 1,
+                message: 'link marker 생성 성공'
+            });
     });
 };
 
-var getLinkMarker = function(req, res){
+var getLinkMarker = function (req, res) {
     const linkMarkerId = req.query.linkMarkerId;
 
     const sqlGetLinkMarker =
@@ -793,6 +809,8 @@ var getLinkMarker = function(req, res){
         ") " +
         "GROUP BY footprint_id ";
 
+    const sqlImageLoad = "SELECT * FROM link_image WHERE link_marker_id = ?";
+
     const sqlCountLike =
         "SELECT count(*) AS countLike " +
         "FROM eval WHERE footprint_id = ? AND state = 1";
@@ -802,35 +820,52 @@ var getLinkMarker = function(req, res){
         "FROM eval WHERE footprint_id = ? AND state = 2";
 
     var task = [
-        function(cb){
-            connection.query(sqlGetLinkMarker, [linkMarkerId], function(err, linkMarker){
-                if(err) return cb(true);
+        function (cb) {
+            connection.query(sqlGetLinkMarker, [linkMarkerId], function (err, linkMarker) {
+                if (err) return cb(true);
 
                 linkMarker = JSON.parse(JSON.stringify(linkMarker))[0];
 
-                if(linkMarker){
+                if (linkMarker) {
                     return cb(null, linkMarker);
                 }
 
                 return cb(true);
             });
         },
-        function(linkMarker, cb){
+        function (linkMarker, cb) {
+            connection.query(sqlImageLoad, [linkMarkerId], function (err, imageKeys) {
+                if (err) return cb(err);
+
+                console.log(imageKeys);
+                imageKeys = JSON.parse(JSON.stringify(imageKeys));
+
+                var imageUrls = [];
+
+                imageKeys.forEach(function (image) {
+                    var imageUrl = getImageUrl(image.image_key);
+                    imageUrls.push(imageUrl);
+                });
+
+                return cb(null, _.extend(linkMarker, {imageUrls: imageUrls}));
+            });
+        },
+        function (linkMarker, cb) {
             console.log(linkMarker);
-            connection.query(sqlFindUser, [linkMarker.id], function(err, profile){
-                if(err) return cb(true);
+            connection.query(sqlFindUser, [linkMarker.id], function (err, profile) {
+                if (err) return cb(true);
 
                 profile = JSON.parse(JSON.stringify(profile))[0];
 
-                if(profile){
+                if (profile) {
 
                     var profileUrl, profileKey = profile.profile_key;
                     if (profileKey) profileUrl = getImageUrl(profileKey);
                     else profileUrl = getImageUrl(profileDefaultKey);
 
                     return cb(null, _.extend(linkMarker, {
-                        displayName : profile.displayName,
-                        profileUrl : profileUrl
+                            displayName: profile.displayName,
+                            profileUrl: profileUrl
                         })
                     );
                 }
@@ -838,11 +873,11 @@ var getLinkMarker = function(req, res){
                 else return cb(true);
             });
         },
-        function(linkMarker, cb){
+        function (linkMarker, cb) {
             console.log('#debug : ' + linkMarker);
-            connection.query(sqlGetLinkedFootprintList, [linkMarkerId], function(err, linkedFootprintList){
+            connection.query(sqlGetLinkedFootprintList, [linkMarkerId], function (err, linkedFootprintList) {
 
-                if(err) return cb(true);
+                if (err) return cb(true);
 
                 linkedFootprintList = JSON.parse(JSON.stringify(linkedFootprintList));
 
@@ -899,22 +934,22 @@ var getLinkMarker = function(req, res){
         }
     ];
 
-    async.waterfall(task, function(err, result){
-        if(err) res.status(400).json({code: -1, message:'link marker 불러오기 오류'});
-        else{
+    async.waterfall(task, function (err, result) {
+        if (err) res.status(400).json({code: -1, message: 'link marker 불러오기 오류'});
+        else {
             res.status(200).json({
                 code: 1,
-                message:'link marker 불러오기 성공',
+                message: 'link marker 불러오기 성공',
                 linkMarker: result
             });
         }
     });
 };
 
-var updateLinkMarker = function(req, res){
+var updateLinkMarker = function (req, res) {
 
 };
-var deleteLinkMarker = function(req, res){
+var deleteLinkMarker = function (req, res) {
 
 };
 
@@ -1085,7 +1120,7 @@ module.exports = {
     // getSubFootprintByFootprintID: getSubFootprintByFootprintID,
 
     createLinkMarker: createLinkMarker,
-    getLinkMarker : getLinkMarker,
-    updateLinkMarker : updateLinkMarker,
+    getLinkMarker: getLinkMarker,
+    updateLinkMarker: updateLinkMarker,
     deleteLinkMarker: deleteLinkMarker
 };
