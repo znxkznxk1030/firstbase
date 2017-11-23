@@ -1,3 +1,4 @@
+var async = require("async");
 const MAX_TITLE_LENGTH = 70,
     MAX_CONTENT_LENGTH = 1000;
 
@@ -9,53 +10,44 @@ const MSG_TITLE_EMPTY = '제목이 비어있습니다.',
     MSG_LATITUDE_NAN = 'latitude가 숫자가 아닙니다.',
     MSG_LONGITUDE_NAN = 'longitude가 숫자가 아닙니다.';
 
-
-
-var checkTitle = function (title, cb) {
-    if(!title) return cb(MSG_TITLE_EMPTY);
-    if(title.length > MAX_TITLE_LENGTH) return cb(MSG_TITLE_OVERFLOW);
-
-    return cb(null);
-};
-
-var checkContent = function (content, cb) {
-    if(content.length > MAX_CONTENT_LENGTH) return cb(MSG_CONTENT_OVERFLOW);
-
-    return cb(null);
-};
-
-var checkLocation = function(lat, lng, cb){
-    if(!lat) return cb(MSG_LATITUDE_EMPTY);
-    if(!lng) return cb(MSG_LONGITUDE_EMPTY);
-
-    if(isNaN(lat)) return cb(MSG_LATITUDE_NAN);
-    if(isNaN(lng)) return cb(MSG_LONGITUDE_NAN);
-
-    return cb(null);
-};
-
 var validateMarkerParams = function(req, res, next){
     // todo : vaildate parameters
 
-    checkTitle(req.body.title, function(err){
-        if(err) return res.status(200).json({
-            code: -1,
-            message: err
-        });
-    });
+    const title = req.body.title,
+        content = req.body.content,
+        lat = req.body.latitude,
+        lng = req.body.longitude;
 
-    checkContent(req.body.content, function(err){
-        if(err) return res.status(200).json({
-            code: -1,
-            message: err
-        });
-    });
+    var task = [
+        function (cb) {
+            if(!title) return cb(MSG_TITLE_EMPTY);
+            if(title.length > MAX_TITLE_LENGTH) return cb(MSG_TITLE_OVERFLOW);
 
-    checkLocation(req.body.latitude, req.body.longitude, function(err){
+            return cb(null);
+        },
+        function (cb) {
+            if(content.length > MAX_CONTENT_LENGTH) return cb(MSG_CONTENT_OVERFLOW);
+
+            return cb(null);
+        },
+        function(cb){
+            if(!lat) return cb(MSG_LATITUDE_EMPTY);
+            if(!lng) return cb(MSG_LONGITUDE_EMPTY);
+
+            if(isNaN(lat)) return cb(MSG_LATITUDE_NAN);
+            if(isNaN(lng)) return cb(MSG_LONGITUDE_NAN);
+
+            return cb(null);
+        }
+    ];
+
+    async.series(task, function(err){
         if(err) return res.status(200).json({
             code: -1,
             message: err
         });
+
+        else return next();
     });
 
     return next();
