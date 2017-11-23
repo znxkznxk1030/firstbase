@@ -124,7 +124,6 @@ var getFootprintListByDisplayName = function (req, res) {
             });
         });
 };
-
 var getFootprintList = function (req, res) {
 
     const data = req.query;
@@ -211,7 +210,6 @@ var getFootprintList = function (req, res) {
             });
         });
 };
-
 var getFootprintListByCurrentLocationAndViewLevel = function (req, res) {
     var data = req.query;
     var sql = "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
@@ -560,7 +558,6 @@ var createFootprint = function (req, res) {
             }
         });
 };
-
 var deleteFootprintByFootprintID = function (req, res) {
 
     const userId = req.user.id,
@@ -613,7 +610,6 @@ var deleteFootprintByFootprintID = function (req, res) {
 
     });
 };
-
 var getFootprintByFootprintID = function (req, res) {
     const user = req.user;
     const footprintId = req.query.footprintId;
@@ -653,23 +649,6 @@ var getFootprintByFootprintID = function (req, res) {
 
     const sqlGetProfileImage =
         "SELECT profile_key, displayName FROM user WHERE id = ?";
-
-    const sqlGetAllLinks =
-        "SELECT * " +
-        "FROM link_footprint " +
-        "WHERE link_footprint.footprint_id = ? ";
-
-    const sqlGetAllLinkFootprints =
-        "SELECT DISTINCT footprint.*, view_count AS countView, count(comment.comment_id) AS countComments " +
-        "FROM footprint " +
-        "LEFT JOIN comment " +
-        "ON footprint.footprint_id = comment.footprint_id " +
-        "WHERE footprint.footprint_id IN (" +
-        "SELECT end_footprint_id " +
-        "FROM link_footprint " +
-        "WHERE link_footprint.footprint_id = ?" +
-        ") " +
-        "GROUP BY footprint_id ";
 
     const task = [
         /**
@@ -806,46 +785,6 @@ var getFootprintByFootprintID = function (req, res) {
                     console.log(profileUrl);
                     return cb(null, _.extend(footprint, {profileUrl: profileUrl}));
                 });
-        },
-        function (footprint, cb) {
-            connection.query(sqlGetAllLinks, [footprintId],
-                function (err, links) {
-                    if (err) return cb(err);
-
-                    links = JSON.parse(JSON.stringify(links));
-
-                    if (links) {
-                        links.map(function (link) {
-                            delete link.link_footprint_id;
-                            delete link.id;
-                        });
-                        footprint = _.extend(footprint, {links: links});
-                    }
-                    return cb(null, footprint);
-                });
-        },
-        function(footprint, cb){
-            connection.query(sqlGetAllLinkFootprints, [footprintId],
-                function (err, linkFootprints) {
-                    if (err) return cb(err);
-
-                    linkFootprints = JSON.parse(JSON.stringify(linkFootprints));
-
-                    footprint.links.map(function(link){
-                        linkFootprints.some(function(linkFootprint){
-                            console.log(linkFootprint);
-                            if(link.end_footprint_id === linkFootprint.footprint_id){
-                                link = _.extend(link, linkFootprint);
-                                return true;
-                            }
-                            return false;
-                        });
-
-                        console.log(footprint.links);
-                        return link;
-                    });
-                    return cb(null, footprint);
-                });
         }
     ];
 
@@ -864,6 +803,216 @@ var getFootprintByFootprintID = function (req, res) {
                     .json(_.extend(result, {code: 1}));
             }
         });
+};
+
+
+/**
+ *
+ * @param req
+ * @param res
+ */
+var createLinkMarker = function (req, res) {
+    const id = req.user.id
+        , title = req.body.title
+        , iconKey = req.body.iconKey
+        , content = req.body.content
+        , latitude = req.body.latitude
+        , longitude = req.body.longitude;
+
+    const footprintIdList = req.body.footprintIdList;
+
+    const sqlCreateLinkMarker =
+        "INSERT INTO link_marker (id, title, icon_key, content, latitude, longitude) "
+        + " VALUES (?, ?, ?, ?, ?, ?)";
+    const sqlCreateLink =
+        "INSERT INTO link (link_mark_id, footprint_id) " +
+        "VALUES (?, ?)";
+
+    var task = [
+        function (cb) {
+            connection.query(sqlCreateLinkMarker, [id, title, iconKey, content, latitude, longitude], function (err, result) {
+                if (err)
+                    return cb(true);
+
+                if (result) {
+                    return cb(null, result.insertId);
+                }
+                return cb(true);
+            });
+        },
+        function (linkMarkerId, cb) {
+            const length = footprintIdList.length;
+
+            async.times(length, function(i, next){
+                var footprintId = footprintIdList[i];
+
+                connection.query(sqlCreateLink, [linkMarkerId, footprintId], function (err, result) {
+                    if (err) {
+                        next(true);
+                    }
+                    next();
+                });
+            }, function(err){
+                if(err) cb(true);
+                cb();
+            });
+        }
+    ];
+
+    async.waterfall(task, function (err, result) {
+        if (err) {
+            return res.status(400).json({code: -1, message: 'link marker 생성 실패'});
+        }
+
+        return res.status(200)
+            .json({code: 1,
+                message:'link marker 생성 성공'});
+    });
+};
+var getLinkMarker = function(req, res){
+    const linkMarkerId = req.query.linkMarkerId;
+
+    const sqlGetLinkMarker =
+        "SELECT * FROM link_marker WHERE link_marker_id = ?";
+
+    const sqlFindUser = "SELECT profile_key, displayName " +
+        "FROM user " +
+        "WHERE user.id = ? ";
+
+    const sqlGetLinkedFootprintList =
+        "SELECT footprint.*, count(comment.comment_id) AS countComments " +
+        "FROM footprint LEFT JOIN view " +
+        "ON footprint.footprint_id = view.footprint_id " +
+        "LEFT JOIN comment " +
+        "ON footprint.footprint_id = comment.footprint_id " +
+        "WHERE footprint.footprint_id IN (" +
+        "SELECT footprint_id FROM link WHERE link_marker_id = ?" +
+        ") " +
+        "GROUP BY footprint_id ";
+
+    const sqlCountLike =
+        "SELECT count(*) AS countLike " +
+        "FROM eval WHERE footprint_id = ? AND state = 1";
+
+    const sqlCountDislike =
+        "SELECT count(*) AS countDisLike " +
+        "FROM eval WHERE footprint_id = ? AND state = 2";
+
+    var task = [
+        function(cb){
+            connection.query(sqlGetLinkMarker, [linkMarkerId], function(err, linkMarker){
+                if(err) return cb(true);
+
+                linkMarker = JSON.parse(JSON.stringify(linkMarker))[0];
+
+                if(linkMarker){
+                    return cb(null, linkMarker);
+                }
+
+                return cb(true);
+            });
+        },
+        function(linkMarker, cb){
+            console.log(linkMarker);
+            connection.query(sqlFindUser, [linkMarker.id], function(err, profile){
+                if(err) return cb(true);
+
+                profile = JSON.parse(JSON.stringify(profile))[0];
+
+                if(profile){
+
+                    var profileUrl, profileKey = profile.profile_key;
+                    if (profileKey) profileUrl = getImageUrl(profileKey);
+                    else profileUrl = getImageUrl(profileDefaultKey);
+
+                    return cb(null, _.extend(linkMarker, {
+                        displayName : profile.displayName,
+                        profileUrl : profileUrl
+                        })
+                    );
+                }
+
+                else return cb(true);
+            });
+        },
+        function(linkMarker, cb){
+            console.log('#debug : ' + linkMarker);
+            connection.query(sqlGetLinkedFootprintList, [linkMarkerId], function(err, linkedFootprintList){
+
+                if(err) return cb(true);
+
+                linkedFootprintList = JSON.parse(JSON.stringify(linkedFootprintList));
+
+                async.map(linkedFootprintList, function (footprint, cb2) {
+                    var task = [
+                        function (callback) {
+                            connection.query(sqlFindUser, footprint.id, function (err, profile) {
+                                if (err) return callback(err);
+
+                                profile = JSON.parse(JSON.stringify(profile))[0];
+
+                                footprint.displayName = profile.displayName;
+
+                                var profileUrl, profileKey = profile.profile_key;
+                                if (profileKey) profileUrl = getImageUrl(profileKey);
+                                else profileUrl = getImageUrl(profileDefaultKey);
+
+                                return callback(null, {profileUrl: profileUrl});
+                            });
+                        },
+                        function (tails, callback) {
+                            connection.query(sqlCountLike, [footprint.footprint_id],
+                                function (err, countLike) {
+                                    if (err) return callback(err);
+
+                                    const ret = JSON.parse(JSON.stringify(countLike))[0];
+
+                                    return callback(null, _.extend(tails, ret));
+                                });
+                        },
+                        function (tails, callback) {
+                            connection.query(sqlCountDislike, [footprint.footprint_id],
+                                function (err, Dislike) {
+                                    if (err) return callback(err);
+
+                                    const ret = JSON.parse(JSON.stringify(Dislike))[0];
+
+                                    return callback(null, _.extend(tails, ret));
+                                });
+                        }
+
+                    ];
+
+                    async.waterfall(task, function (err, tails) {
+                        if (err) return cb2(err);
+                        return cb2(null, _.extend(footprint, tails));
+                    });
+                }, function (err, footprintList) {
+                    if (err) return cb(true);
+
+                    else cb(null, _.extend(linkMarker, {footprintList: footprintList}));
+                });
+            });
+        }
+    ];
+
+    async.waterfall(task, function(err, result){
+        if(err) res.status(400).json({code: -1, message:'link marker 불러오기 오류'});
+        else{
+            res.status(200).json({
+                code: 1,
+                message:'link marker 불러오기 성공',
+                linkMarker: result
+            });
+        }
+    });
+};
+
+var updateLinkMarker = function(req, res){
+
+};
+var deleteLinkMarker = function(req, res){
+    
 };
 
 
@@ -933,7 +1082,6 @@ var createSubFootprint = function (req, res) {
     );
 
 };
-
 var getSubFootprintByFootprintID = function (req, res) {
     const footprintId = req.query.footprintId;
 
@@ -1030,5 +1178,10 @@ module.exports = {
     deleteFootprintByFootprintID: deleteFootprintByFootprintID,
     getFootprintListByCurrentLocationAndViewLevel: getFootprintListByCurrentLocationAndViewLevel,
     createSubFootprint: createSubFootprint,
-    getSubFootprintByFootprintID: getSubFootprintByFootprintID
+    getSubFootprintByFootprintID: getSubFootprintByFootprintID,
+
+    createLinkMarker: createLinkMarker,
+    getLinkMarker : getLinkMarker,
+    updateLinkMarker : updateLinkMarker,
+    deleteLinkMarker: deleteLinkMarker
 };

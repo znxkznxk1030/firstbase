@@ -19,6 +19,7 @@ var chat = require('./routes/chat');
 var eval = require('./routes/eval');
 var follow = require('./routes/follow');
 var version = require('./routes/version');
+var linkmarker = require('./routes/linkmarker');
 
 var app = express();
 var config = require("./config");
@@ -54,6 +55,7 @@ app.use(express.static(__dirname + '/node_modules'));
 app.all('/*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    console.log(req.headers);
     next();
 });
 
@@ -72,6 +74,7 @@ app.use('/chat', chat);
 app.use('/eval', eval);
 app.use('/follow', follow);
 app.use('/version', version);
+app.use('/linkmarker', linkmarker);
 
 //swagger
 app.use('/swagger-ui', express.static(path.join('./node_modules/swagger-ui/dist')));
