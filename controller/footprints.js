@@ -798,8 +798,7 @@ var getLinkMarker = function (req, res) {
     const linkMarkerId = req.query.linkMarkerId;
 
     const sqlGetLinkMarker =
-        "SELECT link_marker_id AS linkMarkerId, title, icon_key AS iconKey, content, latitude, longitude, created_date, modified_date " +
-        "FROM link_marker WHERE link_marker_id = ?";
+        "SELECT * FROM link_marker WHERE link_marker_id = ?";
 
     const sqlFindUser = "SELECT profile_key, displayName " +
         "FROM user " +
