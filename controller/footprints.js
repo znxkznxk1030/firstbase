@@ -720,6 +720,7 @@ var createLinkMarker = function (req, res) {
         , title = req.body.title
         , iconKey = req.body.iconKey
         , imageKeys = req.body.imageKeys
+        , footprintIdList = req.body.footprintIdList
         , content = req.body.content
         , latitude = req.body.latitude
         , longitude = req.body.longitude;
@@ -788,11 +789,17 @@ var createLinkMarker = function (req, res) {
     });
 };
 
+/**
+ *
+ * @param req
+ * @param res
+ */
 var getLinkMarker = function (req, res) {
     const linkMarkerId = req.query.linkMarkerId;
 
     const sqlGetLinkMarker =
-        "SELECT * FROM link_marker WHERE link_marker_id = ?";
+        "SELECT link_marker_id AS linkMarkerId, title, icon_key AS iconKey, content, latitude, longitude, created_date, modified_date " +
+        "FROM link_marker WHERE link_marker_id = ?";
 
     const sqlFindUser = "SELECT profile_key, displayName " +
         "FROM user " +
