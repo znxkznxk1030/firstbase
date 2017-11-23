@@ -6,7 +6,7 @@ var auth = require('../auth/auth');
 /**
  * subFootprint CRUD functions
  */
-router.get('/', controller.getSubFootprintByFootprintID);
-router.post('/create', auth.authMiddleware, controller.createSubFootprint);
+// router.get('/', controller.getSubFootprintByFootprintID);
+// router.post('/create', auth.authMiddleware, controller.createSubFootprint);
 
 module.exports = router;
