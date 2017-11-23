@@ -368,46 +368,6 @@ var createFootprint = function (req, res) {
 
     var type = body.type;
 
-
-    // todo : vaildate parameters
-
-    if (!title) {
-        return res.status(400)
-            .json({
-                code: -1,
-                message: '제목이 비어있습니다.'
-            });
-    }
-
-    if (title.length > 70) {
-        return res.status(400)
-            .json({
-                code: -1,
-                message: '제목의 길이가 너무 깁니다.'
-            });
-    }
-
-    if (content.length > 1000) {
-        return res.status(400)
-            .json({
-                code: -1,
-                message: '내용의 길이가 너무 깁니다.'
-            })
-    }
-
-    if (!latitude || !longitude) {
-        return res.status(400)
-            .json({
-                code: -1,
-                message: '위치 데이터가 비어있습니다.'
-            });
-    }
-
-    if (!type) {
-        type = 'default';
-    }
-
-
     const sqlCreateFootprint =
         "INSERT INTO footprint (id, displayName, title, icon_key, content, latitude, longitude, type) "
         + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -763,8 +723,6 @@ var createLinkMarker = function (req, res) {
         , latitude = req.body.latitude
         , longitude = req.body.longitude;
 
-    const footprintIdList = req.body.footprintIdList;
-
     const sqlCreateLinkMarker =
         "INSERT INTO link_marker (id, title, icon_key, content, latitude, longitude) "
         + " VALUES (?, ?, ?, ?, ?, ?)";
@@ -813,6 +771,7 @@ var createLinkMarker = function (req, res) {
                 message:'link marker 생성 성공'});
     });
 };
+
 var getLinkMarker = function(req, res){
     const linkMarkerId = req.query.linkMarkerId;
 
@@ -960,157 +919,157 @@ var deleteLinkMarker = function(req, res){
 };
 
 
-/**
- *  todo: move to trace.js
- *
- * @param req
- * @param res
- * @returns {*|{type, alias, describe}}
- */
-var createSubFootprint = function (req, res) {
-    const body = req.body;
-
-    const iconKey = body.iconKey,
-        footprintId = body.footprintId,
-        latitude = body.latitude,
-        longitude = body.longitude;
-
-    // todo: create subFootprint
-    // parameter test
-
-    if (!title) {
-        return res.status(400)
-            .json({
-                code: -1,
-                message: 'title should be not null'
-            });
-    }
-
-    if (!latitude || !longitude) {
-        return res.status(400)
-            .json({
-                code: -1,
-                message: 'location data should be not null'
-            });
-    }
-
-    const sqlCreateSubFootprint =
-        "INSERT INTO sub_footprint ( footprint_id, icon_key, latitude, longitude ) " +
-        "VALUES (?, ?, ?, ?)";
-
-    connection.query(sqlCreateSubFootprint, [footprintId, iconKey, latitude, longitude],
-        function (err, result) {
-            if (err)
-                return res.status(400)
-                    .json({
-                        code: -2,
-                        message: 'sql fail'
-                    });
-
-
-            if (result) {
-                return res.status(201)
-                    .json({
-                        code: 1,
-                        message: 'success to create sub footprint mark'
-                    });
-            } else {
-                return res.status(400)
-                    .json({
-                        code: -1,
-                        message: 'fail to create'
-                    });
-            }
-
-        }
-    );
-
-};
-var getSubFootprintByFootprintID = function (req, res) {
-    const footprintId = req.query.footprintId;
-
-    // todo: query data validation test
-    if (!footprintId) {
-        return res.status(400)
-            .json({
-                code: -1,
-                message: 'footprintId that you sent is not allowed'
-            })
-    }
-
-    const sqlRetrieveFootprintByFootprintId =
-        "SELECT * " +
-        "FROM footprint " +
-        "WHERE footprint_id = ?";
-
-    const sqlRetrieveSubFootprintByFootprintId =
-        "SELECT sub_footprint.icon_key AS iconKey, sub_footprint.latitude, sub_footprint.longitude " +
-        "FROM sub_footprint " +
-        "WHERE footprint_id = ? ";
-
-    const task = [
-        function (cb) {
-            connection.query(sqlRetrieveFootprintByFootprintId, [footprintId],
-                function (err, footprint) {
-                    if (err)
-                        return cb(err, null);
-
-                    if (footprint)
-                        return cb(null, JSON.parse(JSON.stringify(footprint))[0]);
-                    else return cb('sql error', null);
-                })
-        },
-        function (cb) {
-            connection.query(sqlRetrieveSubFootprintByFootprintId, [footprintId],
-                function (err, subFootprints) {
-                    if (err)
-                        return cb(err, null);
-
-                    if (subFootprints)
-                        return cb(null, subFootprints);
-                    else return cb('sql error', null);
-                });
-        }
-    ];
-
-    async.series(task,
-        function (err, result) {
-            if (err)
-                return res.status(400)
-                    .json({
-                        code: -1,
-                        message: '서브마커 불러오기 오류'
-                    });
-
-            if (result) {
-                // var objectResponseJson = {};
-                // objectResponseJson.push({code: 1})
-                //     .push(result[0])
-                //     .push(result[1]);
-                if (!result[0]) {
-                    return res.status(400)
-                        .json({
-                            code: -1,
-                            message: 'parameter error'
-                        });
-                }
-
-                result[0]['code'] = 1;
-                result[0]['subMarkers'] = result[1];
-                console.log(result[0]);
-
-                return res.status(200)
-                    .json(result[0]);
-            }
-            else
-                return res.status(400)
-                    .json({
-                        code: -1,
-                        message: 'sql output error'
-                    });
-        });
-
-};
+// /**
+//  *  todo: move to trace.js
+//  *
+//  * @param req
+//  * @param res
+//  * @returns {*|{type, alias, describe}}
+//  */
+// var createSubFootprint = function (req, res) {
+//     const body = req.body;
+//
+//     const iconKey = body.iconKey,
+//         footprintId = body.footprintId,
+//         latitude = body.latitude,
+//         longitude = body.longitude;
+//
+//     // todo: create subFootprint
+//     // parameter test
+//
+//     if (!title) {
+//         return res.status(400)
+//             .json({
+//                 code: -1,
+//                 message: 'title should be not null'
+//             });
+//     }
+//
+//     if (!latitude || !longitude) {
+//         return res.status(400)
+//             .json({
+//                 code: -1,
+//                 message: 'location data should be not null'
+//             });
+//     }
+//
+//     const sqlCreateSubFootprint =
+//         "INSERT INTO sub_footprint ( footprint_id, icon_key, latitude, longitude ) " +
+//         "VALUES (?, ?, ?, ?)";
+//
+//     connection.query(sqlCreateSubFootprint, [footprintId, iconKey, latitude, longitude],
+//         function (err, result) {
+//             if (err)
+//                 return res.status(400)
+//                     .json({
+//                         code: -2,
+//                         message: 'sql fail'
+//                     });
+//
+//
+//             if (result) {
+//                 return res.status(201)
+//                     .json({
+//                         code: 1,
+//                         message: 'success to create sub footprint mark'
+//                     });
+//             } else {
+//                 return res.status(400)
+//                     .json({
+//                         code: -1,
+//                         message: 'fail to create'
+//                     });
+//             }
+//
+//         }
+//     );
+//
+// };
+// var getSubFootprintByFootprintID = function (req, res) {
+//     const footprintId = req.query.footprintId;
+//
+//     // todo: query data validation test
+//     if (!footprintId) {
+//         return res.status(400)
+//             .json({
+//                 code: -1,
+//                 message: 'footprintId that you sent is not allowed'
+//             })
+//     }
+//
+//     const sqlRetrieveFootprintByFootprintId =
+//         "SELECT * " +
+//         "FROM footprint " +
+//         "WHERE footprint_id = ?";
+//
+//     const sqlRetrieveSubFootprintByFootprintId =
+//         "SELECT sub_footprint.icon_key AS iconKey, sub_footprint.latitude, sub_footprint.longitude " +
+//         "FROM sub_footprint " +
+//         "WHERE footprint_id = ? ";
+//
+//     const task = [
+//         function (cb) {
+//             connection.query(sqlRetrieveFootprintByFootprintId, [footprintId],
+//                 function (err, footprint) {
+//                     if (err)
+//                         return cb(err, null);
+//
+//                     if (footprint)
+//                         return cb(null, JSON.parse(JSON.stringify(footprint))[0]);
+//                     else return cb('sql error', null);
+//                 })
+//         },
+//         function (cb) {
+//             connection.query(sqlRetrieveSubFootprintByFootprintId, [footprintId],
+//                 function (err, subFootprints) {
+//                     if (err)
+//                         return cb(err, null);
+//
+//                     if (subFootprints)
+//                         return cb(null, subFootprints);
+//                     else return cb('sql error', null);
+//                 });
+//         }
+//     ];
+//
+//     async.series(task,
+//         function (err, result) {
+//             if (err)
+//                 return res.status(400)
+//                     .json({
+//                         code: -1,
+//                         message: '서브마커 불러오기 오류'
+//                     });
+//
+//             if (result) {
+//                 // var objectResponseJson = {};
+//                 // objectResponseJson.push({code: 1})
+//                 //     .push(result[0])
+//                 //     .push(result[1]);
+//                 if (!result[0]) {
+//                     return res.status(400)
+//                         .json({
+//                             code: -1,
+//                             message: 'parameter error'
+//                         });
+//                 }
+//
+//                 result[0]['code'] = 1;
+//                 result[0]['subMarkers'] = result[1];
+//                 console.log(result[0]);
+//
+//                 return res.status(200)
+//                     .json(result[0]);
+//             }
+//             else
+//                 return res.status(400)
+//                     .json({
+//                         code: -1,
+//                         message: 'sql output error'
+//                     });
+//         });
+//
+// };
 
 
 module.exports = {
@@ -1121,8 +1080,9 @@ module.exports = {
     createFootprint: createFootprint,
     deleteFootprintByFootprintID: deleteFootprintByFootprintID,
     getFootprintListByCurrentLocationAndViewLevel: getFootprintListByCurrentLocationAndViewLevel,
-    createSubFootprint: createSubFootprint,
-    getSubFootprintByFootprintID: getSubFootprintByFootprintID,
+
+    // createSubFootprint: createSubFootprint,
+    // getSubFootprintByFootprintID: getSubFootprintByFootprintID,
 
     createLinkMarker: createLinkMarker,
     getLinkMarker : getLinkMarker,

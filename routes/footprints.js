@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var controller = require('../controller/footprints');
 var auth = require('../auth/auth');
+var validateMarkerParams = require('../middleware/vaildations').validateMarkerParams;
 
 router.get('/list', controller.getFootprintList);
 
@@ -17,7 +18,7 @@ router.get('/list/:lat/:lng/:level', controller.getFootprintListByCurrentLocatio
 /**
  * footprint CRUD functions
  */
-router.post('/create', auth.authMiddleware, controller.createFootprint);
+router.post('/create', auth.authMiddleware, validateMarkerParams, controller.createFootprint);
 router.get('/detail', auth.passMiddleware, controller.getFootprintByFootprintID);
 router.post('/delete', auth.authMiddleware, controller.deleteFootprintByFootprintID);
 
