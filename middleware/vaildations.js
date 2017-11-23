@@ -38,27 +38,27 @@ var validateMarkerParams = function(req, res, next){
     // todo : vaildate parameters
 
     checkTitle(req.body.title, function(err){
-        if(err) res.status(200).json({
+        if(err) return res.status(200).json({
             code: -1,
             message: err
         });
     });
 
     checkContent(req.body.content, function(err){
-        if(err) res.status(200).json({
+        if(err) return res.status(200).json({
             code: -1,
             message: err
         });
     });
 
     checkLocation(req.body.latitude, req.body.longitude, function(err){
-        if(err) res.status(200).json({
+        if(err) return res.status(200).json({
             code: -1,
             message: err
         });
     });
 
-    next();
+    return next();
 };
 
 module.exports = {
