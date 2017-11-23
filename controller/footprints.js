@@ -414,9 +414,6 @@ var createFootprint = function (req, res) {
     const sqlInsertImage =
         "INSERT INTO image (footprint_id, image_key) " +
         "VALUES (?, ?) ";
-    const sqlCreateSubFootprint =
-        "INSERT INTO sub_footprint ( footprint_id, icon_key, latitude, longitude ) " +
-        "VALUES (?, ?, ?, ?)";
 
 
     var createImages = function (footprintId, imageKeys, cb) {
@@ -447,46 +444,6 @@ var createFootprint = function (req, res) {
         return cb(null, true);
     };
 
-    var createSubMarkers = function (footprintId, subMarkers, cb) {
-        console.log(subMarkers);
-
-        if (!footprintId) {
-            return cb('foreign key err', null);
-        }
-
-        subMarkers.forEach(
-            function (subMarker) {
-                if (subMarker !== null) {
-                    const subLatitude = subMarker.latitude,
-                        subLongitude = subMarker.longitude;
-                    var subIconKey = subMarker.iconKey;
-                    console.log(subMarker);
-
-                    // todo: vaildate sub markers parameters
-
-                    if (!subIconKey) {
-                        subIconKey = iconKey;
-                    }
-
-                    if (!subLongitude || !subLatitude) {
-                        return cb('sub marker location data err', null);
-                    }
-
-                    connection.query(sqlCreateSubFootprint, [footprintId, subIconKey, subLatitude, subLongitude],
-                        function (err, result) {
-                            if (err)
-                                return cb(err, null);
-
-                            if (!result)
-                                return cb('fail to create subMarkers', null);
-                        });
-                }
-            });
-
-        return cb(null, true);
-    };
-
-
     connection.query(sqlCreateFootprint, [userId, userDisplayName, title, iconKey, content, latitude, longitude, type],
         function (err, result) {
             if (err)
@@ -512,19 +469,6 @@ var createFootprint = function (req, res) {
                                     return cb(err, null);
 
                                 if (images)
-                                    return cb(null, true);
-                            });
-                    },
-
-                    function (cb) {
-                        if (!subMarkers) {
-                            return cb(null, false);
-                        }
-                        createSubMarkers(result.insertId, subMarkers,
-                            function (err, markers) {
-                                if (err)
-                                    return cb(err, null);
-                                if (markers)
                                     return cb(null, true);
                             });
                     }
@@ -1012,7 +956,7 @@ var updateLinkMarker = function(req, res){
 
 };
 var deleteLinkMarker = function(req, res){
-    
+
 };
 
 
