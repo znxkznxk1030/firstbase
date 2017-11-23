@@ -20,7 +20,7 @@ var validateMarkerParams = function(req, res, next){
 
     var task = [
         function (cb) {
-            if(!title) return cb(MSG_TITLE_EMPTY);
+            if(!title || title.length <= 0) return cb(MSG_TITLE_EMPTY);
             if(title.length > MAX_TITLE_LENGTH) return cb(MSG_TITLE_OVERFLOW);
 
             return cb(null);
@@ -49,8 +49,6 @@ var validateMarkerParams = function(req, res, next){
 
         else return next();
     });
-
-    return next();
 };
 
 module.exports = {
