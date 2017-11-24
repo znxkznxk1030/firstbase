@@ -139,7 +139,7 @@ var getFootprintList = function (req, res) {
         "ON footprint.footprint_id = comment.footprint_id " +
         "GROUP BY footprint_id ";
 
-    const sqlFindUser = "SELECT profile_key " +
+    const sqlFindUser = "SELECT displayName, profile_key " +
         "FROM user " +
         "WHERE user.id = ? ";
 
