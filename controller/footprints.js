@@ -783,7 +783,7 @@ var getLinkMarker = function (req, res) {
     const linkFootprintId = req.query.linkFootprintId;
 
     const sqlRetrieveFootprint =
-        "SELECT footprint.*, count(comment.comment_id) AS countComments, link.rank" +
+        "SELECT footprint.*, count(comment.comment_id) AS countComments, link.rank " +
         "FROM footprint " +
         "LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
@@ -792,7 +792,7 @@ var getLinkMarker = function (req, res) {
         "LEFT JOIN link " +
         "ON link.linked_footprint_id = footprint.footprint_id " +
         "WHERE footprint.footprint_id IN (" +
-        "SELECT linked_footprint_id AS footprint_id FROM link WHERE link_footprint_id = ? " +
+        "SELECT linked_footprint_id FROM link WHERE link_footprint_id = ? " +
         ") " +
         "GROUP BY footprint_id " +
         "ORDER BY link.rank ";
