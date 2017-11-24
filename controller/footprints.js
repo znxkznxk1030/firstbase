@@ -167,13 +167,13 @@ var getFootprintList = function (req, res) {
 
                             profile = JSON.parse(JSON.stringify(profile))[0];
 
-                            footprint.displayName = profile.displayName;
+                            var displayName = profile.displayName;
 
                             var profileUrl, profileKey = profile.profile_key;
                             if (profileKey) profileUrl = getImageUrl(profileKey);
                             else profileUrl = getImageUrl(profileDefaultKey);
 
-                            return callback(null, {profileUrl: profileUrl});
+                            return callback(null, {displayName : displayName, profileUrl: profileUrl});
                         });
                     },
                     function (tails, callback) {
@@ -299,13 +299,13 @@ var getFootprintListByLocation = function (req, res) {
 
                             profile = JSON.parse(JSON.stringify(profile))[0];
 
-                            footprint.displayName = profile.displayName;
+                            var displayName = profile.displayName;
 
                             var profileUrl, profileKey = profile.profile_key;
                             if (profileKey) profileUrl = getImageUrl(profileKey);
                             else profileUrl = getImageUrl(profileDefaultKey);
 
-                            return callback(null, {profileUrl: profileUrl});
+                            return callback(null, {displayName : displayName, profileUrl: profileUrl});
                         });
                     },
                     function (tails, callback) {
