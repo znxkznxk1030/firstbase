@@ -541,6 +541,9 @@ var getFootprintByFootprintID = function (req, res) {
     const sqlGetProfileImage =
         "SELECT profile_key, displayName FROM user WHERE id = ?";
 
+    const sqlGetLinkedFootprint =
+        "SELECT linked_footprint_id AS linkedFootprintId, rank FROM footprint WHERE link_footprint_id = ? ORDER BY rank";
+
     const task = [
         function (cb) {
             connection.query(sqlRetrieveFootprintByFootprintId, [footprintId],
@@ -574,6 +577,20 @@ var getFootprintByFootprintID = function (req, res) {
                         return cb(err);
                     return cb(null, footprint);
                 });
+        },
+        function (footprint, cb){
+            if(footprint.type === 'link'){
+                connection.query(sqlGetLinkedFootprint, [footprintId], function(err, linkedFootprintList){
+                    if(err){
+                        return cb(true);
+                    }else{
+                        linkedFootprintList = JSON.parse(JSON.stringify(linkedFootprintList));
+                        return cb(null, _.extend(footprint, {linkedFootprintList : linkedFootprintList}));
+                    }
+                });
+            }else{
+                return cb(null, footprint);
+            }
         },
         function (footprint, cb) {
             connection.query(sqlImageLoad, [footprintId],
