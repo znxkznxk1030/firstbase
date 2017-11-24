@@ -731,7 +731,7 @@ var createLinkMarker = function (req, res) {
         "INSERT INTO link_marker (id, title, icon_key, content, latitude, longitude) "
         + " VALUES (?, ?, ?, ?, ?, ?)";
     const sqlCreateLinkImage =
-        "INSERT INTO link_image (image_key, link_mark_id) " +
+        "INSERT INTO link_image (image_key, link_marker_id) " +
         "VALUES (?, ?)";
     const sqlCreateLink =
         "INSERT INTO link (link_marker_id, footprint_id) " +
