@@ -412,25 +412,28 @@ var createFootprint = function (req, res) {
             });
         },
         function(footprintId, cb){
-            const length = footprintIdList.length;
+            if(type === 'link')
+            {
+                const length = footprintIdList.length;
 
-            async.times(length, function (i, next) {
-                var linkedFootprintId = footprintIdList[i];
+                async.times(length, function (i, next) {
+                    var linkedFootprintId = footprintIdList[i];
 
-                connection.query(sqlCreateLink, [footprintId, linkedFootprintId], function (err, result) {
+                    connection.query(sqlCreateLink, [footprintId, linkedFootprintId], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            return next(true);
+                        }
+                        else return next();
+                    });
+                }, function (err) {
                     if (err) {
                         console.log(err);
-                        return next(true);
+                        cb(true);
                     }
-                    else return next();
+                    cb();
                 });
-            }, function (err) {
-                if (err) {
-                    console.log(err);
-                    cb(true);
-                }
-                cb();
-            });
+            }
         }
     ];
 
@@ -537,11 +540,6 @@ var getFootprintByFootprintID = function (req, res) {
         "SELECT profile_key, displayName FROM user WHERE id = ?";
 
     const task = [
-        /**
-         *  Get selected footprint data set
-         *
-         * @param cb
-         */
         function (cb) {
             connection.query(sqlRetrieveFootprintByFootprintId, [footprintId],
                 function (err, footprint) {
@@ -567,13 +565,6 @@ var getFootprintByFootprintID = function (req, res) {
                     }
                 });
         },
-        /**
-         *  Check user watch
-         *  todo: refresh every day
-         *
-         * @param cb
-         * @returns {*}
-         */
         function (footprint, cb) {
             connection.query(sqlWatch, [footprintId],
                 function (err) {
@@ -582,11 +573,6 @@ var getFootprintByFootprintID = function (req, res) {
                     return cb(null, footprint);
                 });
         },
-        /**
-         *  Get images by footprint Id
-         *
-         * @public
-         */
         function (footprint, cb) {
             connection.query(sqlImageLoad, [footprintId],
                 function (err, imageInfo) {
