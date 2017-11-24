@@ -377,8 +377,8 @@ var createFootprint = function (req, res) {
         "INSERT INTO image (footprint_id, image_key) " +
         "VALUES (?, ?) ";
     const sqlCreateLink =
-        "INSERT INTO link (link_footprint_id, linked_footprint_id) " +
-        "VALUES (?, ?)";
+        "INSERT INTO link (link_footprint_id, linked_footprint_id, rank) " +
+        "VALUES (?, ?, ?)";
 
     var task = [
         function(cb){
@@ -419,7 +419,7 @@ var createFootprint = function (req, res) {
                 async.times(length, function (i, next) {
                     var linkedFootprintId = footprintIdList[i];
 
-                    connection.query(sqlCreateLink, [footprintId, linkedFootprintId], function (err, result) {
+                    connection.query(sqlCreateLink, [footprintId, linkedFootprintId, i], function (err, result) {
                         if (err) {
                             console.log(err);
                             return next(true);
@@ -790,7 +790,7 @@ var getLinkMarker = function (req, res) {
         "ON footprint.footprint_id = comment.footprint_id " +
         "WHERE footprint.footprint_id IN (" +
         "SELECT linked_footprint_id FROM link WHERE link_footprint_id = ? " +
-        "ORDER BY created_date " +
+        "ORDER BY rank " +
         ")" +
         "GROUP BY footprint_id ";
 
