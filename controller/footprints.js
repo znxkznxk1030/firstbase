@@ -789,7 +789,7 @@ var getLinkMarker = function (req, res) {
         "LEFT JOIN comment " +
         "ON footprint.footprint_id = comment.footprint_id " +
         "WHERE footprint.footprint_id IN (" +
-        "SELECT linked_footprint_id FROM link WHERE linked_footprint_id = ? " +
+        "SELECT linked_footprint_id FROM link WHERE link_footprint_id = ? " +
         ") " +
         "GROUP BY footprint_id ";
 
