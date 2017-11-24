@@ -542,7 +542,7 @@ var getFootprintByFootprintID = function (req, res) {
         "SELECT profile_key, displayName FROM user WHERE id = ?";
 
     const sqlGetLinkedFootprint =
-        "SELECT linked_footprint_id AS linkedFootprintId, rank FROM footprint WHERE link_footprint_id = ? ORDER BY rank";
+        "SELECT linked_footprint_id AS linkedFootprintId, rank FROM link WHERE link_footprint_id = ? ORDER BY rank";
 
     const task = [
         function (cb) {
