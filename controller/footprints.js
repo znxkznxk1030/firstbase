@@ -751,7 +751,7 @@ var createLinkMarker = function (req, res) {
             const length = imageKeys.length;
 
             async.times(length, function (i, next) {
-                var imageKey = imageKey[i];
+                var imageKey = imageKeys[i];
 
                 connection.query(sqlCreateLinkImage, [imageKey, linkMarkerId], function (err, result) {
                     if (err) {
