@@ -89,7 +89,7 @@ var startSocketIo = function (server) {
             };
 
             var newMsg = new Chat({
-                msg: msg,
+                msg: msgSafe,
                 displayName: displayName,
                 date: date.toLocaleDateString(),
                 time: ((date.getHours() + 9)%24) + '시 ' + date.getMinutes() + '분'
