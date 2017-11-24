@@ -765,7 +765,7 @@ var createLinkMarker = function (req, res) {
                     console.log(err);
                     cb(true);
                 }
-                cb(linkMarkerId);
+                cb(null, linkMarkerId);
             });
         },
         function (linkMarkerId, cb) {
