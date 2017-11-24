@@ -791,9 +791,6 @@ var getLinkMarker = function (req, res) {
         "ON footprint.footprint_id = comment.footprint_id " +
         "LEFT JOIN (SELECT linked_footprint_id AS footprint_id, rank FROM link WHERE link_footprint_id = ? ) AS link " +
         "ON link.footprint_id = footprint.footprint_id " +
-        "WHERE footprint.footprint_id IN (" +
-        "SELECT linked_footprint_id FROM link WHERE link_footprint_id = ? " +
-        ") " +
         "GROUP BY footprint_id " +
         "ORDER BY link.rank ";
 
