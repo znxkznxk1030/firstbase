@@ -790,7 +790,7 @@ var getLinkMarker = function (req, res) {
         "ON footprint.footprint_id = comment.footprint_id " +
         "WHERE footprint.footprint_id IN (" +
         "SELECT linked_footprint_id FROM link WHERE link_footprint_id = ? " +
-        ") " +
+        ") AND footprint.footprint_id = ? " +
         "GROUP BY footprint_id ";
 
     const sqlFindUser = "SELECT profile_key, displayName " +
@@ -805,7 +805,7 @@ var getLinkMarker = function (req, res) {
         "SELECT count(*) AS countDisLike " +
         "FROM eval WHERE footprint_id = ? AND state = 2";
 
-    connection.query(sqlRetrieveFootprint, [linkFootprintId],
+    connection.query(sqlRetrieveFootprint, [linkFootprintId, linkFootprintId],
         function (err, footprintList) {
             if (err)
                 return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
