@@ -3,9 +3,12 @@ var router = express.Router();
 var auth = require('../auth/auth');
 
 router.get('/', auth.passMiddleware, function (req, res) {
+    var displayName = '비회원';
+    if(req.user)
+        displayName = req.user.displayName;
     res.render('socket', {
         id: 'nope',
-        displayName: req.user.displayName
+        displayName: req.user.displayName | '비회원'
     });
 });
 
