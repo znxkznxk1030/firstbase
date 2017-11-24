@@ -790,6 +790,7 @@ var getLinkMarker = function (req, res) {
         "ON footprint.footprint_id = comment.footprint_id " +
         "WHERE footprint.footprint_id IN (" +
         "SELECT linked_footprint_id FROM link WHERE link_footprint_id = ? " +
+        "ORDER BY created_date " +
         ")" +
         "GROUP BY footprint_id ";
 
