@@ -100,7 +100,7 @@ var startSocketIo = function (server) {
                     throw err;
                 }
                 else {
-                    console.log('debug#' + msg);
+                    console.log('debug#' + msgSafe);
                     msg.isSelf = false;
                     socket.broadcast.emit('chat', msg);
                     msg.isSelf = true;
