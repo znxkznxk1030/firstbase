@@ -433,6 +433,8 @@ var createFootprint = function (req, res) {
                     }
                     cb();
                 });
+            }else{
+                cb();
             }
         }
     ];
