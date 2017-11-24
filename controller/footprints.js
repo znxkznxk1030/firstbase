@@ -794,7 +794,7 @@ var getLinkMarker = function (req, res) {
         "SELECT linked_footprint_id FROM link WHERE link_footprint_id = ? " +
         ") " +
         "GROUP BY footprint_id " +
-        "ORDER BY rank ";
+        "ORDER BY link.rank ";
 
     const sqlFindUser = "SELECT profile_key, displayName " +
         "FROM user " +
