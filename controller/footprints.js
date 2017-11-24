@@ -779,27 +779,23 @@ var createLinkMarker = function (req, res) {
  * @param res
  */
 var getLinkMarker = function (req, res) {
-    const linkMarkerId = req.query.linkMarkerId;
 
-    const sqlGetLinkMarker =
-        "SELECT * FROM link_marker WHERE link_marker_id = ?";
+    const linkFootprintId = req.query.linkFootprintId;
 
-    const sqlFindUser = "SELECT profile_key, displayName " +
-        "FROM user " +
-        "WHERE user.id = ? ";
-
-    const sqlGetLinkedFootprintList =
+    const sqlRetrieveFootprint =
         "SELECT footprint.*, count(comment.comment_id) AS countComments " +
         "FROM footprint LEFT JOIN view " +
         "ON footprint.footprint_id = view.footprint_id " +
         "LEFT JOIN comment " +
         "ON footprint.footprint_id = comment.footprint_id " +
         "WHERE footprint.footprint_id IN (" +
-        "SELECT footprint_id FROM link WHERE link_marker_id = ?" +
+        "SELECT linked_footprint_id FROM link WHERE link_footprint_id = ? " +
         ") " +
         "GROUP BY footprint_id ";
 
-    const sqlImageLoad = "SELECT * FROM link_image WHERE link_marker_id = ?";
+    const sqlFindUser = "SELECT profile_key, displayName " +
+        "FROM user " +
+        "WHERE user.id = ? ";
 
     const sqlCountLike =
         "SELECT count(*) AS countLike " +
@@ -809,131 +805,64 @@ var getLinkMarker = function (req, res) {
         "SELECT count(*) AS countDisLike " +
         "FROM eval WHERE footprint_id = ? AND state = 2";
 
-    var task = [
-        function (cb) {
-            connection.query(sqlGetLinkMarker, [linkMarkerId], function (err, linkMarker) {
-                if (err) return cb(true);
+    connection.query(sqlRetrieveFootprint, [linkFootprintId],
+        function (err, footprintList) {
+            if (err)
+                return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
 
-                linkMarker = JSON.parse(JSON.stringify(linkMarker))[0];
+            var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
 
-                if (linkMarker) {
-                    return cb(null, linkMarker);
-                }
+            async.map(footprintListJSON, function (footprint, cb) {
+                var task = [
+                    function (callback) {
+                        connection.query(sqlFindUser, footprint.id, function (err, profile) {
+                            if (err) return callback(err);
 
-                return cb(true);
-            });
-        },
-        function (linkMarker, cb) {
-            connection.query(sqlImageLoad, [linkMarkerId], function (err, imageKeys) {
-                if (err) return cb(err);
+                            profile = JSON.parse(JSON.stringify(profile))[0];
 
-                console.log(imageKeys);
-                imageKeys = JSON.parse(JSON.stringify(imageKeys));
+                            footprint.displayName = profile.displayName;
 
-                var imageUrls = [];
+                            var profileUrl, profileKey = profile.profile_key;
+                            if (profileKey) profileUrl = getImageUrl(profileKey);
+                            else profileUrl = getImageUrl(profileDefaultKey);
 
-                imageKeys.forEach(function (image) {
-                    var imageUrl = getImageUrl(image.image_key);
-                    imageUrls.push(imageUrl);
-                });
-
-                return cb(null, _.extend(linkMarker, {imageUrls: imageUrls}));
-            });
-        },
-        function (linkMarker, cb) {
-            console.log(linkMarker);
-            connection.query(sqlFindUser, [linkMarker.id], function (err, profile) {
-                if (err) return cb(true);
-
-                profile = JSON.parse(JSON.stringify(profile))[0];
-
-                if (profile) {
-
-                    var profileUrl, profileKey = profile.profile_key;
-                    if (profileKey) profileUrl = getImageUrl(profileKey);
-                    else profileUrl = getImageUrl(profileDefaultKey);
-
-                    return cb(null, _.extend(linkMarker, {
-                            displayName: profile.displayName,
-                            profileUrl: profileUrl
-                        })
-                    );
-                }
-
-                else return cb(true);
-            });
-        },
-        function (linkMarker, cb) {
-            console.log('#debug : ' + linkMarker);
-            connection.query(sqlGetLinkedFootprintList, [linkMarkerId], function (err, linkedFootprintList) {
-
-                if (err) return cb(true);
-
-                linkedFootprintList = JSON.parse(JSON.stringify(linkedFootprintList));
-
-                async.map(linkedFootprintList, function (footprint, cb2) {
-                    var task = [
-                        function (callback) {
-                            connection.query(sqlFindUser, footprint.id, function (err, profile) {
+                            return callback(null, {profileUrl: profileUrl});
+                        });
+                    },
+                    function (tails, callback) {
+                        connection.query(sqlCountLike, [footprint.footprint_id],
+                            function (err, countLike) {
                                 if (err) return callback(err);
 
-                                profile = JSON.parse(JSON.stringify(profile))[0];
+                                const ret = JSON.parse(JSON.stringify(countLike))[0];
 
-                                footprint.displayName = profile.displayName;
-
-                                var profileUrl, profileKey = profile.profile_key;
-                                if (profileKey) profileUrl = getImageUrl(profileKey);
-                                else profileUrl = getImageUrl(profileDefaultKey);
-
-                                return callback(null, {profileUrl: profileUrl});
+                                return callback(null, _.extend(tails, ret));
                             });
-                        },
-                        function (tails, callback) {
-                            connection.query(sqlCountLike, [footprint.footprint_id],
-                                function (err, countLike) {
-                                    if (err) return callback(err);
+                    },
+                    function (tails, callback) {
+                        connection.query(sqlCountDislike, [footprint.footprint_id],
+                            function (err, Dislike) {
+                                if (err) return callback(err);
 
-                                    const ret = JSON.parse(JSON.stringify(countLike))[0];
+                                const ret = JSON.parse(JSON.stringify(Dislike))[0];
 
-                                    return callback(null, _.extend(tails, ret));
-                                });
-                        },
-                        function (tails, callback) {
-                            connection.query(sqlCountDislike, [footprint.footprint_id],
-                                function (err, Dislike) {
-                                    if (err) return callback(err);
+                                return callback(null, _.extend(tails, ret));
+                            });
+                    }
 
-                                    const ret = JSON.parse(JSON.stringify(Dislike))[0];
+                ];
 
-                                    return callback(null, _.extend(tails, ret));
-                                });
-                        }
-
-                    ];
-
-                    async.waterfall(task, function (err, tails) {
-                        if (err) return cb2(err);
-                        return cb2(null, _.extend(footprint, tails));
-                    });
-                }, function (err, footprintList) {
-                    if (err) return cb(true);
-
-                    else cb(null, _.extend(linkMarker, {footprintList: footprintList}));
+                async.waterfall(task, function (err, tails) {
+                    if (err) return cb(err);
+                    return cb(null, _.extend(footprint, tails));
                 });
-            });
-        }
-    ];
 
-    async.waterfall(task, function (err, result) {
-        if (err) res.status(400).json({code: -1, message: 'link marker 불러오기 오류'});
-        else {
-            res.status(200).json({
-                code: 1,
-                message: 'link marker 불러오기 성공',
-                linkMarker: result
+            }, function (err, result) {
+                if (err) return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
+
+                else res.status(200).json(result);
             });
-        }
-    });
+        });
 };
 
 var updateLinkMarker = function (req, res) {
