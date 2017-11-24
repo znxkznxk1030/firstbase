@@ -382,7 +382,7 @@ var createFootprint = function (req, res) {
 
     var task = [
         function(cb){
-            connection.query(sqlCreateFootprint, [userId, userDisplayName, title, iconKey, content, latitude, longitude, type],
+            connection.query(sqlCreateFootprint, [userId, title, iconKey, content, latitude, longitude, type],
                 function (err, result) {
                     if (err || !result){
                         return cb(true);
