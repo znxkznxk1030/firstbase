@@ -1,6 +1,8 @@
 var config = require("./config");
 var jwt = require("jsonwebtoken");
 
+var xss = require('xss');
+
 var SECRET = config.token_secret;
 var ONEDAY = 1000 * 60 * 60 * 24;
 var ONEWEEK = ONEDAY * 7;
@@ -76,17 +78,18 @@ var startSocketIo = function (server) {
             socket.displayName = displayName;
 
             var date = new Date(Date.now());
+            const msg = xss(data.msg);
 
             var msg = {
                 displayName: displayName,
-                msg: data.msg,
+                msg: msg,
 
                 date: date.toLocaleDateString(),
                 time: ((date.getHours() + 9)%24) + '시 ' + date.getMinutes() + '분'
             };
 
             var newMsg = new Chat({
-                msg: data.msg,
+                msg: msg,
                 displayName: displayName,
                 date: date.toLocaleDateString(),
                 time: ((date.getHours() + 9)%24) + '시 ' + date.getMinutes() + '분'
