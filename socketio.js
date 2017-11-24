@@ -78,11 +78,11 @@ var startSocketIo = function (server) {
             socket.displayName = displayName;
 
             var date = new Date(Date.now());
-            const msg = xss(data.msg);
+            const msgSafe = xss(data.msg);
 
             var msg = {
                 displayName: displayName,
-                msg: msg,
+                msg: msgSafe,
 
                 date: date.toLocaleDateString(),
                 time: ((date.getHours() + 9)%24) + '시 ' + date.getMinutes() + '분'
