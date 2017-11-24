@@ -363,104 +363,86 @@ var createFootprint = function (req, res) {
     const title = body.title,
         iconKey = body.icon_key,
         content = body.content,
+        imageKeys = body.imageKeys,
+        footprintIdList = req.body.footprintIdList,
         latitude = body.latitude,
         longitude = body.longitude;
 
     var type = body.type;
 
     const sqlCreateFootprint =
-        "INSERT INTO footprint (id, displayName, title, icon_key, content, latitude, longitude, type) "
-        + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        "INSERT INTO footprint (id, title, icon_key, content, latitude, longitude, type) "
+        + " VALUES (?, ?, ?, ?, ?, ?, ?)";
     const sqlInsertImage =
         "INSERT INTO image (footprint_id, image_key) " +
         "VALUES (?, ?) ";
+    const sqlCreateLink =
+        "INSERT INTO link (link_footprint_id, linked_footprint_id) " +
+        "VALUES (?, ?)";
 
-
-    var createImages = function (footprintId, imageKeys, cb) {
-
-        if (!footprintId) {
-            return cb('foreign key err', null);
-        }
-
-        console.log(imageKeys);
-
-        imageKeys.forEach(
-            function (imageKey) {
-                if (imageKey !== null) {
-                    //console.log(imageKey);
-                    connection.query(sqlInsertImage, [footprintId, imageKey],
-                        function (err, image) {
-                            if (err)
-                                return cb(err, null);
-
-                            if (!image) {
-                                return cb('image link error', null);
-                            }
-
-                        });
-                }
-            });
-
-        return cb(null, true);
-    };
-
-    connection.query(sqlCreateFootprint, [userId, userDisplayName, title, iconKey, content, latitude, longitude, type],
-        function (err, result) {
-            if (err)
-                return res.status(400)
-                    .json({
-                        code: -2,
-                        message: 'sql fail'
-                    });
-            if (result) {
-                const imageKeys = body.imageKeys,
-                    subMarkers = body.subMarkers;
-
-                var task = [
-                    function (cb) {
-                        console.log(imageKeys);
-                        if (!imageKeys) {
-                            return cb(null, false);
-                        }
-
-                        createImages(result.insertId, imageKeys,
-                            function (err, images) {
-                                if (err)
-                                    return cb(err, null);
-
-                                if (images)
-                                    return cb(null, true);
-                            });
+    var task = [
+        function(cb){
+            connection.query(sqlCreateFootprint, [userId, userDisplayName, title, iconKey, content, latitude, longitude, type],
+                function (err, result) {
+                    if (err || !result){
+                        return cb(true);
                     }
-                ];
+                    else return cb(null, result.insertId);
+                });
+        },
+        function(footprintId, cb){
+            const length = imageKeys.length;
 
-                async.series(task,
-                    function (err, result) {
-                        if (err) {
-                            return res.status(400)
-                                .json({
-                                    code: -1,
-                                    message: '게시글을 생성하는데 오류가 생겼습니다.'
-                                });
-                        }
+            async.times(length, function (i, next) {
+                var imageKey = imageKeys[i];
 
-                        if (result) {
-                            return res.status(201)
-                                .json({
-                                    code: 1,
-                                    message: 'success to create footprint mark'
-                                });
-                        }
+                connection.query(sqlInsertImage, [footprintId, imageKey], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        next(true);
+                    }
+                    else return next();
+                });
+            }, function (err) {
+                if (err){
+                    console.log(err);
+                    cb(true);
+                }
+                cb(null, footprintId);
+            });
+        },
+        function(footprintId, cb){
+            const length = footprintIdList.length;
 
-                    });
-            } else {
-                return res.status(400)
-                    .json({
-                        code: -1,
-                        message: 'fail to create'
-                    });
-            }
-        });
+            async.times(length, function (i, next) {
+                var linkedFootprintId = footprintIdList[i];
+
+                connection.query(sqlCreateLink, [footprintId, linkedFootprintId], function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        return next(true);
+                    }
+                    else return next();
+                });
+            }, function (err) {
+                if (err) {
+                    console.log(err);
+                    cb(true);
+                }
+                cb();
+            });
+        }
+    ];
+
+    async.waterfall(task, function(err, result){
+        if(err){
+            return res.status(400).json({ code: -1, message: '게시물 작성 오류'});
+        }
+        else{
+            res.status(200).json({ code: 1, message: '게시물 작성 성공'});
+        }
+    });
+
 };
 var deleteFootprintByFootprintID = function (req, res) {
 
