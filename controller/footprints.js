@@ -725,6 +725,8 @@ var createLinkMarker = function (req, res) {
         , latitude = req.body.latitude
         , longitude = req.body.longitude;
 
+    console.log(req.body);
+
     const sqlCreateLinkMarker =
         "INSERT INTO link_marker (id, title, icon_key, content, latitude, longitude) "
         + " VALUES (?, ?, ?, ?, ?, ?)";
@@ -738,8 +740,10 @@ var createLinkMarker = function (req, res) {
     var task = [
         function (cb) {
             connection.query(sqlCreateLinkMarker, [id, title, iconKey, content, latitude, longitude], function (err, result) {
-                if (err || !result)
+                if (err || !result){
+                    console.log(err);
                     return cb(true);
+                }
                 else return cb(null, result.insertId);
             });
         },
@@ -750,11 +754,17 @@ var createLinkMarker = function (req, res) {
                 var imageKey = imageKey[i];
 
                 connection.query(sqlCreateLinkImage, [imageKey, linkMarkerId], function (err, result) {
-                    if (err) next(true);
+                    if (err) {
+                        console.log(err);
+                        next(true);
+                    }
                     else return next();
                 });
             }, function (err) {
-                if (err) cb(true);
+                if (err){
+                    console.log(err);
+                    cb(true);
+                }
                 cb(linkMarkerId);
             });
         },
@@ -766,12 +776,16 @@ var createLinkMarker = function (req, res) {
 
                 connection.query(sqlCreateLink, [linkMarkerId, footprintId], function (err, result) {
                     if (err) {
+                        console.log(err);
                         return next(true);
                     }
                     else return next();
                 });
             }, function (err) {
-                if (err) cb(true);
+                if (err) {
+                    console.log(err);
+                    cb(true);
+                }
                 cb();
             });
         }
