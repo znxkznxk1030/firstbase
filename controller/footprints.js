@@ -585,6 +585,7 @@ var getFootprintByFootprintID = function (req, res) {
                         return cb(true);
                     }else{
                         linkedFootprintList = JSON.parse(JSON.stringify(linkedFootprintList));
+                        console.log(linkedFootprintList);
                         return cb(null, _.extend(footprint, {linkedFootprintList : linkedFootprintList}));
                     }
                 });
