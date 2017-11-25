@@ -41,6 +41,7 @@ passport.use('local-login', new LocalStrategy({
                 });
             },
             function (profile, cb) {
+            console.log('#2 : ' + profile);
                 user.findPassword(id, function (err, retrievedPassword) {
                     if (err) return cb('비밀번호를 찾을 수 없습니다.');
                     else {
@@ -49,6 +50,7 @@ passport.use('local-login', new LocalStrategy({
                 });
             },
             function (profile, retrievedPassword, cb) {
+            console.log('#3 : ', profile, retrievedPassword);
                 passwordUtil.passwordCheck(password, retrievedPassword, function (err, isAuth) {
                     if (isAuth) {
                         return cb(null, profile);
