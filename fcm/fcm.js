@@ -41,7 +41,7 @@ var sendCreateFootprintFcmToFollowers = function(userId, displayName, footprint)
                     followerList = JSON.parse(JSON.stringify(followerList));
 
                     followerList.forEach(function(follower){
-                        sendFcm(follower.device_token, displayName, profileUrl, footprint);
+                        sendFcm(follower.device_token, 'footprint', displayName, profileUrl, footprint);
                     });
                 }
             });
@@ -58,7 +58,7 @@ var sendCreateFootprintFcmToFollowers = function(userId, displayName, footprint)
     });
 };
 
-var sendFcm = function(token, displayName, profileUrl, footprint){
+var sendFcm = function(token, type, displayName, profileUrl, footprint){
     var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
         to: token,
         collapse_key: 'firstbase_default_key',
@@ -72,6 +72,7 @@ var sendFcm = function(token, displayName, profileUrl, footprint){
             displayName : displayName,
             profileUrl: profileUrl,
             title: footprint.title,
+            type: type,
             footprintId: footprint.footprintId
         }
     };
