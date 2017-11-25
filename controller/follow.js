@@ -2,6 +2,7 @@ var connection = require('../database/db');
 var async = require('async');
 var getImageUrl = require("./files").getImageUrl;
 var _ = require('underscore');
+var sendFollowFcm = require("../fcm/fcm").sendFollowFcm;
 var sendFcm = require("../fcm/fcm").sendFcm;
 
 var unfollow = function(req, res){
