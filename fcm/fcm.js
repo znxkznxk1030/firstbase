@@ -62,7 +62,7 @@ var sendCommentFcm = function (displayName, footprintId, comment) {
             console.log(targetDeviceToken);
 
             if (typeof targetDeviceToken !== 'undefined') {
-                sendFcm(targetDeviceToken, 'comment', followerDisplayName, comment);
+                sendFcm(targetDeviceToken, 'comment', displayName, comment);
             }
         }
     });
