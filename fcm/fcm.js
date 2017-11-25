@@ -64,11 +64,6 @@ var sendFcm = function (token, type, displayName, content) {
                 to: token,
                 collapse_key: 'firstbase_default_key',
 
-                notification: {
-                    title: 'Title of your push notification',
-                    body: 'Body of your push notification'
-                },
-
                 data: {  //you can send only notification or only data(or include both)
                     displayName: displayName,
                     profileUrl: profileUrl,
