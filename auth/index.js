@@ -7,6 +7,7 @@ const google = require('passport-google-oauth').OAuth2Strategy;
 const facebook = require('passport-facebook').Strategy;
 const _ = require('underscore');
 var async = require("async");
+const connection = require('../database/db');
 
 passport.serializeUser(function (user, done) {
     // console.log('serialize');
@@ -36,17 +37,28 @@ passport.use('local-login', new LocalStrategy({
 
         var task = [
             function (cb) {
-                user.findOne(id, function (err, profile) {
-                    if (profile) return cb(null, profile);
-                    else return cb('입력한 아이디가 존재하지 않습니다.');
+                var sql = 'SELECT * FROM user WHERE id = ? OR displayName';
+                connection.query(sql, [id, displayName], function(err, result){
+                    if(err){
+                        return cb('해당 유저가 존재하지 않습니다.');
+                    }
+
+                    var user = JSON.parse(JSON.stringify(result))[0];
+                    console.log(user);
+                    return cb(null, user);
                 });
             },
             function (profile, cb) {
             console.log('#2 : ' + profile);
-                user.findPassword(id, function (err, retrievedPassword) {
-                    if (err) return cb('비밀번호를 찾을 수 없습니다.');
-                    else {
-                        cb(null, profile, retrievedPassword);
+                connection.query('SELECT * FROM password WHERE id=?', [id], function(err, result) {
+                    if(err) return cb('비밀번호가 없습니다.');
+
+                    var ret = JSON.parse(JSON.stringify(result));
+                    console.log(ret);
+                    if(typeof ret[0] !== 'undefined'){
+                        return cb(null, profile, ret[0].password);
+                    }else{
+                        return cb('비밀번호가 없습니다.');
                     }
                 });
             },
@@ -61,12 +73,12 @@ passport.use('local-login', new LocalStrategy({
                 });
             },
             function (profile, cb) {
-                user.updateDeviceToken(id, deviceToken, function (err, result) {
-                    if (err) return cb(null);
-                    else {
-                        return cb(null);
-                    }
-                })
+                var sql = 'UPDATE user SET device_token = ? WHERE id = ?';
+
+                connection.query(sql, [id, deviceToken], function(err, result){
+                    if(err) return cb('토큰생성 실패');
+                    else return cb(null, profile);
+                });
             }
         ];
 
