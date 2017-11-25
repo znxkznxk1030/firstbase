@@ -56,9 +56,9 @@ var sendCommentFcm = function (displayName, footprintId, comment) {
     connection.query(sqlGetTargetDeviceToken, [footprintId], function(err, targetDeviceToken){
         if (err || targetDeviceToken.length < 1) return false;
         else {
-            targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken))[0].device_token;
 
             console.log("#debudddd : " + targetDeviceToken);
+            targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken))[0].device_token;
 
             if (typeof targetDeviceToken !== 'undefined') {
                 sendFcm(targetDeviceToken, 'comment', displayName, comment);
