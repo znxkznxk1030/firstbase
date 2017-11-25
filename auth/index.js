@@ -75,8 +75,8 @@ passport.use('local-login', new LocalStrategy({
             function (profile, cb) {
                 var sql = 'UPDATE user SET device_token = ? WHERE id = ?';
 
-                connection.query(sql, [id, deviceToken], function(err, result){
-                    if(err) return cb('토큰생성 실패');
+                connection.query(sql, [deviceToken, id], function(err, result){
+                    if(err || result.length < 1) return cb('토큰생성 실패');
                     else return cb(null, profile);
                 });
             }
