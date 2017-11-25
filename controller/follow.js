@@ -2,6 +2,7 @@ var connection = require('../database/db');
 var async = require('async');
 var getImageUrl = require("./files").getImageUrl;
 var _ = require('underscore');
+var sendFcm = require("../fcm/fcm").sendFcm;
 
 var unfollow = function(req, res){
     const id = req.user.id,
@@ -65,6 +66,7 @@ var unfollow = function(req, res){
 var follow = function(req, res){
 
     const id = req.user.id,
+        displayName = req.user.displayName,
         targetDisplayName = req.body.targetDisplayName;
 
     if(!targetDisplayName){
@@ -109,6 +111,9 @@ var follow = function(req, res){
                         connection.query(sqlUnFollow, [id, targetId],
                             function (err, result) {
                                 if (err) return cb('팔로우 오류', null);
+
+                                sendFollowFcm(displayName, targetDisplayName);
+
 
                                 return cb(null, {targetId: targetId,
                                     isFollow:false});
