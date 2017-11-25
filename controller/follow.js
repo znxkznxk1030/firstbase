@@ -148,7 +148,6 @@ var follow = function(req, res){
             console.log(result);
             return res.status(200).json({code: 1, isFollow: result, message: '팔로우를 한건지 안한건지 모르겠습니다.'});
         }
-
     });
 };
 
@@ -236,11 +235,10 @@ var getFollowingList = function(req, res){
             connection.query(sqlGetId, displayName, function(err, id){
                 if(err) return cb('팔로워 리스트 불러오기 오류');
                 else{
-                    id = JSON.parse(JSON.stringify(id))[0].id;
-
                     if(!id){
                         return cb('팔로워 리스트 불러오기 오류');
                     }else{
+                        id = JSON.parse(JSON.stringify(id))[0].id;
                         return cb(null, id);
                     }
                 }
