@@ -270,7 +270,9 @@ var getFootprintListByLocation = function (req, res) {
         "LEFT JOIN comment " +
         "ON footprint.footprint_id = comment.footprint_id " +
         "WHERE footprint.latitude <= ? AND footprint.longitude >= ? AND footprint.latitude >= ? AND footprint.longitude <= ? " +
-        "GROUP BY footprint_id ";
+        "GROUP BY footprint_id " +
+        "ORDER BY footprint.created_date " +
+        "LIMIT 100 ";
 
     const sqlFindUser = "SELECT profile_key, displayName " +
         "FROM user " +
