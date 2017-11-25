@@ -58,7 +58,7 @@ passport.use('local-login', new LocalStrategy({
                     if(typeof ret[0] !== 'undefined'){
                         return cb(null, profile, ret[0].password);
                     }else{
-                        return cb('비밀번호가 없습니다.');
+                        return cb('패스워드가 틀렸습니다.');
                     }
                 });
             },
