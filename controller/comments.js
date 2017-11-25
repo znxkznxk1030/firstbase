@@ -31,6 +31,7 @@ var createComment = function (req, res) {
                 });
 
         sendCommentFcm(displayName, footprintId, {
+            footprintId : footprintId,
             content: content
         });
 
@@ -83,8 +84,6 @@ var deleteCommentTemporary = function (req, res) {
     const id = req.user.id,
         commentId = req.body.commentId;
 
-    console.log(req.body);
-    console.log(req.user);
 
     const sqlDeleteComment = "UPDATE comment SET is_ban = 1 WHERE comment_id = ? AND id = ?";
 
