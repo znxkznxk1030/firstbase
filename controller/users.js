@@ -47,9 +47,9 @@ var nicknameCheck = function(req, res){
 /*
     find operations
  */
-var findOne = function findOne(id, cb){
-    var sql = 'SELECT * FROM user WHERE id = ?';
-    connection.query(sql, [id], function(err, result){
+var findOne = function findOne(id, displayName, cb){
+    var sql = 'SELECT * FROM user WHERE id = ? OR displayName';
+    connection.query(sql, [id, displayName], function(err, result){
         if(err){
             throw err;
         }
@@ -293,6 +293,7 @@ var getUserInfoByUserId = function(req, res){
  */
 var updateUserInfo = function(req, res){
     const sql = "UPDATE user SET displayName = ?, description = ? WHERE user.id = ? ";
+    const sqlCheckDisplayNameExist = "SELECT displayName FROM user WHERE user.displayName = ?";
     const body = req.body;
 
     const user = req.user;
@@ -316,6 +317,14 @@ var updateUserInfo = function(req, res){
     var task = [
         function(cb){
             return cb(isDisplayNameVaild(displayName, user.displayName));
+        },
+        function(cb){
+            connection.query(sqlCheckDisplayNameExist, displayName, function(err, isExist){
+                if(err || isExist.length > 0) cb(true);
+                else{
+                    cb(null);
+                }
+            })
         },
         function(cb){
             connection.query(sql, [displayName, description, user.id],
@@ -380,7 +389,8 @@ var registrateSocialUser = function registrateSocialLoginUser(data, cb){
 var registrateUser = function registrateUser(formData, cb){
     // todo: refactoring
     // callback hell -> async heaven
-    findOne(formData.id, function(err, user){
+
+    findOne(formData.id, formData.displayName, function(err, user){
         passwordUtil.passwordCreate(formData.password1, function(err, password){
             if(err) throw err;
 
