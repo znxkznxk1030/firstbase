@@ -6,60 +6,60 @@ var config = require("../config");
 const google = require('passport-google-oauth').OAuth2Strategy;
 const facebook = require('passport-facebook').Strategy;
 
-passport.serializeUser(function(user, done){
+passport.serializeUser(function (user, done) {
     // console.log('serialize');
     done(null, user);
 });
 
-passport.deserializeUser(function(user, done){
+passport.deserializeUser(function (user, done) {
     // console.log('deserialize');
     // console.log(userId);
     //user.findByUsername(userId, function(err, profile){
-        done(null, user);
+    done(null, user);
     //});
 });
 
 passport.use('local-login', new LocalStrategy({
-    usernameField : 'id',
-    passwordField : 'password',
-    passReqToCallback : true
-},
-    function(req, id, password, done) {
-    // console.log("local-login : " + req.body);
-        user.findOne(id, function(err, profile){
-            if(profile){
-                user.findPassword(id, function(err, retrievedPassword){
-                    if(err) throw done(err, null);
+        usernameField: 'id',
+        passwordField: 'password',
+        passReqToCallback: true
+    },
+    function (req, id, password, done) {
+        // console.log("local-login : " + req.body);
+        user.findOne(id, function (err, profile) {
+            if (profile) {
+                user.findPassword(id, function (err, retrievedPassword) {
+                    if (err) throw done(err, null);
 
                     console.log(retrievedPassword);
-                    passwordUtil.passwordCheck (password, retrievedPassword, function(err, isAuth){
+                    passwordUtil.passwordCheck(password, retrievedPassword, function (err, isAuth) {
                         console.log(isAuth);
-                        if(isAuth){
+                        if (isAuth) {
                             // console.log('login success');
                             return done(null, profile);
-                        }else{
+                        } else {
                             // console.log('login fail');
-                            return done(null, false, { message: '패스워드가 틀렸습니다.'});
+                            return done(null, false, {message: '패스워드가 틀렸습니다.'});
                         }
                     });
                 });
-            }else{
-                return done(null, false, { message: '입력한 아이디가 존재하지 않습니다.' });
+            } else {
+                return done(null, false, {message: '입력한 아이디가 존재하지 않습니다.'});
             }
         });
-}));
+    }));
 
 passport.use(new facebook({
-    clientID: config.facebook.appID,
-    clientSecret: config.facebook.appSecret,
-    callbackURL: config.host + config.port + config.routes.facebookAuthCallback
-},
-    function(accessToken, refreshToken, profile, done){
+        clientID: config.facebook.appID,
+        clientSecret: config.facebook.appSecret,
+        callbackURL: config.host + config.port + config.routes.facebookAuthCallback
+    },
+    function (accessToken, refreshToken, profile, done) {
         console.log(profile);
-        user.findOne(profile.id, function(err, one){
-            if(one){
+        user.findOne(profile.id, function (err, one) {
+            if (one) {
                 done(null, profile);
-            }else {
+            } else {
 
                 user.registrateSocialUser(profile, function (err, result) {
                     if (err) throw err;
@@ -73,26 +73,26 @@ passport.use(new facebook({
 );
 
 passport.use(new google({
-    clientID: config.google.clientID,
-    clientSecret: config.google.clientSecret,
-    callbackURL: config.host + config.port + config.routes.googleAuthCallback
-    }, function(accessToken, refreshToken, profile, done){
-    console.log(profile);
-    user.findOne(profile.id, function(err, one){
-        if(one){
-            done(null, profile);
-        }else{
-            user.registrateSocialUser(profile, function(err, result){
-                if(err) throw err;
-                console.log("debug passport social user registration : " + result);
+        clientID: config.google.clientID,
+        clientSecret: config.google.clientSecret,
+        callbackURL: config.host + config.port + config.routes.googleAuthCallback
+    }, function (accessToken, refreshToken, profile, done) {
+        console.log(profile);
+        user.findOne(profile.id, function (err, one) {
+            if (one) {
                 done(null, profile);
-            });
-        }
-    });
+            } else {
+                user.registrateSocialUser(profile, function (err, result) {
+                    if (err) throw err;
+                    console.log("debug passport social user registration : " + result);
+                    done(null, profile);
+                });
+            }
+        });
     })
 );
 
-var routes = function(app){
+var routes = function (app) {
     app.get(config.routes.facebookAuth, passport.authenticate('facebook'));
     app.get(config.routes.facebookAuthCallback, passport.authenticate('facebook',
         {
@@ -105,7 +105,7 @@ var routes = function(app){
     app.get(config.routes.googleAuth, passport.authenticate('google',
         {
             scope: ['https://www.googleapis.com/auth/userinfo.profile',
-            'https://www.googleapis.com/auth/userinfo.email']
+                'https://www.googleapis.com/auth/userinfo.email']
         }
     ));
     app.get(config.routes.googleAuthCallback, passport.authenticate('google',

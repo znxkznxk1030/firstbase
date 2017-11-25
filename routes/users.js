@@ -7,7 +7,6 @@ var controller = require("../controller/users");
 router.use(passport.initialize());
 router.use(passport.session());
 
-/* GET users listing. */
 router.get('/', auth.authenticate);
 
 
