@@ -164,7 +164,7 @@ var retrieveIconAllFromDirectory = function(req, res){
                 value: iconUrl});
     });
 
-    res.status(200)
+    return res.status(200)
         .json({code:1,
             message:"success to load all icon",
             length:iconUrls.length,

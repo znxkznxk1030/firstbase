@@ -431,7 +431,7 @@ var registrateUser = function registrateUser(formData, cb){
             1. length (5 < && < 25)
          */
 
-var acceptTokenRe = /(^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9)/g;
+const acceptTokenRe = /(^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9)/g;
 
 var isDisplayNameVaild = function(displayName , oldDisplayName){
 
