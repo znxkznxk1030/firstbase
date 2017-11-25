@@ -26,7 +26,7 @@ passport.use('local-login', new LocalStrategy({
         passReqToCallback: true
     },
     function (req, id, password, done) {
-        // console.log("local-login : " + req.body);
+         console.log("local-login : " + req.body);
 
         var deviceToken = req.body.deviceToken;
 
