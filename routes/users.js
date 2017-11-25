@@ -19,7 +19,7 @@ router.get('/signup-form', function (req, res, next) {
     res.render('registration');
 });
 
-router.post('/registrate', function (req, res, next) {
+router.post('/registrate', controller.isFormVaild, function (req, res, next) {
     console.log(req.body);
 
     if (req.body.password1 === req.body.password2) {
@@ -79,7 +79,7 @@ router.get('/logout', function (req, res) {
 router.get('/nickname-check', controller.nicknameCheck);
 
 router.get('/profile', auth.authMiddleware, controller.getUserInfoByReqHeader);
-router.post('/update', auth.authMiddleware, controller.updateUserInfo);
+router.post('/update', auth.authMiddleware, controller.isFormVaild, controller.updateUserInfo);
 router.post('/updateImage', auth.authMiddleware, controller.updateUserImage);
 
 router.get('/detail', auth.authMiddleware, controller.getUserInfoByUserDisplayName);
