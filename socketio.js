@@ -17,7 +17,7 @@ var startSocketIo = function (server) {
      */
     io.on('connection', function (socket) {
 
-        Chat.find({timeStamp: {$gt: Date.now() - ONEWEEK}}).sort({timestamp: -1}).limit(50).exec(function (err, docs) {
+        Chat.find({timeStamp: {$gt: Date.now() - ONEWEEK}}).sort({timeStamp: -1}).limit(50).exec(function (err, docs) {
             if (err) {
                 console.log(err);
                 throw err;
@@ -83,7 +83,7 @@ var startSocketIo = function (server) {
             var msg = {
                 displayName: displayName,
                 msg: msgSafe,
-
+                timeStamp: Date.now(),
                 date: date.toLocaleDateString(),
                 time: ((date.getHours() + 9)%24) + '시 ' + date.getMinutes() + '분'
             };
@@ -91,6 +91,7 @@ var startSocketIo = function (server) {
             var newMsg = new Chat({
                 msg: msgSafe,
                 displayName: displayName,
+                timeStamp: Date.now(),
                 date: date.toLocaleDateString(),
                 time: ((date.getHours() + 9)%24) + '시 ' + date.getMinutes() + '분'
             });
