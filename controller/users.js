@@ -305,30 +305,6 @@ var updateUserInfo = function(req, res){
     const displayName = body.displayName;
     var description = body.description;
 
-    if(acceptTokenRe.test(displayName)){
-        return res.status(401).
-        json({code: -2,
-            message: '닉네임은 한글,영문,숫자만 가능합니다'});
-    }
-
-    if(description.length > 1000){
-        return res.status(401)
-            .json({code:-2,
-                message:'소개글 최대 길이초과 (최대 1000byte)'});
-    }
-
-    if(!displayName)
-    {
-        return res.status(400)
-            .json({code: -1,
-                message: "display name should be not null"});
-    }
-
-    if(!description)
-    {
-        description = " ";
-    }
-
     var task = [
         function(cb){
             return cb(isDisplayNameVaild(displayName, user.displayName));
@@ -450,6 +426,12 @@ var isDisplayNameVaild = function(displayName , oldDisplayName){
     if(!oldDisplayName && displayName === oldDisplayName)
     {
         return null;
+    }
+
+    if(acceptTokenRe.test(displayName)){
+        return res.status(401).
+        json({code: -2,
+            message: '닉네임은 한글,영문,숫자만 가능합니다'});
     }
 
     //todo: 띄어쓰기 방지, 영문, 숫자
@@ -599,6 +581,32 @@ var isPasswordVaild = function(password1, password2){
 
 };
 
+var isUpdateFormVaild = function(req, res, next){
+    const displayName = xss(req.body.displayName),
+        description = xss(req.body.description);
+
+    if(description.length > 1000){
+        return res.status(401)
+            .json({code:-2,
+                message:'소개글 최대 길이초과 (최대 1000byte)'});
+    }
+
+    const task = [
+        function(cb){
+            cb(isDisplayNameVaild(displayName));
+        }
+    ];
+
+    async.series(task, function(err, result){
+        if(err)
+            return res.status(401)
+                .json({code:-2,
+                    message:err});
+        else return next();
+    });
+};
+
+
 var isFormVaild = function(req, res, next){
     const id = xss(req.body.id),
         displayName = xss(req.body.displayName),
@@ -607,12 +615,6 @@ var isFormVaild = function(req, res, next){
         password2 = xss(req.body.password2);
 
     console.log(id + password1 + password2);
-
-    if(acceptTokenRe.test(displayName)){
-        return res.status(401).
-            json({code: -2,
-        message: '닉네임은 한글,영문,숫자만 가능합니다'});
-    }
 
     if(description.length > 1000){
         return res.status(401)
@@ -657,6 +659,8 @@ module.exports = {
 
     registrateSocialUser: registrateSocialUser,
     registrateUser : registrateUser,
+
+    isUpdateFormVaild: isUpdateFormVaild,
 
     isFormVaild : isFormVaild
 };
