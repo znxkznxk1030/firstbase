@@ -26,9 +26,12 @@ passport.use('local-login', new LocalStrategy({
         passReqToCallback: true
     },
     function (req, id, password, done) {
-         console.log("local-login : " + req.body);
+        console.log("local-login : " + req.body);
 
-        var deviceToken = req.body.deviceToken;
+        var deviceToken = '';
+
+        if (typeof req.body.deviceToken !== 'undefined')
+            deviceToken = req.body.deviceToken;
 
         var task = [
             function (cb) {
@@ -55,9 +58,9 @@ passport.use('local-login', new LocalStrategy({
                 });
             },
             function (profile, cb) {
-                user.updateDeviceToken(id, deviceToken, function(err, result){
-                    if(err) return cb('푸시 토큰 갱신 실패');
-                    else{
+                user.updateDeviceToken(id, deviceToken, function (err, result) {
+                    if (err) return cb('푸시 토큰 갱신 실패');
+                    else {
                         return cb(null);
                     }
                 })
