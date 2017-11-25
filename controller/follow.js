@@ -235,10 +235,12 @@ var getFollowingList = function(req, res){
             connection.query(sqlGetId, displayName, function(err, id){
                 if(err) return cb('팔로워 리스트 불러오기 오류');
                 else{
+                    console.log(id);
                     if(!id){
                         return cb('팔로워 리스트 불러오기 오류');
                     }else{
                         id = JSON.parse(JSON.stringify(id))[0].id;
+                        console.log(id);
                         return cb(null, id);
                     }
                 }
