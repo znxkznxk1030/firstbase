@@ -113,8 +113,6 @@ var follow = function(req, res){
                             function (err, result) {
                                 if (err) return cb('팔로우 오류', null);
 
-                                sendFollowFcm(displayName, targetDisplayName);
-
 
                                 return cb(null, {targetId: targetId,
                                     isFollow:false});
@@ -123,6 +121,8 @@ var follow = function(req, res){
                         connection.query(sqlFollow, [id, targetId],
                             function(err, result){
                                 if(err) return cb('팔로우 오류', null);
+
+                                sendFollowFcm(displayName, targetDisplayName);
 
                                 return cb(null, {targetId: targetId,
                                     isFollow:true});
