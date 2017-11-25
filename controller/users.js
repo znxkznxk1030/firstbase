@@ -7,7 +7,8 @@ var passwordUtil = require("../auth/password");
 var xss = require("xss");
 var uploadUserImage = require("./files").uploadUserImage;
 
-const acceptTokenRe = /(^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9)/g;
+// language=JSRegexp
+const acceptTokenRe = /[^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9]/g;
 
 
 
