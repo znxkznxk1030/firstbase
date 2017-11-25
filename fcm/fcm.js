@@ -54,18 +54,18 @@ var sendCommentFcm = function (displayName, footprintId, comment) {
         "ON footprint.id = user.id " +
         "WHERE footprint.footprint_id = ? ";
 
-    connection.query(sqlGetTargetDeviceToken, [footprintId], function(err, targetDeviceToken){
-        if (err || targetDeviceToken.length < 1){
+    connection.query(sqlGetTargetDeviceToken, [footprintId], function(err, author){
+        if (err || author.length < 1){
             console.log(err);
             return false;
         }
         else {
-            console.log("#debudddd : " + targetDeviceToken);
-            targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken))[0];
-            var author = targetDeviceToken.displayName;
+            console.log("#debudddd : " + author);
+            author = JSON.parse(JSON.stringify(author))[0];
+            var authorDisplayName = author.displayName;
 
-            if (typeof targetDeviceToken.device_token !== 'undefined' && displayName !== author) {
-                sendFcm(targetDeviceToken.device_token, 'comment', displayName, comment);
+            if (typeof author.device_token !== 'undefined' && displayName !== authorDisplayName) {
+                sendFcm(author.device_token, 'comment', displayName, comment);
             }
             return true;
         }

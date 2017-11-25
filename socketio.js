@@ -17,7 +17,7 @@ var startSocketIo = function (server) {
      */
     io.on('connection', function (socket) {
 
-        Chat.find({timeStamp: {$gt: Date.now() - ONEWEEK}}).sort({timeStamp: 1}).limit(50).exec(function (err, docs) {
+        Chat.find({timeStamp: {$gt: Date.now() - ONEWEEK}}).limit(50).sort({timeStamp: 1}).exec(function (err, docs) {
             if (err) {
                 console.log(err);
                 throw err;
