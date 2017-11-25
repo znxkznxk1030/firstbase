@@ -7,6 +7,8 @@ var passwordUtil = require("../auth/password");
 var xss = require("xss");
 var uploadUserImage = require("./files").uploadUserImage;
 
+const acceptTokenRe = /(^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9)/g;
+
 
 
 var nicknameCheck = function(req, res){
@@ -302,7 +304,18 @@ var updateUserInfo = function(req, res){
     const displayName = body.displayName;
     var description = body.description;
 
-    // todo: vaildate parameters
+    if(acceptTokenRe.test(displayName)){
+        return res.status(401).
+        json({code: -2,
+            message: '닉네임은 한글,영문,숫자만 가능합니다'});
+    }
+
+    if(description.length > 1000){
+        return res.status(401)
+            .json({code:-2,
+                message:'소개글 최대 길이초과 (최대 1000byte)'});
+    }
+
     if(!displayName)
     {
         return res.status(400)
@@ -430,8 +443,6 @@ var registrateUser = function registrateUser(formData, cb){
             Check DisplayName's validation.
             1. length (5 < && < 25)
          */
-
-const acceptTokenRe = /(^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9)/g;
 
 var isDisplayNameVaild = function(displayName , oldDisplayName){
 
