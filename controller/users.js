@@ -55,12 +55,12 @@ var findOne = function findOne(id, displayName, cb){
     var sql = 'SELECT * FROM user WHERE id = ? OR displayName';
     connection.query(sql, [id, displayName], function(err, result){
         if(err){
-            throw err;
+            return cb('해당 유저가 존재하지 않습니다.');
         }
 
         var user = JSON.parse(JSON.stringify(result))[0];
         console.log(user);
-        cb(null, user);
+        return cb(null, user);
     });
 };
 
