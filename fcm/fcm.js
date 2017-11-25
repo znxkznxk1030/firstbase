@@ -29,20 +29,43 @@ var sendCreateFootprintFcmToFollowers = function (userId, displayName, footprint
     });
 };
 
-var sendFollowFcm = function (followerDisplayName, targetDisplayName){
+var sendFollowFcm = function (followerDisplayName, targetDisplayName) {
     const sqlGetTargetDeviceToken =
         "SELECT user.device_token FROM user WHERE displayName = ?";
 
-    connection.query(sqlGetTargetDeviceToken, targetDisplayName, function(err, targetDeviceToken){
+    connection.query(sqlGetTargetDeviceToken, targetDisplayName, function (err, targetDeviceToken) {
         if (err || targetDeviceToken.length < 1) return false;
-        else{
-            targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken))[0];
+        else {
+            targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken))[0].device_token;
 
-            if(typeof targetDeviceToken.device_token !== 'undefined'){
-                sendFcm(targetDeviceToken.device_token, 'follow', followerDisplayName, {});
+            if (typeof targetDeviceToken !== 'undefined') {
+                sendFcm(targetDeviceToken, 'follow', followerDisplayName, {});
             }
         }
     });
+};
+
+var sendCommentFcm = function (displayName, footprintId, comment) {
+
+    const sqlGetTargetDeviceToken =
+        "SELECT user.device_token " +
+        "FROM user" +
+        "LEFT JOIN footprint" +
+        "ON footprint.id = user.id" +
+        "WHERE footprint.footprint_id = ?";
+
+    connection.query(sqlGetTargetDeviceToken, [footprintId], function(err, targetDeviceToken){
+        if (err || targetDeviceToken.length < 1) return false;
+        else {
+            targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken))[0].device_token;
+
+            if (typeof targetDeviceToken !== 'undefined') {
+                sendFcm(targetDeviceToken, 'comment', followerDisplayName, comment);
+            }
+        }
+    });
+
+
 };
 
 var sendFcm = function (token, type, displayName, content) {
@@ -87,6 +110,7 @@ var sendFcm = function (token, type, displayName, content) {
 
 module.exports = {
     sendCreateFootprintFcmToFollowers: sendCreateFootprintFcmToFollowers,
-    sendFcm : sendFcm,
-    sendFollowFcm: sendFollowFcm
+    sendFcm: sendFcm,
+    sendFollowFcm: sendFollowFcm,
+    sendCommentFcm: sendCommentFcm
 };

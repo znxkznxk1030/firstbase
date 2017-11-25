@@ -452,7 +452,7 @@ var createFootprint = function (req, res) {
                 footprintId : footprintId,
                 title : title
             });
-            
+
             return res.status(200).json({ code: 1, message: '게시물 작성 성공'});
         }
     });

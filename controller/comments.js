@@ -2,11 +2,13 @@ var connection = require('../database/db');
 var user = require('./users');
 var async = require('async');
 var util = require("../utils/util");
+var sendCommentFcm = require("../fcm/fcm").sendCommentFcm;
 
 
 var createComment = function (req, res) {
 
     const id = req.user.id,
+        displayName = req.user.displayName,
         footprintId = req.body.footprintId,
         content = req.body.content;
 
@@ -27,6 +29,10 @@ var createComment = function (req, res) {
                     code: -1,
                     message: '댓글 생성 오류'
                 });
+
+        sendCommentFcm(displayName, footprintId, {
+            content: content
+        });
 
         return res.status(200)
             .json({
