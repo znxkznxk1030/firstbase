@@ -191,7 +191,7 @@ var getFollowerList = function(req, res){
 
                 followers.map(function(follower){
                     delete follower.id;
-                    follower.profileUrl = getImageUrl(follower.profile_key);
+                    follower.profileUrl = getImageUrl(follower.profile_key | 'profiledefault.png');
                     delete follower.profile_key;
                     return follower;
                 });
@@ -252,7 +252,7 @@ var getFollowingList = function(req, res){
 
                 followings.map(function(following){
                     delete following.id;
-                    following.profileUrl = getImageUrl(following.profile_key);
+                    following.profileUrl = getImageUrl(following.profile_key | 'profiledefault.png');
                     delete following.profile_key;
                     return following;
                 });
