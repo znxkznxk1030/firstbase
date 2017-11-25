@@ -36,7 +36,7 @@ var sendFollowFcm = function (followerDisplayName, targetDisplayName){
     connection.query(sqlGetTargetDeviceToken, targetDisplayName, function(err, targetDeviceToken){
         if (err || targetDeviceToken.length < 1) return false;
         else{
-            targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken));
+            targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken))[0].device_token;
             sendFcm(targetDeviceToken, 'follow', followerDisplayName, {});
         }
     });
