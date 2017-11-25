@@ -8,7 +8,7 @@ router.use(passport.initialize());
 router.use(passport.session());
 
 /* GET users listing. */
-router.get('/', auth.testAuthenticated);
+router.get('/', auth.authenticate);
 
 
 
@@ -35,8 +35,6 @@ router.post('/registrate', controller.isFormVaild,function(req, res, next){
     }
 
 });
-
-
 
 router.post('/login', function(req, res, next){
     passport.authenticate('local-login', function(err, user, info){
@@ -78,7 +76,7 @@ router.get('/logout', function(req, res){
 router.get('/nickname-check', controller.nicknameCheck);
 
 router.get('/profile', auth.authMiddleware, controller.getUserInfoByReqHeader);
-router.post('/update', auth.authMiddleware, controller.updateUserInfo);
+router.post('/update', auth.authMiddleware, controller.isFormVaild, controller.updateUserInfo);
 router.post('/updateImage', auth.authMiddleware, controller.updateUserImage);
 
 router.get('/detail', auth.authMiddleware, controller.getUserInfoByUserDisplayName);

@@ -4,6 +4,7 @@ const getImageUrl = require("./files").getImageUrl;
 const profileDefaultKey = 'profiledefault.png';
 const _ = require('underscore');
 var passwordUtil = require("../auth/password");
+var xss = require("xss");
 var uploadUserImage = require("./files").uploadUserImage;
 
 
@@ -213,7 +214,7 @@ var getUserInfoByUserDisplayName = function(req, res){
         function(err, profile){
             if(err) return res.status(400)
                 .json({code: -1,
-                    message:'유저 정보 가져오기 실패'});
+                    message:'해당 유저를 찾을 수 없습니다'});
 
             else{
                 delete profile.id;
@@ -320,7 +321,7 @@ var updateUserInfo = function(req, res){
         },
         function(cb){
             connection.query(sqlCheckDisplayNameExist, displayName, function(err, isExist){
-                if(err || isExist.length > 0) cb(true);
+                if(err || isExist.length > 0) cb('이미 존재하는 닉네입 입니다');
                 else{
                     cb(null);
                 }
@@ -329,7 +330,7 @@ var updateUserInfo = function(req, res){
         function(cb){
             connection.query(sql, [displayName, description, user.id],
                 function(err, userUpdated) {
-                    if(err) cb(err);
+                    if(err) cb('유저 정보 수정 실패');
                     else cb(null);
                 });
         }
@@ -338,8 +339,8 @@ var updateUserInfo = function(req, res){
     async.series(task, function(err){
         if(err)
             return res.status(400)
-                .json({code:-1,
-                    message:'sql error'});
+                .json({code: -1,
+                    message: err});
 
         return res.status(200)
             .json({code: 1,
@@ -429,12 +430,16 @@ var registrateUser = function registrateUser(formData, cb){
             Check DisplayName's validation.
             1. length (5 < && < 25)
          */
+
+var acceptTokenRe = /(^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9)/g;
+
 var isDisplayNameVaild = function(displayName , oldDisplayName){
 
     if(!oldDisplayName && displayName === oldDisplayName)
     {
         return null;
     }
+
     //todo: 띄어쓰기 방지, 영문, 숫자
     if(displayName === null || displayName === '' || displayName === 'undefined')
         return '닉네임 입력 칸이 비어있습니다.';
@@ -443,7 +448,7 @@ var isDisplayNameVaild = function(displayName , oldDisplayName){
 
     if(length < 2)
         return '닉네임의 길이가 너무 짧습니다.';
-    if(length > 25)
+    if(length > 10)
         return '닉네임의 길이가 너무 깁니다.';
 
     const sqlDisplayCheck = "SELECT * FROM user WHERE displayName = ? ";
@@ -583,12 +588,25 @@ var isPasswordVaild = function(password1, password2){
 };
 
 var isFormVaild = function(req, res, next){
-    const id = req.body.id,
-        displayName = req.body.displayName,
-        password1 = req.body.password1,
-        password2 = req.body.password2;
+    const id = xss(req.body.id),
+        displayName = xss(req.body.displayName),
+        description = xss(req.body.description),
+        password1 = xss(req.body.password1),
+        password2 = xss(req.body.password2);
 
     console.log(id + password1 + password2);
+
+    if(acceptTokenRe.test(displayName)){
+        return res.status(401).
+            json({code: -2,
+        message: '닉네임은 한글,영문,숫자만 가능합니다'});
+    }
+
+    if(description.length > 1000){
+        return res.status(401)
+            .json({code:-2,
+                message:'소개글 최대 길이초과 (최대 1000byte)'});
+    }
 
     const task = [
         function(cb){
