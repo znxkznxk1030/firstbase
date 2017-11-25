@@ -435,20 +435,24 @@ var createFootprint = function (req, res) {
                         console.log(err);
                         cb(true);
                     }
-                    cb();
+                    cb(null, footprintId);
                 });
             }else{
-                cb();
+                cb(null, footprintId);
             }
         }
     ];
 
-    async.waterfall(task, function(err, result){
+    async.waterfall(task, function(err, footprintId){
         if(err){
             return res.status(400).json({ code: -1, message: '게시물 작성 오류'});
         }
         else{
-            sendCreateFootprintFcmToFollowers(userId, displayName, title);
+            sendCreateFootprintFcmToFollowers(userId, displayName, {
+                footprintId : footprintId,
+                title : title
+            });
+            
             return res.status(200).json({ code: 1, message: '게시물 작성 성공'});
         }
     });

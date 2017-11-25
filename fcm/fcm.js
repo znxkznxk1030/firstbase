@@ -8,7 +8,7 @@ var getImageUrl = require("../controller/files").getImageUrl;
 
 const profileDefaultKey = 'profiledefault.png';
 
-var sendCreateFootprintFcmToFollowers = function(userId, displayName, title){
+var sendCreateFootprintFcmToFollowers = function(userId, displayName, footprint){
     const sqlFindUser = "SELECT profile_key " +
         "FROM user " +
         "WHERE user.id = ? ";
@@ -41,7 +41,7 @@ var sendCreateFootprintFcmToFollowers = function(userId, displayName, title){
                     followerList = JSON.parse(JSON.stringify(followerList));
 
                     followerList.forEach(function(follower){
-                        sendFcm(follower.device_token, displayName, profileUrl, title);
+                        sendFcm(follower.device_token, displayName, profileUrl, footprint);
                     });
                 }
             });
@@ -58,7 +58,7 @@ var sendCreateFootprintFcmToFollowers = function(userId, displayName, title){
     });
 };
 
-var sendFcm = function(token, displayName, profileUrl, title){
+var sendFcm = function(token, displayName, profileUrl, footprint){
     var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
         to: token,
         collapse_key: 'firstbase_default_key',
@@ -71,7 +71,8 @@ var sendFcm = function(token, displayName, profileUrl, title){
         data: {  //you can send only notification or only data(or include both)
             displayName : displayName,
             profileUrl: profileUrl,
-            title: title
+            title: footprint.title,
+            footprintId: footprint.footprintId
         }
     };
 
