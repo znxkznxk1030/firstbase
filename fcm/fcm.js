@@ -37,7 +37,7 @@ var sendFollowFcm = function (followerDisplayName, targetDisplayName){
         if (err || targetDeviceToken.length < 1) return false;
         else{
             targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken));
-            sendFcm(targetDeviceToken, 'follow', followerDisplayName);
+            sendFcm(targetDeviceToken, 'follow', followerDisplayName, {});
         }
     });
 };
