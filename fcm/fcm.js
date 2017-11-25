@@ -36,8 +36,11 @@ var sendFollowFcm = function (followerDisplayName, targetDisplayName){
     connection.query(sqlGetTargetDeviceToken, targetDisplayName, function(err, targetDeviceToken){
         if (err || targetDeviceToken.length < 1) return false;
         else{
-            targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken))[0].device_token;
-            sendFcm(targetDeviceToken, 'follow', followerDisplayName, {});
+            targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken))[0];
+
+            if(typeof targetDeviceToken.device_token !== 'undefined'){
+                sendFcm(targetDeviceToken.device_token, 'follow', followerDisplayName, {});
+            }
         }
     });
 };
