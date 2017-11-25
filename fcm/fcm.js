@@ -49,8 +49,8 @@ var sendCommentFcm = function (displayName, footprintId, comment) {
 
     const sqlGetTargetDeviceToken =
         "SELECT user.device_token " +
-        "FROM user" +
-        "LEFT JOIN footprint" +
+        "FROM user " +
+        "LEFT JOIN footprint " +
         "ON footprint.footprint_id = ? AND footprint.id = user.id";
 
     connection.query(sqlGetTargetDeviceToken, [footprintId], function(err, targetDeviceToken){
