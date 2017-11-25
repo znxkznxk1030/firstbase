@@ -37,8 +37,8 @@ passport.use('local-login', new LocalStrategy({
 
         var task = [
             function (cb) {
-                var sql = 'SELECT * FROM user WHERE id = ? OR displayName';
-                connection.query(sql, [id, displayName], function(err, result){
+                var sql = 'SELECT * FROM user WHERE id = ?';
+                connection.query(sql, [id], function(err, result){
                     if(err){
                         return cb('해당 유저가 존재하지 않습니다.');
                     }
