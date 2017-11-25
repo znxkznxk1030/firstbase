@@ -6,6 +6,7 @@ var config = require("../config");
 const google = require('passport-google-oauth').OAuth2Strategy;
 const facebook = require('passport-facebook').Strategy;
 const _ = require('underscore');
+var async = require("async");
 
 passport.serializeUser(function (user, done) {
     // console.log('serialize');
