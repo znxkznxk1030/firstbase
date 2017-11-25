@@ -59,7 +59,7 @@ var sendCommentFcm = function (displayName, footprintId, comment) {
         else {
             targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken))[0].device_token;
 
-            console.log(targetDeviceToken);
+            console.log("#debudddd : " + targetDeviceToken);
 
             if (typeof targetDeviceToken !== 'undefined') {
                 sendFcm(targetDeviceToken, 'comment', displayName, comment);
