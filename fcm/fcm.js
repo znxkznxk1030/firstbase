@@ -34,7 +34,7 @@ var sendFollowFcm = function (followerDisplayName, targetDisplayName){
         "SELECT user.device_token FROM user WHERE displayName = ?";
 
     connection.query(sqlGetTargetDeviceToken, targetDisplayName, function(err, targetDeviceToken){
-        if (err || followerList.length < 1) return false;
+        if (err || targetDeviceToken.length < 1) return false;
         else{
             targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken));
             sendFcm(targetDeviceToken, 'follow', followerDisplayName);
