@@ -13,7 +13,8 @@ var ONEWEEK = ONEDAY * 7;
 var Chat = require('./model').Chat;
 var Pos = require('./model').Pos;
 
-var startSocketIo = function (server) {
+var startSocketIo;
+startSocketIo = function (server) {
     var io = require('socket.io')(server);
 
     io.on('connection', function (socket) {
@@ -50,8 +51,8 @@ var startSocketIo = function (server) {
 
 
             var options = {
-                url: url,
-                headers: {'X-Naver-Client-Id': clientId, 'X-Naver-Client-Secret': clientSecret}
+                url: url
+                //headers: {'X-Naver-Client-Id': clientId, 'X-Naver-Client-Secret': clientSecret}
             };
 
             request.get(options, function (error, response, body) {
@@ -72,11 +73,58 @@ var startSocketIo = function (server) {
                         });
                         console.log(sites);
 
-                        _.extend(data, {total : sites.length, sites: sites});
+                        _.extend(data, {total: sites.length, sites: sites});
                     }
                 }
                 io.emit('get ping', data);
             });
+
+            url = 'http://map.naver.com/common2/loginInfo.nhn';
+            options = {
+                method: 'GET',
+                url: url
+                // headers: {//'Content-Type': 'application/x-www-form-urlencoded'
+                //     //'X-Naver-Client-Id': clientId, 'X-Naver-Client-Secret': clientSecret
+                // }
+                // multipart: [{
+                //     'Content-Type': 'application/x-www-form-urlencoded',
+                //     body: JSON.stringify({id: 'PerimeterInfo_s18394397'})
+                // }]
+            };
+
+            request.get(options, function (error, response, body) {
+                console.log(body);
+            });
+
+
+            url = 'http://map.naver.com/search2/getSiteInfo.nhn';
+            console.log(url);
+
+            //var j = request.jar();
+            //j.setCookie();
+            options = {
+                method: 'POST',
+                url: url,
+                jar : {
+                    _naver_usersession_:'aBg5WYpy/Kd2CewfpcJSNA==',
+                    ASID:'3d2b8b040000015e97eca0590000004c'
+                },
+                headers: {'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With':'XMLHttpRequest',
+                    'Referer':'http://map.naver.com/',
+                    'Origin' : 'http://map.naver.com/'
+                    //'Accept-Encoding': 'gzip, deflate'
+                },
+                multipart: [{
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    body: 'id=PerimeterInfo_s18394397'
+                }]
+            };
+
+            request.post(options, function (error, response, body) {
+                console.log(body);
+            });
+
         });
 
         socket.on('join to team-map', function (data) {

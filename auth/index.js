@@ -5,6 +5,7 @@ const passwordUtil = require('./password');
 var config = require("../config");
 const google = require('passport-google-oauth').OAuth2Strategy;
 const facebook = require('passport-facebook').Strategy;
+const _ = require('underscore');
 
 passport.serializeUser(function (user, done) {
     // console.log('serialize');
@@ -26,27 +27,70 @@ passport.use('local-login', new LocalStrategy({
     },
     function (req, id, password, done) {
         // console.log("local-login : " + req.body);
-        user.findOne(id, function (err, profile) {
-            if (profile) {
-                user.findPassword(id, function (err, retrievedPassword) {
-                    if (err) throw done(err, null);
 
-                    console.log(retrievedPassword);
-                    passwordUtil.passwordCheck(password, retrievedPassword, function (err, isAuth) {
-                        console.log(isAuth);
-                        if (isAuth) {
-                            // console.log('login success');
-                            return done(null, profile);
-                        } else {
-                            // console.log('login fail');
-                            return done(null, false, {message: '패스워드가 틀렸습니다.'});
-                        }
-                    });
+        var deviceToken = req.body.deviceToken;
+
+        var task = [
+            function (cb) {
+                user.findOne(id, function (err, profile) {
+                    if (profile) return cb(null, profile);
+                    else return cb('입력한 아이디가 존재하지 않습니다.');
                 });
-            } else {
-                return done(null, false, {message: '입력한 아이디가 존재하지 않습니다.'});
+            },
+            function (profile, cb) {
+                user.findPassword(id, function (err, retrievedPassword) {
+                    if (err) return cb('비밀번호를 찾을 수 없습니다.');
+                    else {
+                        cb(null, profile, retrievedPassword);
+                    }
+                });
+            },
+            function (profile, retrievedPassword, cb) {
+                passwordUtil.passwordCheck(password, retrievedPassword, function (err, isAuth) {
+                    if (isAuth) {
+                        return cb(null, profile);
+                    } else {
+                        return cb('패스워드가 틀렸습니다');
+                    }
+                });
+            },
+            function (profile, cb) {
+                user.updateDeviceToken(id, deviceToken, function(err, result){
+                    if(err) return cb('푸시 토큰 갱신 실패');
+                    else{
+                        return cb(null);
+                    }
+                })
             }
+        ];
+
+        async.waterfall(task, function (err, profile) {
+            if (err) return done(null, false, {message: err});
+            return done(null, profile);
         });
+
+
+        // user.findOne(id, function (err, profile) {
+        //     if (profile) {
+        //         user.findPassword(id, function (err, retrievedPassword) {
+        //             if (err) throw done(err, null);
+        //
+        //             console.log(retrievedPassword);
+        //             passwordUtil.passwordCheck(password, retrievedPassword, function (err, isAuth) {
+        //                 console.log(isAuth);
+        //                 if (isAuth) {
+        //                     // console.log('login success');
+        //                     return done(null, profile);
+        //                 } else {
+        //                     // console.log('login fail');
+        //                     return done(null, false, {message: '패스워드가 틀렸습니다.'});
+        //                 }
+        //             });
+        //         });
+        //     } else {
+        //         return done(null, false, {message: '입력한 아이디가 존재하지 않습니다.'});
+        //     }
+        // });
     }));
 
 passport.use(new facebook({

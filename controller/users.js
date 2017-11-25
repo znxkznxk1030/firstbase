@@ -64,6 +64,15 @@ var findOne = function findOne(id, displayName, cb){
     });
 };
 
+var updateDeviceToken = function (id, deviceToken, cb){
+    var sql = 'UPDATE user SET device_token = ? WHERE id = ?';
+
+    connection.query(sql, [id, deviceToken], function(err, result){
+        if(err) cb(err);
+        else cb(null);
+    });
+};
+
 var findPassword = function findPassword(id, cb){
     connection.query('SELECT * FROM password WHERE id=?', [id], function(err, result) {
         if(err) throw err;
@@ -662,5 +671,6 @@ module.exports = {
 
     isUpdateFormVaild: isUpdateFormVaild,
 
-    isFormVaild : isFormVaild
+    isFormVaild : isFormVaild,
+    updateDeviceToken: updateDeviceToken
 };

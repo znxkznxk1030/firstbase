@@ -10,6 +10,8 @@ const Footprint = require('../database/footprints').Footprint;
 
 const _ = require('underscore');
 var util = require("../utils/util");
+var sendCreateFootprintFcmToFollowers = require("../fcm/fcm").sendCreateFootprintFcmToFollowers;
+var sendFcm = require("../fcm/fcm").sendFcm;
 var getImageUrl = require("./files").getImageUrl;
 var retrieveByKey = require("./files").retrieveByKey;
 
@@ -446,7 +448,8 @@ var createFootprint = function (req, res) {
             return res.status(400).json({ code: -1, message: '게시물 작성 오류'});
         }
         else{
-            res.status(200).json({ code: 1, message: '게시물 작성 성공'});
+            sendCreateFootprintFcmToFollowers(userId, displayName, title);
+            return res.status(200).json({ code: 1, message: '게시물 작성 성공'});
         }
     });
 
