@@ -48,7 +48,7 @@ var sendFollowFcm = function (followerDisplayName, targetDisplayName) {
 var sendCommentFcm = function (displayName, footprintId, comment) {
 
     const sqlGetTargetDeviceToken =
-        "SELECT user.device_token. user.displayName " +
+        "SELECT user.device_token, user.displayName " +
         "FROM user " +
         "LEFT JOIN footprint " +
         "ON footprint.id = user.id " +
