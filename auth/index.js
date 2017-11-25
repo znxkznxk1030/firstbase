@@ -59,7 +59,7 @@ passport.use('local-login', new LocalStrategy({
             },
             function (profile, cb) {
                 user.updateDeviceToken(id, deviceToken, function (err, result) {
-                    if (err) return cb('푸시 토큰 갱신 실패');
+                    if (err) return cb(null);
                     else {
                         return cb(null);
                     }
