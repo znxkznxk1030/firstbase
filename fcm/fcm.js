@@ -1,5 +1,5 @@
 var FCM = require('fcm-node');
-var serverKey = require('config').firebase.serverKey;
+var serverKey = require('../config').firebase.serverKey;
 var fcm = new FCM(serverKey);
 
 const connection = require('../database/db');
