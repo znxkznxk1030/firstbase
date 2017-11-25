@@ -9,7 +9,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-//var users = require('./routes/users');
+var users = require('./routes/users');
 var footprint = require('./routes/footprints');
 var files = require('./routes/files');
 var views = require('./routes/views');
@@ -64,7 +64,7 @@ app.use(passport.passport.initialize());
 
 
 app.use('/', index);
-//app.use('/users', users);
+app.use('/users', users);
 app.use('/footprint', footprint);
 app.use('/files', files);
 app.use('/views', views);
