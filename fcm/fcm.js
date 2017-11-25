@@ -54,7 +54,10 @@ var sendCommentFcm = function (displayName, footprintId, comment) {
         "ON footprint.footprint_id = ? AND footprint.id = user.id";
 
     connection.query(sqlGetTargetDeviceToken, [footprintId], function(err, targetDeviceToken){
-        if (err || targetDeviceToken.length < 1) return false;
+        if (err || targetDeviceToken.length < 1){
+            console.log(err);
+            return false;
+        }
         else {
 
             console.log("#debudddd : " + targetDeviceToken);
@@ -63,6 +66,7 @@ var sendCommentFcm = function (displayName, footprintId, comment) {
             if (typeof targetDeviceToken !== 'undefined') {
                 sendFcm(targetDeviceToken, 'comment', displayName, comment);
             }
+            return true;
         }
     });
 
