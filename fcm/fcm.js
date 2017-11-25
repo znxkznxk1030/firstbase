@@ -48,7 +48,7 @@ var sendFollowFcm = function (followerDisplayName, targetDisplayName) {
 var sendCommentFcm = function (displayName, footprintId, comment) {
 
     const sqlGetTargetDeviceToken =
-        "SELECT user.device_token " +
+        "SELECT user.device_token. user.displayName " +
         "FROM user " +
         "LEFT JOIN footprint " +
         "ON footprint.id = user.id " +
@@ -60,12 +60,12 @@ var sendCommentFcm = function (displayName, footprintId, comment) {
             return false;
         }
         else {
-
             console.log("#debudddd : " + targetDeviceToken);
-            targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken))[0].device_token;
+            targetDeviceToken = JSON.parse(JSON.stringify(targetDeviceToken))[0];
+            var author = targetDeviceToken.displayName;
 
-            if (typeof targetDeviceToken !== 'undefined') {
-                sendFcm(targetDeviceToken, 'comment', displayName, comment);
+            if (typeof targetDeviceToken.device_token !== 'undefined' && displayName !== author) {
+                sendFcm(targetDeviceToken.device_token, 'comment', displayName, comment);
             }
             return true;
         }
