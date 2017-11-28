@@ -61,7 +61,8 @@ var createItemObject = function(files, cb){
 
 var upload = function(req, res){
     var form = new formidable.IncomingForm();
-    console.log(guid.raw());
+    //console.log(guid.raw());
+    console.log(req.body);
 
     form.parse(req, function(err, fields, files){
         if(err)
