@@ -490,8 +490,8 @@ var registrateUser = function registrateUser(req, res) {
         else {
             return res.status(200).json({
                 code: 1,
-                message : "퍼스트베이스에 오신걸 환영합니다\n회원가입 성공";
-            })
+                message : "퍼스트베이스에 오신걸 환영합니다! \n 회원가입 성공"
+            });
         }
     });
 
