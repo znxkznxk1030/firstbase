@@ -38,6 +38,7 @@ if(err){
 };
 
 var createItemObject = function(files, cb){
+    console.log(files);
     console.log(files.image.name);
     var imageKey = 'firstbase-image-' + guid.raw();
 
