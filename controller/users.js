@@ -469,13 +469,15 @@ var registrateUser = function registrateUser(req, res) {
         function (cb) {
             passwordUtil.passwordCreate(password1, function (err, password) {
                 if (err) return cb('회원가입 오류');
-                connection.query(sqlCreatePassword, [id, password], function (err, password) {
-                    if (err) {
-                        return cb('회원가입 오류');
-                    } else {
-                        return cb(null);
-                    }
-                });
+                else{
+                    connection.query(sqlCreatePassword, [id, password], function (err, password) {
+                        if (err) {
+                            return cb('회원가입 오류');
+                        } else {
+                            return cb(null);
+                        }
+                    });
+                }
             });
         }
     ];
@@ -744,15 +746,6 @@ var isFormVaild = function (req, res, next) {
     }
 
     const task = [
-        function (cb){
-            if(!password1)
-                return cb('패스워드1 란이 비어있습니다');
-            if(!password2)
-                return cb('패스워드 2 란이 비어있습니다');
-            if(password1 !== password2){
-                return cb('두 패스워드가 일치하지 않습니다');
-            }
-        },
         function (cb) {
             return cb(isDisplayNameVaild(displayName));
         },
