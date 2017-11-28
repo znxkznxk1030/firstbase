@@ -18,19 +18,7 @@ router.get('/signup-form', function (req, res, next) {
     res.render('registration');
 });
 
-router.post('/registrate', controller.isFormVaild, function (req, res, next) {
-    console.log(req.body);
-
-    if (req.body.password1 === req.body.password2) {
-        controller.registrateUser(req.body, function (err, result) {
-            if (err) return res.status(401).json({code: -1, message: err});
-            else return res.status(200).json({code: 1, message: 'success register'});
-        });
-    } else {
-        return res.status(401).json({code: -1, message: 'Two password fields are not matched!'})
-    }
-
-});
+router.post('/registrate', controller.isFormVaild, controller.registrateUser);
 
 router.post('/login', function (req, res, next) {
     passport.authenticate('local-login', function (err, user, info) {
