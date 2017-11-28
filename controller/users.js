@@ -58,8 +58,8 @@ var nicknameCheck = function (req, res) {
 /*
     find operations
  */
-var findOne = function findOne(id, displayName, cb) {
-    var sql = 'SELECT * FROM user WHERE id = ? OR displayName';
+var findOne = function findOne(id, cb) {
+    var sql = 'SELECT * FROM user WHERE id = ?';
     connection.query(sql, [id, displayName], function (err, result) {
         if (err) {
             return cb('해당 유저가 존재하지 않습니다.');
@@ -609,12 +609,12 @@ var isIDVaild = function (id) {
     if (userIdSplitByDomain.length !== 2)
         return 'ID의 형식은 e-mail 형식이여야 합니다.';
 
-    const id = userIdSplitByDomain[0], 
+    const emailId = userIdSplitByDomain[0],
         domain = userIdSplitByDomain[1];
 
     var hasAcceptedDomain = false;
 
-    if(acceptIdRe.test(id) === false){
+    if(acceptIdRe.test(emailId) === false){
         return 'id 에는 영문, 숫자만 가능합니다.';
     }
 

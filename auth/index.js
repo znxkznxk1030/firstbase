@@ -118,6 +118,8 @@ passport.use(new facebook({
     },
     function (accessToken, refreshToken, profile, done) {
         console.log(profile);
+
+
         user.findOne(profile.id, function (err, one) {
             if (one) {
                 done(null, profile);
@@ -140,6 +142,8 @@ passport.use(new google({
         callbackURL: config.host + config.port + config.routes.googleAuthCallback
     }, function (accessToken, refreshToken, profile, done) {
         console.log(profile);
+
+
         user.findOne(profile.id, function (err, one) {
             if (one) {
                 done(null, profile);
