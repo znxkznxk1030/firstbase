@@ -8,7 +8,8 @@ var xss = require("xss");
 var uploadUserImage = require("./files").uploadUserImage;
 
 // language=JSRegexp
-const acceptTokenRe = /[^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9]/g;
+const acceptTokenRe = /[^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9]/g,
+    acceptIdRe = /[^a-zA-Z0-9]/g;
 
 
 var nicknameCheck = function (req, res) {
@@ -469,7 +470,7 @@ var registrateUser = function registrateUser(req, res) {
         function (cb) {
             passwordUtil.passwordCreate(password1, function (err, password) {
                 if (err) return cb('회원가입 오류');
-                
+
                 connection.query(sqlCreatePassword, [id, password], function (err, password) {
                     if (err) {
                         return cb('회원가입 오류');
@@ -593,7 +594,9 @@ var isIDVaild = function (id) {
     const ACCEPTED_DOMAIN = [
         'naver.com',
         'gmail.com',
-        'daum.net'
+        'daum.net',
+        'hanmail.net',
+        'paran.com'
     ];
 
     if (length < 8)
@@ -606,8 +609,15 @@ var isIDVaild = function (id) {
     if (userIdSplitByDomain.length !== 2)
         return 'ID의 형식은 e-mail 형식이여야 합니다.';
 
-    const domain = userIdSplitByDomain[1];
+    const id = userIdSplitByDomain[0], 
+        domain = userIdSplitByDomain[1];
+
     var hasAcceptedDomain = false;
+
+    if(acceptIdRe.test(id) === false){
+        return 'id 에는 영문, 숫자만 가능합니다.';
+    }
+
 
     ACCEPTED_DOMAIN.forEach(function (acceptedDomain) {
         if (acceptedDomain === domain)
