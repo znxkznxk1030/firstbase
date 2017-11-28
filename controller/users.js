@@ -469,15 +469,14 @@ var registrateUser = function registrateUser(req, res) {
         function (cb) {
             passwordUtil.passwordCreate(password1, function (err, password) {
                 if (err) return cb('회원가입 오류');
-                //else{
-                    connection.query(sqlCreatePassword, [id, password], function (err, password) {
-                        if (err) {
-                            return cb('회원가입 오류');
-                        } else {
-                            return cb(null);
-                        }
-                    });
-                //}
+                
+                connection.query(sqlCreatePassword, [id, password], function (err, password) {
+                    if (err) {
+                        return cb('회원가입 오류');
+                    } else {
+                        return cb(null);
+                    }
+                });
             });
         }
     ];
