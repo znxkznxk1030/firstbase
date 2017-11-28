@@ -60,7 +60,7 @@ var nicknameCheck = function (req, res) {
  */
 var findOne = function findOne(id, cb) {
     var sql = 'SELECT * FROM user WHERE id = ?';
-    connection.query(sql, [id, displayName], function (err, result) {
+    connection.query(sql, [id], function (err, result) {
         if (err) {
             return cb('해당 유저가 존재하지 않습니다.');
         }
