@@ -379,7 +379,7 @@ var createFootprint = function (req, res) {
     const user = req.user;
     const body = req.body;
 
-    var userId = null, displayName = null, footprintPassword = null;
+    var userId = user.id, displayName = null, footprintPassword = null;
 
     const title = body.title,
         iconKey = body.icon_key,
