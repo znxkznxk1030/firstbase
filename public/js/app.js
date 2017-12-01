@@ -649,7 +649,7 @@ function popUp(data) {
             $("#detail-area").html(htmlData);
         },
         complete: function () {
-            history.pushState(null, null, 'http://localhost:8080/post?id=' + data.footprint_id);
+            history.pushState(null, null, baseUrl+'/post?id=' + data.footprint_id);
 
             var param = window.location.href.split('id=')[1];
             console.log("param:" + param);
@@ -820,7 +820,7 @@ function popUp(data) {
 
                 $("#detail-cmt-count").text(data.countComments);
 
-                history.pushState(null, null, 'http://localhost:8080/post?id=' + data.footprint_id);
+                history.pushState(null, null, baseUrl+'/post?id=' + data.footprint_id);
             }
             $("#popUp").modal();
             $(window).resize(
@@ -954,5 +954,5 @@ function hideModal() {
 }
 
 $('#popUp').on('hidden.bs.modal', function (e) {
-    history.pushState(null, null, 'http://localhost:8080/index');
+    history.pushState(null, null, baseUrl+'/index');
 })

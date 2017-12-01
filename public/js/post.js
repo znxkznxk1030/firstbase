@@ -201,5 +201,5 @@ function fillDetail(data) {
 
     $("#detail-cmt-count").text(data.countComments);
 
-    history.pushState(null,null,'http://localhost:8080/post?id='+data.footprint_id);
+    history.pushState(null,null, baseUrl+'post?id='+data.footprint_id);
 }
