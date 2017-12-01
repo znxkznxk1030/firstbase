@@ -580,7 +580,7 @@ var isIDVaild = function (id) {
     if (userIdSplitByDomain.length !== 2)
         return 'ID의 형식은 e-mail 형식이여야 합니다.';
 
-    const emailId = userIdSplitByDomain[0],
+    var emailId = userIdSplitByDomain[0],
         domain = userIdSplitByDomain[1];
 
     var hasAcceptedDomain = false;
@@ -589,6 +589,8 @@ var isIDVaild = function (id) {
     // if(acceptIdRe.test(emailId) === false){
     //     return 'id 에는 영문, 숫자만 가능합니다.';
     // }
+
+    domain = domain.trim();
 
 
     ACCEPTED_DOMAIN.forEach(function (acceptedDomain) {
