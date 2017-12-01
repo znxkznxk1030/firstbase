@@ -585,6 +585,7 @@ var isIDVaild = function (id) {
 
     var hasAcceptedDomain = false;
 
+    console.log(emailId);
     if(acceptIdRe.test(emailId) === false){
         return 'id 에는 영문, 숫자만 가능합니다.';
     }
