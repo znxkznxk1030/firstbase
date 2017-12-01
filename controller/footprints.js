@@ -558,11 +558,11 @@ var getFootprintByFootprintID = function (req, res) {
 
     // todo: query data validation test
     if (!footprintId) {
-        res.status(400)
+        return res.status(400)
             .json({
                 code: -1,
                 message: 'footprintId that you sent is not allowed'
-            })
+            });
     }
 
     var tasksForGetFootprint = Footprint({
