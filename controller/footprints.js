@@ -389,14 +389,14 @@ var createFootprint = function (req, res) {
         latitude = body.latitude,
         longitude = body.longitude;
 
-    if (!user) {
-        displayName = xss(body.displayName);
-        footprintPassword = xss(body.footprintPassword);
-    }
-    else {
-        userId = user.id;
-        displayName = user.displayName;
-    }
+    // if (!user) {
+    //     displayName = xss(body.displayName);
+    //     footprintPassword = xss(body.footprintPassword);
+    // }
+    // else {
+    //     userId = user.id;
+    //     displayName = user.displayName;
+    // }
 
     var type = body.type;
 
