@@ -11,6 +11,8 @@ var uploadUserImage = require("./files").uploadUserImage;
 const acceptTokenRe = /[^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9]/g,
     acceptIdRe = /[^a-zA-Z0-9]/g;
 
+const MSG_REGISTRATE_ERROR = '회원가입 오류';
+
 
 var nicknameCheck = function (req, res) {
 
@@ -421,8 +423,6 @@ var registrateUser = function registrateUser(req, res) {
         provider = 'Local',
         password1 = req.body.password1;
 
-    const msgRegisteError = '회원가입 오류';
-
     const sqlIsExistId = "SELECT * FROM user WHERE id = ?"
         , sqlIsExistDisplayName = "SELECT * FROM user WHERE displayName = ?"
         , sqlCreateUser = "INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)"
@@ -433,7 +433,7 @@ var registrateUser = function registrateUser(req, res) {
         function (cb) {
             connection.query(sqlIsExistId, id, function (err, user) {
                 if (err) {
-                    return cb('회원가입 오류');
+                    return cb(MSG_REGISTRATE_ERROR);
                 } else {
                     user = JSON.parse(JSON.stringify(user))[0];
 
@@ -447,7 +447,7 @@ var registrateUser = function registrateUser(req, res) {
         function (cb) {
             connection.query(sqlIsExistDisplayName, displayName, function (err, user) {
                 if (err) {
-                    return cb('회원가입 오류');
+                    return cb(MSG_REGISTRATE_ERROR);
                 } else {
                     user = JSON.parse(JSON.stringify(user))[0];
 
@@ -461,7 +461,7 @@ var registrateUser = function registrateUser(req, res) {
         function (cb) {
             connection.query(sqlCreateUser, [id, displayName, provider], function (err, user) {
                 if (err) {
-                    return cb('회원가입 오류');
+                    return cb(MSG_REGISTRATE_ERROR);
                 } else {
                     return cb(null);
                 }
@@ -469,11 +469,11 @@ var registrateUser = function registrateUser(req, res) {
         },
         function (cb) {
             passwordUtil.passwordCreate(password1, function (err, password) {
-                if (err) return cb('회원가입 오류');
+                if (err) return cb(MSG_REGISTRATE_ERROR);
 
                 connection.query(sqlCreatePassword, [id, password], function (err, password) {
                     if (err) {
-                        return cb('회원가입 오류');
+                        return cb(MSG_REGISTRATE_ERROR);
                     } else {
                         return cb(null);
                     }
@@ -496,35 +496,6 @@ var registrateUser = function registrateUser(req, res) {
             });
         }
     });
-
-
-    // findOne(formData.id, formData.displayName, function(err, user){
-    //     passwordUtil.passwordCreate(formData.password1, function(err, password){
-    //         if(err) throw err;
-    //
-    //         var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
-    //         connection.query(sql, [formData.id, formData.displayName, 'Local'], function(err, result){
-    //             if(err) return callback('회원가입 에러 ', false);
-    //
-    //             connection.query('INSERT INTO password (id, password) VALUES(?,?)', [formData.id, password], function(err, result){
-    //                 if(err) {
-    //                     connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
-    //                         if(err) return callback('회원가입 에러 ', false);
-    //                     });
-    //                     return callback('이미 있는 아이디 입니다.', false);
-    //                 }
-    //                 console.log(result);
-    //                 if(result){
-    //                     return callback(null, true);
-    //                 }else {
-    //                     connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
-    //                         if(err) return callback('회원가입 에러 ', false);
-    //                     });
-    //                 }
-    //             });
-    //         });
-    //     });
-    // });
 
 
 };
