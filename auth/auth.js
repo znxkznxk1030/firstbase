@@ -89,7 +89,7 @@ var passMiddleware = function passMiddleware(req, res, next) {
     var token = req.cookies.jwt;
 
     if(req.user){
-        console.log(req.user);
+        console.log('social user info : ' + req.user);
         next();
     }
 
