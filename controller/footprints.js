@@ -167,19 +167,27 @@ var getFootprintList = function (req, res) {
 
                 var task = [
                     function (callback) {
-                        connection.query(sqlFindUser, footprint.id, function (err, profile) {
-                            if (err) return callback(err);
+                        var displayName;
+                        var profileUrl, profileKey;
 
-                            profile = JSON.parse(JSON.stringify(profile))[0];
+                        if(footprint.id){
+                            connection.query(sqlFindUser, footprint.id, function (err, profile) {
+                                if (err) return callback(err);
 
-                            var displayName = profile.displayName;
+                                profile = JSON.parse(JSON.stringify(profile))[0];
 
-                            var profileUrl, profileKey = profile.profile_key;
-                            if (profileKey) profileUrl = getImageUrl(profileKey);
-                            else profileUrl = getImageUrl(profileDefaultKey);
+                                displayName = profile.displayName;
 
-                            return callback(null, {displayName: displayName, profileUrl: profileUrl});
-                        });
+                                profileKey = profile.profile_key;
+                                if (profileKey) profileUrl = getImageUrl(profileKey);
+                                else profileUrl = getImageUrl(profileDefaultKey);
+
+                                return callback(null, {displayName: displayName, profileUrl: profileUrl});
+                            });
+                        }else{
+                            profileUrl = getImageUrl(profileDefaultKey);
+                            return callback(null, {profileUrl:profileUrl});
+                        }
                     },
                     function (tails, callback) {
                         connection.query(sqlCountLike, [footprint.footprint_id],
@@ -407,7 +415,7 @@ var createFootprint = function (req, res) {
 
     var task = [
         function (cb) {
-            if (user) {
+            // if (user) {
                 connection.query(sqlCreateFootprintWithAuth, [userId, title, iconKey, content, latitude, longitude, type],
                     function (err, result) {
                         if (err || !result) {
@@ -415,15 +423,15 @@ var createFootprint = function (req, res) {
                         }
                         else return cb(null, result.insertId);
                     });
-            } else {
-                connection.query(sqlCreateFootprintWithoutAuth, [title, displayName, footprintPassword, iconKey, content, latitude, longitude, type],
-                    function (err, result) {
-                        if (err || !result) {
-                            return cb(true);
-                        }
-                        else return cb(null, result.insertId);
-                    });
-            }
+            // } else {
+            //     connection.query(sqlCreateFootprintWithoutAuth, [title, displayName, footprintPassword, iconKey, content, latitude, longitude, type],
+            //         function (err, result) {
+            //             if (err || !result) {
+            //                 return cb(true);
+            //             }
+            //             else return cb(null, result.insertId);
+            //         });
+            // }
         },
         function (footprintId, cb) {
             const length = imageKeys.length;
