@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var controller = require('../controller/footprints');
 var auth = require('../auth/auth');
-var validateMarkerParams = require('../middleware/vaildations').validateMarkerParams;
+var validateMarkerParams = require('../middleware/footprint.validation').validateMarkerParams;
 
 router.get('/list', controller.getFootprintList);
 
@@ -26,6 +26,12 @@ router.post('/delete', auth.authMiddleware, controller.deleteFootprintByFootprin
  * view render functions
  */
 router.get('/new', auth.authMiddleware, function (req, res) {
+
+    console.log(req.user.id);
+    console.log(req.user.displayName);
+    console.log(req.user.provider);
+
+
     res.render('footprint/new', {
         user: req.user
     });

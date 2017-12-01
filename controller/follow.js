@@ -2,6 +2,8 @@ var connection = require('../database/db');
 var async = require('async');
 var getImageUrl = require("./files").getImageUrl;
 var _ = require('underscore');
+var sendFollowFcm = require("../fcm/fcm").sendFollowFcm;
+var sendFcm = require("../fcm/fcm").sendFcm;
 
 var unfollow = function(req, res){
     const id = req.user.id,
@@ -65,6 +67,7 @@ var unfollow = function(req, res){
 var follow = function(req, res){
 
     const id = req.user.id,
+        displayName = req.user.displayName,
         targetDisplayName = req.body.targetDisplayName;
 
     if(!targetDisplayName){
@@ -110,6 +113,7 @@ var follow = function(req, res){
                             function (err, result) {
                                 if (err) return cb('팔로우 오류', null);
 
+
                                 return cb(null, {targetId: targetId,
                                     isFollow:false});
                             });
@@ -117,6 +121,8 @@ var follow = function(req, res){
                         connection.query(sqlFollow, [id, targetId],
                             function(err, result){
                                 if(err) return cb('팔로우 오류', null);
+
+                                sendFollowFcm(displayName, targetDisplayName);
 
                                 return cb(null, {targetId: targetId,
                                     isFollow:true});
@@ -148,7 +154,6 @@ var follow = function(req, res){
             console.log(result);
             return res.status(200).json({code: 1, isFollow: result, message: '팔로우를 한건지 안한건지 모르겠습니다.'});
         }
-
     });
 };
 
@@ -192,7 +197,10 @@ var getFollowerList = function(req, res){
 
                 followers.map(function(follower){
                     delete follower.id;
-                    follower.profileUrl = getImageUrl(follower.profile_key);
+
+                    var profileKey = follower.profile_key || 'profiledefault.png';
+
+                    follower.profileUrl = getImageUrl(profileKey);
                     delete follower.profile_key;
                     return follower;
                 });
@@ -236,11 +244,10 @@ var getFollowingList = function(req, res){
             connection.query(sqlGetId, displayName, function(err, id){
                 if(err) return cb('팔로워 리스트 불러오기 오류');
                 else{
-                    id = JSON.parse(JSON.stringify(id))[0].id;
-
-                    if(!id){
+                    if(id.length < 1){
                         return cb('팔로워 리스트 불러오기 오류');
                     }else{
+                        id = JSON.parse(JSON.stringify(id))[0].id;
                         return cb(null, id);
                     }
                 }
@@ -254,7 +261,9 @@ var getFollowingList = function(req, res){
 
                 followings.map(function(following){
                     delete following.id;
-                    following.profileUrl = getImageUrl(following.profile_key);
+                    var profileKey = following.profile_key || 'profiledefault.png';
+
+                    following.profileUrl = getImageUrl(profileKey);
                     delete following.profile_key;
                     return following;
                 });

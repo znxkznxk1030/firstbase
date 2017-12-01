@@ -18,4 +18,8 @@ router.get('/post/ajax', function(req, res){
     res.render('detail');
 });
 
+router.get('/test', function(req, res){
+  res.render('teststepview');
+});
+
 module.exports = router;

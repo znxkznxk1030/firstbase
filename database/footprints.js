@@ -2,34 +2,29 @@ const connection = require('./db');
 var getImageUrl = require("../controller/files").getImageUrl;
 const _ = require('underscore');
 
-const sqlRetrieveFootprintByFootprintId =
+const SQL_RETRIEVE_FOOTPRINT_BY_FOOTPRINT_ID =
     "SELECT footprint.*, view_count AS countView, count(comment.comment_id) AS countComments " +
     "FROM footprint " +
     "LEFT JOIN comment " +
     "ON footprint.footprint_id = comment.footprint_id " +
     "WHERE footprint.footprint_id = ? " +
-    "GROUP BY footprint_id ";
-
-const sqlWatch = "UPDATE footprint SET view_count = view_count + 1 WHERE footprint_id = ? ";
-
-const sqlImageLoad = "SELECT * FROM image WHERE footprint_id = ?";
-const sqlCountLike =
+    "GROUP BY footprint_id "
+    , SQL_WATCH = "UPDATE footprint SET view_count = view_count + 1 WHERE footprint_id = ? "
+    , SQL_IMAGE_LOAD = "SELECT * FROM image WHERE footprint_id = ?"
+    , SQL_COUNT_LIKE =
     "SELECT count(*) AS countLike " +
-    "FROM eval WHERE footprint_id = ? AND state = 1";
-const sqlCountDislike =
+    "FROM eval WHERE footprint_id = ? AND state = 1"
+    , SQL_COUNT_DISLIKE =
     "SELECT count(*) AS countDisLike " +
-    "FROM eval WHERE footprint_id = ? AND state = 2";
-
-const sqlRetrieveComments =
+    "FROM eval WHERE footprint_id = ? AND state = 2"
+    , SQL_GET_COMMENTS =
     "SELECT comment.is_ban AS isBan, comment.comment_id AS commentId, comment.content ,comment.modified_date AS date, user.displayName, user.profile_key " +
     "FROM comment LEFT JOIN user " +
     "ON comment.id = user.id " +
-    "WHERE comment.footprint_id = ? ";
-
-const sqlGetProfileImage =
-    "SELECT profile_key, displayName FROM user WHERE id = ?";
-
-const sqlGetLinkedFootprint =
+    "WHERE comment.footprint_id = ? "
+    , SQL_GET_PROFILE_IMAGE =
+    "SELECT profile_key, displayName FROM user WHERE id = ?"
+    , SQL_GET_LINKED_FOOTPRINT =
     "SELECT linked_footprint_id AS linkedFootprintId, rank FROM link WHERE link_footprint_id = ? ORDER BY rank";
 
 var Footprint = function(params){
@@ -38,7 +33,7 @@ var Footprint = function(params){
         , user = params.user;
 
     var retrieveFootprintByFootprintId = function(cb){
-        connection.query(sqlRetrieveFootprintByFootprintId, [footprintId],
+        connection.query(SQL_RETRIEVE_FOOTPRINT_BY_FOOTPRINT_ID, [footprintId],
             function (err, footprint) {
                 if (err)
                     return cb(err);
@@ -63,7 +58,7 @@ var Footprint = function(params){
             });
     };
     var watch = function (footprint, cb) {
-        connection.query(sqlWatch, [footprintId],
+        connection.query(SQL_WATCH, [footprintId],
             function (err) {
                 if (err)
                     return cb(err);
@@ -72,7 +67,7 @@ var Footprint = function(params){
     };
     var getLinkedFootprint = function (footprint, cb){
         if(footprint.type === 'link'){
-            connection.query(sqlGetLinkedFootprint, [footprintId], function(err, linkedFootprintList){
+            connection.query(SQL_GET_LINKED_FOOTPRINT, [footprintId], function(err, linkedFootprintList){
                 if(err){
                     return cb(true);
                 }else{
@@ -86,7 +81,7 @@ var Footprint = function(params){
         }
     };
     var imageLoad = function (footprint, cb) {
-        connection.query(sqlImageLoad, [footprintId],
+        connection.query(SQL_IMAGE_LOAD, [footprintId],
             function (err, imageInfo) {
                 if (err) return cb(err);
 
@@ -104,7 +99,7 @@ var Footprint = function(params){
             });
     };
     var retrieveComments = function (footprint, cb) {
-        connection.query(sqlRetrieveComments, [footprintId],
+        connection.query(SQL_GET_COMMENTS, [footprintId],
             function (err, comments) {
                 if (err) return cb(err);
 
@@ -133,7 +128,7 @@ var Footprint = function(params){
             });
     };
     var countLike = function (footprint, cb) {
-        connection.query(sqlCountLike, [footprintId],
+        connection.query(SQL_COUNT_LIKE, [footprintId],
             function (err, countLike) {
                 if (err) return cb(err);
 
@@ -141,7 +136,7 @@ var Footprint = function(params){
             });
     };
     var countDislike = function (footprint, cb) {
-        connection.query(sqlCountDislike, [footprintId],
+        connection.query(SQL_COUNT_DISLIKE, [footprintId],
             function (err, Dislike) {
                 if (err) return cb(err);
 
@@ -149,15 +144,19 @@ var Footprint = function(params){
             });
     };
     var getProfileImage = function (footprint, cb) {
-        connection.query(sqlGetProfileImage, [footprint.id],
+        connection.query(SQL_GET_PROFILE_IMAGE, [footprint.id],
             function (err, profile) {
                 if (err) return cb(err);
 
+                var profileKey;
 
-                footprint.displayName = JSON.parse(JSON.stringify(profile))[0].displayName;
+                try{
+                    footprint.displayName = JSON.parse(JSON.stringify(profile))[0].displayName;
+                    profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
+                }catch(e){
+                    profileKey = null;
+                }
 
-
-                var profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
 
                 if (profileKey === null) {
                     profileKey = 'profiledefault.png';
@@ -171,7 +170,7 @@ var Footprint = function(params){
             });
     };
 
-    var tasksGetFootprint = [
+    var tasksForGetFootprint = [
         retrieveFootprintByFootprintId,
         watch,
         getLinkedFootprint,
@@ -183,7 +182,7 @@ var Footprint = function(params){
     ];
 
     return {
-        tasksGetFootprint : tasksGetFootprint
+        tasksForGetFootprint : tasksForGetFootprint
     }
 };
 

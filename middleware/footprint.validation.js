@@ -1,4 +1,5 @@
 var async = require("async");
+var xss = require("xss");
 const MAX_TITLE_LENGTH = 70,
     MAX_CONTENT_LENGTH = 1000;
 
@@ -13,10 +14,10 @@ const MSG_TITLE_EMPTY = '제목이 비어있습니다.',
 var validateMarkerParams = function(req, res, next){
     // todo : vaildate parameters
 
-    const title = req.body.title,
-        content = req.body.content,
-        lat = req.body.latitude,
-        lng = req.body.longitude;
+    const title = xss(req.body.title),
+        content = xss(req.body.content),
+        lat = xss(req.body.latitude),
+        lng = xss(req.body.longitude);
 
     var task = [
         function (cb) {

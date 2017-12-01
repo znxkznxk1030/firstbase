@@ -2,10 +2,16 @@ var express = require('express');
 var router = express.Router();
 var auth = require('../auth/auth');
 
-router.get('/', function (req, res) {
+router.get('/', auth.passMiddleware, function (req, res) {
+    var displayName = '비회원';
+
+    if(req.user){
+        displayName = req.user.displayName;
+    }
+
     res.render('socket', {
-        id: 'ddd',
-        displayName: 'ddd'
+        id: 'nope',
+        displayName: displayName
     });
 });
 

@@ -4,10 +4,10 @@ var auth = require('../auth/auth');
 var controller = require('../controller/comments');
 
 router.get('/', controller.getCommentsByFootprintId);
-router.get('/new', auth.authMiddleware, function(req, res){
+router.get('/new', auth.authMiddleware, function (req, res) {
     res.render('comment_new', {
-        user : req.user,
-        footprintId : req.query.footprintId
+        user: req.user,
+        footprintId: req.query.footprintId
     });
 });
 

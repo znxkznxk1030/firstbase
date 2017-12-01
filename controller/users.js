@@ -4,41 +4,54 @@ const getImageUrl = require("./files").getImageUrl;
 const profileDefaultKey = 'profiledefault.png';
 const _ = require('underscore');
 var passwordUtil = require("../auth/password");
+var xss = require("xss");
 var uploadUserImage = require("./files").uploadUserImage;
 
+// language=JSRegexp
+const acceptTokenRe = /[^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣0-9]/g,
+    acceptIdRe = /[^a-zA-Z0-9]/g;
+
+const MSG_REGISTRATE_ERROR = '회원가입 오류';
 
 
-var nicknameCheck = function(req, res){
+var nicknameCheck = function (req, res) {
 
     const nickName = req.param.nickName;
     const sql = "SELECT * FROM user WHERE user.displayName = ?";
 
     //todo: validate nickName
-    if(!nickName)
-    {
+    if (!nickName) {
         return res.status(200)
-            .json({code: -1,
+            .json({
+                code: -1,
                 isPossible: -1,
-                message: "nickName should be not null"});
+                message: "nickName should be not null"
+            });
     }
 
 
     connection.query(sql, [nickName],
-        function(err, profile){
+        function (err, profile) {
             if (err) return res.status(400)
-                .json({code: -1,
-                    message: err});
+                .json({
+                    code: -1,
+                    message: err
+                });
 
-            if(profile.displayName){
+            if (profile.displayName) {
                 return res.status(200)
-                    .json({code: 1,
+                    .json({
+                        code: 1,
                         isPossible: -1,
-                        message : 'this name is already existed!'});
-            }else{
+                        message: 'this name is already existed!'
+                    });
+            } else {
                 return res.status(200)
-                    .json({code:1,
+                    .json({
+                        code: 1,
                         isPossible: 1,
-                        message : 'possible to use'});
+                        message: 'possible to use'
+                    });
             }
         })
 };
@@ -47,29 +60,38 @@ var nicknameCheck = function(req, res){
 /*
     find operations
  */
-var findOne = function findOne(id, cb){
+var findOne = function findOne(id, cb) {
     var sql = 'SELECT * FROM user WHERE id = ?';
-    connection.query(sql, [id], function(err, result){
-        if(err){
-            throw err;
+    connection.query(sql, [id], function (err, result) {
+        if (err) {
+            return cb('해당 유저가 존재하지 않습니다.');
         }
 
         var user = JSON.parse(JSON.stringify(result))[0];
         console.log(user);
-        cb(null, user);
+        return cb(null, user);
     });
 };
 
-var findPassword = function findPassword(id, cb){
-    connection.query('SELECT * FROM password WHERE id=?', [id], function(err, result) {
-        if(err) throw err;
+var updateDeviceToken = function (id, deviceToken, cb) {
+    var sql = 'UPDATE user SET device_token = ? WHERE id = ?';
+
+    connection.query(sql, [id, deviceToken], function (err, result) {
+        if (err) cb(err);
+        else cb(null);
+    });
+};
+
+var findPassword = function findPassword(id, cb) {
+    connection.query('SELECT * FROM password WHERE id=?', [id], function (err, result) {
+        if (err) throw err;
 
         var ret = JSON.parse(JSON.stringify(result));
         console.log(ret);
-        if(typeof ret[0] !== 'undefined'){
+        if (typeof ret[0] !== 'undefined') {
             cb(null, ret[0].password);
-        }else{
-            cb({error:"not found"}, false);
+        } else {
+            cb({error: "not found"}, false);
         }
     });
 };
@@ -78,7 +100,7 @@ var findPassword = function findPassword(id, cb){
 /*
     retrieve operations
  */
-var getUserInfoByReqHeader = function(req, res){
+var getUserInfoByReqHeader = function (req, res) {
 
     const sql = "SELECT * " +
         "FROM user " +
@@ -91,36 +113,36 @@ var getUserInfoByReqHeader = function(req, res){
         "SELECT count(*) AS countFollowing FROM follow WHERE follow.follower_id = ? ";
 
     const task = [
-        function(cb){
+        function (cb) {
             //console.log("dd" + req.user.id);
-            if(req.user) cb(null, req.user);
+            if (req.user) cb(null, req.user);
             else cb({code: -1, message: 'Not Authenticated'}, null);
         },
-        function(user, cb){
+        function (user, cb) {
             //console.log(user);
-            connection.query(sql, user.id, function(err, profile){
+            connection.query(sql, user.id, function (err, profile) {
                 if (err) return cb({code: -1, message: 'sql error'}, null);
 
                 return cb(null, profile);
             });
         },
-        function(profile, cb){
+        function (profile, cb) {
             var profileUrl, profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
             //console.log(profileKey);
-            if(profileKey) profileUrl = getImageUrl(profileKey);
+            if (profileKey) profileUrl = getImageUrl(profileKey);
             else profileUrl = getImageUrl(profileDefaultKey);
 
-            return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], { profileUrl: profileUrl }));
+            return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], {profileUrl: profileUrl}));
         },
-        function(profile, cb){
+        function (profile, cb) {
             console.log(profile.id);
-            connection.query(sqlGetFollowerCount, [profile.id], function(err, countFollower){
+            connection.query(sqlGetFollowerCount, [profile.id], function (err, countFollower) {
                 if (err) return cb({code: -1, message: err}, null);
                 return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollower[0]))));
             });
         },
-        function(profile, cb){
-            connection.query(sqlGetFollowingCount, [profile.id], function(err, countFollowing){
+        function (profile, cb) {
+            connection.query(sqlGetFollowingCount, [profile.id], function (err, countFollowing) {
                 if (err) return cb({code: -1, message: err}, null);
                 return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollowing[0]))));
             });
@@ -128,11 +150,13 @@ var getUserInfoByReqHeader = function(req, res){
     ];
 
     async.waterfall(task,
-        function(err, profile){
-            if(err) return res.status(400)
-                .json({code: -1,
-                    message:err});
-            else{
+        function (err, profile) {
+            if (err) return res.status(400)
+                .json({
+                    code: -1,
+                    message: err
+                });
+            else {
                 delete profile.id;
 
                 return res.status(200)
@@ -141,7 +165,7 @@ var getUserInfoByReqHeader = function(req, res){
         });
 };
 
-var getUserInfoByUserDisplayName = function(req, res){
+var getUserInfoByUserDisplayName = function (req, res) {
     const sql = "SELECT * " +
         "FROM user " +
         "WHERE user.displayName = ? ";
@@ -160,48 +184,48 @@ var getUserInfoByUserDisplayName = function(req, res){
     const id = req.user.id;
 
     const task = [
-        function(cb){
+        function (cb) {
             //console.log("dd" + req.user.id);
-            if(!displayName.isNullOrUndefined) return cb(null, displayName);
+            if (!displayName.isNullOrUndefined) return cb(null, displayName);
             else return cb({code: -1, message: 'Not Authenticated'}, null);
         },
-        function(displayName, cb){
-            connection.query(sql, displayName, function(err, profile){
+        function (displayName, cb) {
+            connection.query(sql, displayName, function (err, profile) {
                 if (err) return cb({code: -1, message: err}, null);
 
-                if(profile[0])
+                if (profile[0])
                     return cb(null, profile);
                 else return cb('user is not existed', null);
             });
         },
-        function(profile, cb){
+        function (profile, cb) {
             var profileUrl, profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
             //console.log(profileKey);
-            if(profileKey) profileUrl = getImageUrl(profileKey);
+            if (profileKey) profileUrl = getImageUrl(profileKey);
             else profileUrl = getImageUrl(profileDefaultKey);
 
-            return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], { profileUrl: profileUrl }));
+            return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], {profileUrl: profileUrl}));
         },
-        function(profile, cb){
+        function (profile, cb) {
             console.log(profile.id);
-            connection.query(sqlGetFollowerCount, [profile.id], function(err, countFollower){
+            connection.query(sqlGetFollowerCount, [profile.id], function (err, countFollower) {
                 if (err) return cb(err, null);
                 return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollower[0]))));
             });
         },
-        function(profile, cb){
-            connection.query(sqlGetFollowingCount, [profile.id], function(err, countFollowing){
+        function (profile, cb) {
+            connection.query(sqlGetFollowingCount, [profile.id], function (err, countFollowing) {
                 if (err) return cb(err, null);
                 return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollowing[0]))));
             });
         },
         function (profile, cb) {
-            connection.query(sqlIsFollow, [id, profile.id], function(err, Follow){
+            connection.query(sqlIsFollow, [id, profile.id], function (err, Follow) {
                 if (err) return cb(err, null);
 
                 var isFollow = false;
 
-                if(JSON.parse(JSON.stringify(Follow))[0]){
+                if (JSON.parse(JSON.stringify(Follow))[0]) {
                     isFollow = true;
                 }
                 return cb(null, _.extend(profile, {isFollow: isFollow}));
@@ -210,12 +234,14 @@ var getUserInfoByUserDisplayName = function(req, res){
     ];
 
     async.waterfall(task,
-        function(err, profile){
-            if(err) return res.status(400)
-                .json({code: -1,
-                    message:'유저 정보 가져오기 실패'});
+        function (err, profile) {
+            if (err) return res.status(400)
+                .json({
+                    code: -1,
+                    message: '해당 유저를 찾을 수 없습니다'
+                });
 
-            else{
+            else {
                 delete profile.id;
 
                 return res.status(200)
@@ -224,7 +250,7 @@ var getUserInfoByUserDisplayName = function(req, res){
         });
 };
 
-var getUserInfoByUserId = function(req, res){
+var getUserInfoByUserId = function (req, res) {
 
     const sql = "SELECT * " +
         "FROM user " +
@@ -239,35 +265,35 @@ var getUserInfoByUserId = function(req, res){
     const id = req.query.id;
 
     const task = [
-        function(cb){
+        function (cb) {
             //console.log("dd" + req.user.id);
-            if(!id.isNullOrUndefined) return cb(null, id);
+            if (!id.isNullOrUndefined) return cb(null, id);
             else return cb({code: -1, message: 'Not Authenticated'}, null);
         },
-        function(id, cb){
-            connection.query(sql, id, function(err, profile){
+        function (id, cb) {
+            connection.query(sql, id, function (err, profile) {
                 if (err) return cb({code: -1, message: 'sql error'}, null);
 
                 return cb(null, profile);
             });
         },
-        function(profile, cb){
+        function (profile, cb) {
             var profileUrl, profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
             //console.log(profileKey);
-            if(profileKey) profileUrl = getImageUrl(profileKey);
+            if (profileKey) profileUrl = getImageUrl(profileKey);
             else profileUrl = getImageUrl(profileDefaultKey);
 
-            return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], { profileUrl: profileUrl }));
+            return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], {profileUrl: profileUrl}));
         },
-        function(profile, cb){
+        function (profile, cb) {
             console.log(profile.id);
-            connection.query(sqlGetFollowerCount, [profile.id], function(err, countFollower){
+            connection.query(sqlGetFollowerCount, [profile.id], function (err, countFollower) {
                 if (err) return cb({code: -1, message: err}, null);
                 return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollower[0]))));
             });
         },
-        function(profile, cb){
-            connection.query(sqlGetFollowingCount, [profile.id], function(err, countFollowing){
+        function (profile, cb) {
+            connection.query(sqlGetFollowingCount, [profile.id], function (err, countFollowing) {
                 if (err) return cb({code: -1, message: err}, null);
                 return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollowing[0]))));
             });
@@ -275,11 +301,13 @@ var getUserInfoByUserId = function(req, res){
     ];
 
     async.waterfall(task,
-        function(err, profile){
-            if(err) return res.status(400)
-                .json({code: -1,
-                    message:err});
-            else{
+        function (err, profile) {
+            if (err) return res.status(400)
+                .json({
+                    code: -1,
+                    message: err
+                });
+            else {
                 delete profile.id;
 
                 return res.status(200)
@@ -291,8 +319,9 @@ var getUserInfoByUserId = function(req, res){
 /*
     update operations
  */
-var updateUserInfo = function(req, res){
+var updateUserInfo = function (req, res) {
     const sql = "UPDATE user SET displayName = ?, description = ? WHERE user.id = ? ";
+    const sqlCheckDisplayNameExist = "SELECT displayName FROM user WHERE user.displayName = ?";
     const body = req.body;
 
     const user = req.user;
@@ -300,65 +329,68 @@ var updateUserInfo = function(req, res){
     const displayName = body.displayName;
     var description = body.description;
 
-    // todo: vaildate parameters
-    if(!displayName)
-    {
-        return res.status(400)
-            .json({code: -1,
-                message: "display name should be not null"});
-    }
-
-    if(!description)
-    {
-        description = " ";
-    }
-
     var task = [
-        function(cb){
+        function (cb) {
             return cb(isDisplayNameVaild(displayName, user.displayName));
         },
-        function(cb){
+        function (cb) {
+            connection.query(sqlCheckDisplayNameExist, displayName, function (err, isExist) {
+                if (err || isExist.length > 0) cb('이미 존재하는 닉네입 입니다');
+                else {
+                    cb(null);
+                }
+            })
+        },
+        function (cb) {
             connection.query(sql, [displayName, description, user.id],
-                function(err, userUpdated) {
-                    if(err) cb(err);
+                function (err, userUpdated) {
+                    if (err) cb('유저 정보 수정 실패');
                     else cb(null);
                 });
         }
     ];
 
-    async.series(task, function(err){
-        if(err)
+    async.series(task, function (err) {
+        if (err)
             return res.status(400)
-                .json({code:-1,
-                    message:'sql error'});
+                .json({
+                    code: -1,
+                    message: err
+                });
 
         return res.status(200)
-            .json({code: 1,
-                message:'success to update profile'});
+            .json({
+                code: 1,
+                message: 'success to update profile'
+            });
     });
 };
 
-var updateUserImage = function(req, res){
+var updateUserImage = function (req, res) {
     const sql = "UPDATE user SET profile_key = ? WHERE user.id = ? ";
 
-    uploadUserImage(req, function(err, profileImage){
-        if(err) res.json(err);
+    uploadUserImage(req, function (err, profileImage) {
+        if (err) res.json(err);
         connection.query(sql, [profileImage.key, req.user.id],
-            function(err, userUpdated){
-                if(err) return res.status(400)
-                    .json({code: -1,
-                        message: '프로필 업데이트 오류'});
+            function (err, userUpdated) {
+                if (err) return res.status(400)
+                    .json({
+                        code: -1,
+                        message: '프로필 업데이트 오류'
+                    });
 
-                if(userUpdated)
-                {
+                if (userUpdated) {
                     return res.status(200)
-                        .json({code: 1,
-                            profileUrl: profileImage.url});
-                }else
-                {
+                        .json({
+                            code: 1,
+                            profileUrl: profileImage.url
+                        });
+                } else {
                     return res.status(400)
-                        .json({code:-1,
-                            message:'update error'});
+                        .json({
+                            code: -1,
+                            message: 'update error'
+                        });
                 }
             });
     });
@@ -368,45 +400,104 @@ var updateUserImage = function(req, res){
 /*
     registration operations
  */
-var registrateSocialUser = function registrateSocialLoginUser(data, cb){
+var registrateSocialUser = function registrateSocialLoginUser(data, cb) {
     var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
-    connection.query(sql, [data.id, data.displayName, data.provider], function(err, result){
-        if(err) throw err;
+    connection.query(sql, [data.id, data.displayName, data.provider], function (err, result) {
+        if (err) throw err;
         console.log('#debug registrateSocialUser result : ' + result);
         cb(null, true);
     });
 };
 
-var registrateUser = function registrateUser(formData, cb){
+/**
+ *
+ * @param formData
+ * @param callback
+ */
+var registrateUser = function registrateUser(req, res) {
     // todo: refactoring
     // callback hell -> async heaven
-    findOne(formData.id, function(err, user){
-        passwordUtil.passwordCreate(formData.password1, function(err, password){
-            if(err) throw err;
 
-            var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
-            connection.query(sql, [formData.id, formData.displayName, 'Local'], function(err, result){
-                if(err) return cb('회원가입 에러 ', false);
+    const id = req.body.id,
+        displayName = req.body.displayName,
+        provider = 'Local',
+        password1 = req.body.password1;
 
-                connection.query('INSERT INTO password (id, password) VALUES(?,?)', [formData.id, password], function(err, result){
-                    if(err) {
-                        connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
-                            if(err) return cb('회원가입 에러 ', false);
-                        });
-                        return cb('이미 있는 아이디 입니다.', false);
+    const sqlIsExistId = "SELECT * FROM user WHERE id = ?"
+        , sqlIsExistDisplayName = "SELECT * FROM user WHERE displayName = ?"
+        , sqlCreateUser = "INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)"
+        , sqlCreatePassword = "INSERT INTO password (id, password) VALUES (?, ?)"
+        , sqlDeleteUser = "DELETE FROM user WHERE id = ?";
+
+    var task = [
+        function (cb) {
+            connection.query(sqlIsExistId, id, function (err, user) {
+                if (err) {
+                    return cb(MSG_REGISTRATE_ERROR);
+                } else {
+                    user = JSON.parse(JSON.stringify(user))[0];
+
+                    if (user) {
+                        return cb('이미 존재하는 아이디 입니다.');
                     }
-                    console.log(result);
-                    if(result){
-                        return cb(null, true);
-                    }else {
-                        connection.query('DELETE FROM user WHERE id=?', [formData.id], function(err, result){
-                            if(err) return cb('회원가입 에러 ', false);
-                        });
+                    return cb(null);
+                }
+            });
+        },
+        function (cb) {
+            connection.query(sqlIsExistDisplayName, displayName, function (err, user) {
+                if (err) {
+                    return cb(MSG_REGISTRATE_ERROR);
+                } else {
+                    user = JSON.parse(JSON.stringify(user))[0];
+
+                    if (user) {
+                        return cb('이미 존재하는 닉네임 입니다.');
+                    }
+                    return cb(null);
+                }
+            });
+        },
+        function (cb) {
+            connection.query(sqlCreateUser, [id, displayName, provider], function (err, user) {
+                if (err) {
+                    return cb(MSG_REGISTRATE_ERROR);
+                } else {
+                    return cb(null);
+                }
+            });
+        },
+        function (cb) {
+            passwordUtil.passwordCreate(password1, function (err, password) {
+                if (err) return cb(MSG_REGISTRATE_ERROR);
+
+                connection.query(sqlCreatePassword, [id, password], function (err, password) {
+                    if (err) {
+                        return cb(MSG_REGISTRATE_ERROR);
+                    } else {
+                        return cb(null);
                     }
                 });
             });
-        });
+        }
+    ];
+
+    async.series(task, function (err, result) {
+        if (err) {
+            return res.status(401).json({
+                code: -1,
+                message: err
+            });
+        }
+        else {
+            return res.status(200).json({
+                code: 1,
+                message : "퍼스트베이스에 오신걸 환영합니다! \n 회원가입 성공"
+            });
+        }
     });
+
+
 };
 
 
@@ -419,31 +510,39 @@ var registrateUser = function registrateUser(formData, cb){
             Check DisplayName's validation.
             1. length (5 < && < 25)
          */
-var isDisplayNameVaild = function(displayName , oldDisplayName){
 
-    if(!oldDisplayName && displayName === oldDisplayName)
-    {
+var isDisplayNameVaild = function (displayName, oldDisplayName) {
+
+    if (!oldDisplayName && displayName === oldDisplayName) {
         return null;
     }
+
+    if (acceptTokenRe.test(displayName)) {
+        return res.status(401).json({
+            code: -2,
+            message: '닉네임은 한글,영문,숫자만 가능합니다'
+        });
+    }
+
     //todo: 띄어쓰기 방지, 영문, 숫자
-    if(displayName === null || displayName === '' || displayName === 'undefined')
+    if (displayName === null || displayName === '' || displayName === 'undefined')
         return '닉네임 입력 칸이 비어있습니다.';
 
     const length = displayName.length;
 
-    if(length < 2)
+    if (length < 2)
         return '닉네임의 길이가 너무 짧습니다.';
-    if(length > 25)
+    if (length > 10)
         return '닉네임의 길이가 너무 깁니다.';
 
     const sqlDisplayCheck = "SELECT * FROM user WHERE displayName = ? ";
 
-    connection.query(sqlDisplayCheck, [displayName], function(err, result){
-        if(err) return err;
+    connection.query(sqlDisplayCheck, [displayName], function (err, result) {
+        if (err) return err;
 
-        if(result[0]){
+        if (result[0]) {
             return '이미 존재하는 닉네임입니다';
-        }else{
+        } else {
             return null;
         }
     });
@@ -457,8 +556,8 @@ var isDisplayNameVaild = function(displayName , oldDisplayName){
             3. Check id has a valid email domain.
             4. Check id is unique.
          */
-var isIDVaild = function(id){
-    if(id === null || id === 'undefined' || id === '')
+var isIDVaild = function (id) {
+    if (id === null || id === 'undefined' || id === '')
         return 'ID 입력 칸이 비어있습니다';
 
     const length = id.length;
@@ -466,28 +565,40 @@ var isIDVaild = function(id){
     const ACCEPTED_DOMAIN = [
         'naver.com',
         'gmail.com',
-        'daum.net'
+        'daum.net',
+        'hanmail.net',
+        'paran.com'
     ];
 
-    if(length < 8)
+    if (length < 8)
         return 'ID의 길이가 너무 짧습니다.';
-    if(length > 25)
+    if (length > 25)
         return 'ID의 길이가 너무 깁니다.';
 
     console.log(userIdSplitByDomain);
 
-    if(userIdSplitByDomain.length !== 2)
+    if (userIdSplitByDomain.length !== 2)
         return 'ID의 형식은 e-mail 형식이여야 합니다.';
 
-    const domain = userIdSplitByDomain[1];
+    var emailId = userIdSplitByDomain[0],
+        domain = userIdSplitByDomain[1];
+
     var hasAcceptedDomain = false;
 
-    ACCEPTED_DOMAIN.forEach(function(acceptedDomain){
-        if(acceptedDomain === domain)
+    // console.log(emailId);
+    // if(acceptIdRe.test(emailId) === false){
+    //     return 'id 에는 영문, 숫자만 가능합니다.';
+    // }
+
+    domain = domain.trim();
+
+
+    ACCEPTED_DOMAIN.forEach(function (acceptedDomain) {
+        if (acceptedDomain === domain)
             hasAcceptedDomain = true;
     });
 
-    if(hasAcceptedDomain === false)
+    if (hasAcceptedDomain === false)
         return '사용가능한 도메인을 사용해주세요.(gmail, naver, daum)';
 
 
@@ -495,12 +606,11 @@ var isIDVaild = function(id){
         "SELECT * FROM user WHERE id = ?";
 
     connection.query(sqlIsExisted, [id],
-        function(err, user)
-        {
-            if(err)
+        function (err, user) {
+            if (err)
                 return err;
             console.log(user);
-            if(user[0])
+            if (user[0])
                 return '존재하는 아이디 입니다.';
 
             else return null;
@@ -513,17 +623,17 @@ var isIDVaild = function(id){
             2. Check password' length is between 8 and 20
             3. Check password has more than 3 digits, special char, char
 */
-var isPasswordVaild = function(password1, password2){
-    if(password1 !== password2)
+var isPasswordVaild = function (password1, password2) {
+    if (password1 !== password2)
         return '두 패스워드 값이 일치하지 않습니다.';
 
     const length = password1.length;
     console.log(length);
 
-    if(length < 8)
+    if (length < 8)
         return '패스워드의 길이가 너무 짧습니다.';
 
-    if(length > 20)
+    if (length > 20)
         return '패스워드의 길이가 너무 깁니다.';
 
     var numOfDigit = 0,
@@ -531,21 +641,20 @@ var isPasswordVaild = function(password1, password2){
         numOfChar = 0,
         unVaildChar = false;
 
-    for(var i = 0; i < password1.length; i++)
-    {
+    for (var i = 0; i < password1.length; i++) {
         var code = password1.charCodeAt(i);
 
         console.log(code);
 
-        if(33 <= code && code <= 47)
+        if (33 <= code && code <= 47)
             numOfSpecial++;
-        else if(58 <= code && code <= 64)
+        else if (58 <= code && code <= 64)
             numOfSpecial++;
-        else if(91 <= code && code <= 96)
+        else if (91 <= code && code <= 96)
             numOfSpecial++;
-        else if(48 <= code && code <= 57)
+        else if (48 <= code && code <= 57)
             numOfDigit++;
-        else if(65 <= code && code <= 122)
+        else if (65 <= code && code <= 122)
             numOfChar++;
         else unVaildChar = true;
     }
@@ -554,16 +663,16 @@ var isPasswordVaild = function(password1, password2){
     console.log("char : " + numOfChar);
     console.log("digit : " + numOfDigit);
 
-    if(unVaildChar)
+    if (unVaildChar)
         return '입력된 패스워드 값에 인식되지 않는 값이 있습니다.';
 
-    if(numOfDigit < 3)
+    if (numOfDigit < 3)
         return '패스워드는 3개 이상의 숫자를 포함하여야 합니다.';
 
-    if(numOfSpecial < 0)
+    if (numOfSpecial < 0)
         return '패스워드는 0개 이상의 특수문자를 포함하여야 합니다.';
 
-    if(numOfChar < 3)
+    if (numOfChar < 3)
         return '패스워드는 3개 이상의 문자를 포함하여야 합니다.';
 
 
@@ -572,31 +681,72 @@ var isPasswordVaild = function(password1, password2){
 
 };
 
-var isFormVaild = function(req, res, next){
-    const id = req.body.id,
-        displayName = req.body.displayName,
-        password1 = req.body.password1,
-        password2 = req.body.password2;
+var isUpdateFormVaild = function (req, res, next) {
+    const displayName = xss(req.body.displayName),
+        description = xss(req.body.description);
 
-    console.log(id + password1 + password2);
+    if (description.length > 1000) {
+        return res.status(401)
+            .json({
+                code: -2,
+                message: '소개글 최대 길이초과 (최대 1000byte)'
+            });
+    }
 
     const task = [
-        function(cb){
+        function (cb) {
             cb(isDisplayNameVaild(displayName));
-        },
-        function(cb){
-            cb(isIDVaild(id));
-        },
-        function(cb){
-            cb(isPasswordVaild(password1, password2));
         }
     ];
 
-    async.series(task, function(err, result){
-        if(err)
+    async.series(task, function (err, result) {
+        if (err)
             return res.status(401)
-                .json({code:-2,
-                    message:err});
+                .json({
+                    code: -2,
+                    message: err
+                });
+        else return next();
+    });
+};
+
+
+var isFormVaild = function (req, res, next) {
+    const id = xss(req.body.id),
+        displayName = xss(req.body.displayName),
+        description = xss(req.body.description),
+        password1 = xss(req.body.password1),
+        password2 = xss(req.body.password2);
+
+    console.log(id + password1 + password2);
+
+    if (description.length > 1000) {
+        return res.status(401)
+            .json({
+                code: -2,
+                message: '소개글 최대 길이초과 (최대 1000byte)'
+            });
+    }
+
+    const task = [
+        function (cb) {
+            return cb(isDisplayNameVaild(displayName));
+        },
+        function (cb) {
+            return cb(isIDVaild(id));
+        },
+        function (cb) {
+            return cb(isPasswordVaild(password1, password2));
+        }
+    ];
+
+    async.series(task, function (err, result) {
+        if (err)
+            return res.status(401)
+                .json({
+                    code: -2,
+                    message: err
+                });
         else return next();
     });
 };
@@ -606,9 +756,9 @@ module.exports = {
     nicknameCheck: nicknameCheck,
 
     findOne: findOne,
-    findPassword : findPassword,
+    findPassword: findPassword,
 
-    getUserInfoByReqHeader:getUserInfoByReqHeader,
+    getUserInfoByReqHeader: getUserInfoByReqHeader,
     getUserInfoByUserDisplayName: getUserInfoByUserDisplayName,
     getUserInfoByUserId: getUserInfoByUserId,
 
@@ -616,7 +766,10 @@ module.exports = {
     updateUserImage: updateUserImage,
 
     registrateSocialUser: registrateSocialUser,
-    registrateUser : registrateUser,
+    registrateUser: registrateUser,
 
-    isFormVaild : isFormVaild
+    isUpdateFormVaild: isUpdateFormVaild,
+
+    isFormVaild: isFormVaild,
+    updateDeviceToken: updateDeviceToken
 };

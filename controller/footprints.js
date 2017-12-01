@@ -4,14 +4,18 @@ const locationUtil = require('../utils/locationUtil');
 const async = require('async');
 const bucketName = 'firstbase-bucket';
 const AWS = require('aws-sdk');
-const profileDefaultKey = 'profiledefault.png';
+
 
 const Footprint = require('../database/footprints').Footprint;
 
 const _ = require('underscore');
 var util = require("../utils/util");
+var xss = require("xss");
+var sendCreateFootprintFcmToFollowers = require("../fcm/fcm").sendCreateFootprintFcmToFollowers;
+var sendFcm = require("../fcm/fcm").sendFcm;
 var getImageUrl = require("./files").getImageUrl;
 var retrieveByKey = require("./files").retrieveByKey;
+const profileDefaultKey = 'profiledefault.png';
 
 AWS.config.loadFromPath('s3config.json');
 
@@ -163,19 +167,27 @@ var getFootprintList = function (req, res) {
 
                 var task = [
                     function (callback) {
-                        connection.query(sqlFindUser, footprint.id, function (err, profile) {
-                            if (err) return callback(err);
+                        var displayName;
+                        var profileUrl, profileKey;
 
-                            profile = JSON.parse(JSON.stringify(profile))[0];
+                        if(footprint.id){
+                            connection.query(sqlFindUser, footprint.id, function (err, profile) {
+                                if (err) return callback(err);
 
-                            var displayName = profile.displayName;
+                                profile = JSON.parse(JSON.stringify(profile))[0];
 
-                            var profileUrl, profileKey = profile.profile_key;
-                            if (profileKey) profileUrl = getImageUrl(profileKey);
-                            else profileUrl = getImageUrl(profileDefaultKey);
+                                displayName = profile.displayName;
 
-                            return callback(null, {displayName : displayName, profileUrl: profileUrl});
-                        });
+                                profileKey = profile.profile_key;
+                                if (profileKey) profileUrl = getImageUrl(profileKey);
+                                else profileUrl = getImageUrl(profileDefaultKey);
+
+                                return callback(null, {displayName: displayName, profileUrl: profileUrl});
+                            });
+                        }else{
+                            profileUrl = getImageUrl(profileDefaultKey);
+                            return callback(null, {profileUrl:profileUrl});
+                        }
                     },
                     function (tails, callback) {
                         connection.query(sqlCountLike, [footprint.footprint_id],
@@ -270,7 +282,9 @@ var getFootprintListByLocation = function (req, res) {
         "LEFT JOIN comment " +
         "ON footprint.footprint_id = comment.footprint_id " +
         "WHERE footprint.latitude <= ? AND footprint.longitude >= ? AND footprint.latitude >= ? AND footprint.longitude <= ? " +
-        "GROUP BY footprint_id ";
+        "GROUP BY footprint_id " +
+        "ORDER BY footprint.created_date " +
+        "LIMIT 100 ";
 
     const sqlFindUser = "SELECT profile_key, displayName " +
         "FROM user " +
@@ -295,19 +309,28 @@ var getFootprintListByLocation = function (req, res) {
 
                 var task = [
                     function (callback) {
-                        connection.query(sqlFindUser, footprint.id, function (err, profile) {
-                            if (err) return callback(err);
 
-                            profile = JSON.parse(JSON.stringify(profile))[0];
+                        var displayName;
+                        var profileUrl, profileKey;
 
-                            var displayName = profile.displayName;
+                        if(footprint.id){
+                            connection.query(sqlFindUser, footprint.id, function (err, profile) {
+                                if (err) return callback(err);
 
-                            var profileUrl, profileKey = profile.profile_key;
-                            if (profileKey) profileUrl = getImageUrl(profileKey);
-                            else profileUrl = getImageUrl(profileDefaultKey);
+                                profile = JSON.parse(JSON.stringify(profile))[0];
 
-                            return callback(null, {displayName : displayName, profileUrl: profileUrl});
-                        });
+                                displayName = profile.displayName;
+
+                                profileKey = profile.profile_key;
+                                if (profileKey) profileUrl = getImageUrl(profileKey);
+                                else profileUrl = getImageUrl(profileDefaultKey);
+
+                                return callback(null, {displayName: displayName, profileUrl: profileUrl});
+                            });
+                        }else{
+                            profileUrl = getImageUrl(profileDefaultKey);
+                            return callback(null, {profileUrl:profileUrl});
+                        }
                     },
                     function (tails, callback) {
                         connection.query(sqlCountLike, [footprint.footprint_id],
@@ -353,26 +376,36 @@ var getFootprintListByLocation = function (req, res) {
  */
 var createFootprint = function (req, res) {
 
-    const userProfileByToken = req.user;
-    console.log(userProfileByToken);
-    const userId = userProfileByToken.id,
-        userDisplayName = userProfileByToken.displayName;
-
+    const user = req.user;
     const body = req.body;
+
+    var userId = user.id, displayName = null, footprintPassword = null;
 
     const title = body.title,
         iconKey = body.icon_key,
         content = body.content,
         imageKeys = body.imageKeys,
-        footprintIdList = req.body.footprintIdList,
+        footprintIdList = body.footprintIdList,
         latitude = body.latitude,
         longitude = body.longitude;
 
+    // if (!user) {
+    //     displayName = xss(body.displayName);
+    //     footprintPassword = xss(body.footprintPassword);
+    // }
+    // else {
+    //     userId = user.id;
+    //     displayName = user.displayName;
+    // }
+
     var type = body.type;
 
-    const sqlCreateFootprint =
+    const sqlCreateFootprintWithAuth =
         "INSERT INTO footprint (id, title, icon_key, content, latitude, longitude, type) "
         + " VALUES (?, ?, ?, ?, ?, ?, ?)";
+    const sqlCreateFootprintWithoutAuth =
+        "INSERT INTO footprint (title, displayName, password, content, latitude, longitude, type) " +
+        "VALUES (?, ?, ?, ?, ?, ?, ?)";
     const sqlInsertImage =
         "INSERT INTO image (footprint_id, image_key) " +
         "VALUES (?, ?) ";
@@ -381,16 +414,29 @@ var createFootprint = function (req, res) {
         "VALUES (?, ?, ?)";
 
     var task = [
-        function(cb){
-            connection.query(sqlCreateFootprint, [userId, title, iconKey, content, latitude, longitude, type],
-                function (err, result) {
-                    if (err || !result){
-                        return cb(true);
-                    }
-                    else return cb(null, result.insertId);
-                });
+        function (cb) {
+        console.log('1');
+            // if (user) {
+                connection.query(sqlCreateFootprintWithAuth, [userId, title, iconKey, content, latitude, longitude, type],
+                    function (err, result) {
+                        if (err || !result) {
+                            console.log(err);
+                            return cb(true);
+                        }
+                        else return cb(null, result.insertId);
+                    });
+            // } else {
+            //     connection.query(sqlCreateFootprintWithoutAuth, [title, displayName, footprintPassword, iconKey, content, latitude, longitude, type],
+            //         function (err, result) {
+            //             if (err || !result) {
+            //                 return cb(true);
+            //             }
+            //             else return cb(null, result.insertId);
+            //         });
+            // }
         },
-        function(footprintId, cb){
+        function (footprintId, cb) {
+            console.log('2');
             const length = imageKeys.length;
 
             async.times(length, function (i, next) {
@@ -404,16 +450,16 @@ var createFootprint = function (req, res) {
                     else return next();
                 });
             }, function (err) {
-                if (err){
+                if (err) {
                     console.log(err);
                     cb(true);
                 }
                 cb(null, footprintId);
             });
         },
-        function(footprintId, cb){
-            if(type === 'link')
-            {
+        function (footprintId, cb) {
+            console.log('3');
+            if (type === 'link') {
                 const length = footprintIdList.length;
 
                 async.times(length, function (i, next) {
@@ -431,20 +477,25 @@ var createFootprint = function (req, res) {
                         console.log(err);
                         cb(true);
                     }
-                    cb();
+                    cb(null, footprintId);
                 });
-            }else{
-                cb();
+            } else {
+                cb(null, footprintId);
             }
         }
     ];
 
-    async.waterfall(task, function(err, result){
-        if(err){
-            return res.status(400).json({ code: -1, message: '게시물 작성 오류'});
+    async.waterfall(task, function (err, footprintId) {
+        if (err) {
+            return res.status(400).json({code: -1, message: '게시물 작성 오류'});
         }
-        else{
-            res.status(200).json({ code: 1, message: '게시물 작성 성공'});
+        else {
+            sendCreateFootprintFcmToFollowers(userId, displayName, {
+                footprintId: footprintId,
+                title: title
+            });
+
+            return res.status(200).json({code: 1, message: '게시물 작성 성공'});
         }
     });
 
@@ -514,10 +565,12 @@ var getFootprintByFootprintID = function (req, res) {
             })
     }
 
-    var tasksGetFootprint = Footprint({footprintId : req.query.footprintId,
-                                user : req.user}).tasksGetFootprint;
+    var tasksForGetFootprint = Footprint({
+        footprintId: footprintId,
+        user: user
+    }).tasksForGetFootprint;
 
-    async.waterfall(tasksGetFootprint,
+    async.waterfall(tasksForGetFootprint,
         function (err, result) {
             if (err) {
                 console.log(err);
@@ -564,7 +617,7 @@ var createLinkMarker = function (req, res) {
     var task = [
         function (cb) {
             connection.query(sqlCreateLinkMarker, [id, title, iconKey, content, latitude, longitude], function (err, result) {
-                if (err || !result){
+                if (err || !result) {
                     console.log(err);
                     return cb(true);
                 }
@@ -585,7 +638,7 @@ var createLinkMarker = function (req, res) {
                     else return next();
                 });
             }, function (err) {
-                if (err){
+                if (err) {
                     console.log(err);
                     cb(true);
                 }

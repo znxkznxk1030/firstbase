@@ -38,6 +38,7 @@ if(err){
 };
 
 var createItemObject = function(files, cb){
+    console.log(files);
     console.log(files.image.name);
     var imageKey = 'firstbase-image-' + guid.raw();
 
@@ -61,7 +62,8 @@ var createItemObject = function(files, cb){
 
 var upload = function(req, res){
     var form = new formidable.IncomingForm();
-    console.log(guid.raw());
+    //console.log(guid.raw());
+    console.log(" body catch : " + req.body);
 
     form.parse(req, function(err, fields, files){
         if(err)
@@ -164,7 +166,7 @@ var retrieveIconAllFromDirectory = function(req, res){
                 value: iconUrl});
     });
 
-    res.status(200)
+    return res.status(200)
         .json({code:1,
             message:"success to load all icon",
             length:iconUrls.length,

@@ -50,17 +50,6 @@
             var $msgForm = $('#msgForm');
             var msg = $msgForm.val();
 
-
-            msg = msg.replace('script', '고마해라 마이묵었다');
-            msg = msg.replace('<', ' ');
-            msg = msg.replace('>', ' ');
-            msg = msg.replace('{', ' ');
-            msg = msg.replace('}', ' ');
-            msg = msg.replace('$', ' ');
-            msg = msg.replace('null', '널');
-
-            console.log(msg);
-
             socket.emit('chat', {msg: msg});
             $msgForm.val("");
         });

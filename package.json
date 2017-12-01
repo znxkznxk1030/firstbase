@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "JSON": "^1.0.0",
+    "Promise": "^1.0.5",
     "async": "^2.5.0",
     "aws-cli": "0.0.1",
     "aws-sdk": "^2.143.0",
@@ -18,6 +19,8 @@
     "ejs": "~2.5.6",
     "express": "~4.15.2",
     "express-session": "^1.15.5",
+    "fcm-node": "^1.2.1",
+    "fcm-push": "^1.1.3",
     "forever": "^0.15.3",
     "formidable": "^1.1.1",
     "guid": "0.0.12",
@@ -43,6 +46,7 @@
     "swagger-ui": "^3.3.0",
     "underscore": "^1.8.3",
     "uuid": "^3.1.0",
-    "webpack": "^3.6.0"
+    "webpack": "^3.6.0",
+    "xss": "^0.3.4"
   }
 }
