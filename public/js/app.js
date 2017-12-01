@@ -69,11 +69,15 @@ $(document).ready(function(){
 
 });
 
-$(document).on('click', '#load-area', function(){
-    $("#load-area").animate({opacity: "0"}, 1200, function () {
-        $("#load-area").remove();
-    });
+$(window).on('load', function () {
+    $('#loading').remove();
 });
+//
+// $(document).on('click', '#load-area', function(){
+//     $("#load-area").animate({opacity: "0"}, 1200, function () {
+//         $("#load-area").remove();
+//     });
+// });
 
 //
 //
@@ -148,9 +152,40 @@ $(document).on('mouseup', '.write-icons img', function(e){  //document라서 중
 
 });
 
+var writeImages = [];
+var writeCoord;
+
+$(document).on('click', '#wbo', writeComplete);
+
+function writeComplete() {
+    var title = $("#write-title").text();
+    var icon_url = $("#write-div-icon img").attr("src");
+    var content = $("#write-content").val();
+    var imageKey = writeImages;
+    var latitude = writeCoord.latitude;
+    var longitude = writeCoord.longitude;
+    var ajaxData = {
+        title : title,
+        icon_url : icon_url,
+        content : content,
+        imageKey : imageKey,
+        latitude : latitude,
+        longitude : longitude
+    }
+    $.ajax({
+        type: 'POST',
+        data: ajaxData,
+        url: baseUrl+'/footprint/create',
+        success: function(data) {
+            console.log(data);
+            cancel($('#writePage'));
+        }
+    });
+}
 
 function writeHere(coord, imgUrl) {
     ActivateWriteHere = false;
+    writeCoord = coord;
     $('#write-change').html("");
     var markerOptions = {
         position: new naver.maps.LatLng(coord.y, coord.x),
@@ -179,7 +214,7 @@ function writeHere(coord, imgUrl) {
     write_form+= '</div>';
 
     write_form+= '<div id="write-mid-div">';
-    write_form+= '<div id="write-text-form"><textarea name="content" id="content" class="form-control" placeholder="내용" wrap="hard"></textarea></div>';
+    write_form+= '<div id="write-text-form"><textarea name="content" id="write-content" class="form-control" placeholder="내용" wrap="hard"></textarea></div>';
     write_form+= '<div id="write-add-img"><input type="file" id="write-img" accept="image/*" multiple/><label for="write-img"><img src="/img/layout/add-img.png">사진 첨부하기</label></div>';
     write_form+= '</div>';
 
@@ -222,10 +257,10 @@ function writeHere(coord, imgUrl) {
     // });
 }
 
-    //글 작성 페이지 완성
+//글 작성 페이지 완성
 
 
-    // <div class='footprint-new'>
+// <div class='footprint-new'>
 //         <form action="/footprint/create" method="post" enctype="application/json">
 //         <h2>닉네임: <%= user.displayName %></h2>
 //         <div>
@@ -258,34 +293,29 @@ function writeHere(coord, imgUrl) {
 //     </div>
 
 
-    //완료 버튼 클릭시 함수 작성
+//완료 버튼 클릭시 함수 작성
 
-    //완료 버튼 클릭시 marker 삭제 후 title 넣어서 재생성 & markers에 넣기
+//완료 버튼 클릭시 marker 삭제 후 title 넣어서 재생성 & markers에 넣기
 
-    // var marker = new naver.maps.Marker({
-    //     map: map,
-    //     position: new naver.maps.LatLng(latitude, longitude),
-    //     icon: {
-    //         url: iconUrl,
-    //         size: new naver.maps.Size(30, 30),
-    //         scaledSize: new naver.maps.Size(30, 30),
-    //         origin: new naver.maps.Point(0, 0),
-    //         anchor: new naver.maps.Point(15, 15)
-    //     },
-    //     title: o.footprint_id
-    // });
-    // markers.push(marker);
+// var marker = new naver.maps.Marker({
+//     map: map,
+//     position: new naver.maps.LatLng(latitude, longitude),
+//     icon: {
+//         url: iconUrl,
+//         size: new naver.maps.Size(30, 30),
+//         scaledSize: new naver.maps.Size(30, 30),
+//         origin: new naver.maps.Point(0, 0),
+//         anchor: new naver.maps.Point(15, 15)
+//     },
+//     title: o.footprint_id
+// });
+// markers.push(marker);
 
-    //
-    // $("#contents-area .footprint-new #icon_url").val('/img/layout/travel.png');
-    // $("#contents-area .footprint-new #latitude").val(here.x);
-    // $("#contents-area .footprint-new #longitude").val(here.y);
+//
+// $("#contents-area .footprint-new #icon_url").val('/img/layout/travel.png');
+// $("#contents-area .footprint-new #latitude").val(here.x);
+// $("#contents-area .footprint-new #longitude").val(here.y);
 
-
-
-function completeWrite() {
-    
-}
 
 function makeMarkers(data) {
     if (data.length > 0) {
@@ -376,7 +406,7 @@ function makePage(data) {
                 });
                 $content_img = $('<div class="content-img"></div>').appendTo($content);
                 $('<div class="content-title"></div>').text(o.title).appendTo($content);
-                $('<div class="content-author"></div>').text("api수정").appendTo($content);
+                $('<div class="content-author"></div>').text(o.displayName).appendTo($content);
                 $('<div class="content-date"></div>').text(o.modified_date.substring(5,10)).appendTo($content);
                 $('<div class="content-hits"></div>').text(o.view_count).appendTo($content);
 
@@ -431,7 +461,7 @@ function renderPage(data) {
                 });
                 $content_img = $('<div class="content-img"></div>').appendTo($content);
                 $('<div class="content-title"></div>').text(o.title).appendTo($content);
-                $('<div class="content-author"></div>').text("api수정").appendTo($content);
+                $('<div class="content-author"></div>').text(o.displayName).appendTo($content);
                 $('<div class="content-date"></div>').text(o.modified_date.substring(5,10)).appendTo($content);
                 $('<div class="content-hits"></div>').text(o.view_count).appendTo($content);
 
@@ -590,62 +620,71 @@ if( (a>x) && (b>y) ){
 
 
 function popUp(data) {
-    $("#popUp").modal()
+    $.ajax({
+        type: 'GET',
+        data: '',
+        url: baseUrl+'/post/ajax',
+        success: function(data) {
+            console.log("dsafdsaf");
+            console.log(data);
+        }
+    });
 
+    $("#popUp").modal()
+    history.pushState(null,null,'http://localhost:8080/post?id='+data.footprint_id);
 
     // $("#popUp").css("display", "flex");
     // $("#popUp").data("change", "true");
 
-    $("#popUp").find($(".change")).text("");
+    // $("#popUp").find($(".change")).text("");
+    //
+    // var icon_key = data.icon_key;
+    // var $icon;
+    // $.each( allIcon, function( key, value ) {
+    //     if(key == icon_key){
+    //         $icon = '<img src='+value+'>';
+    //     }
+    // });
+    // $($icon).appendTo($("#detail-icon"));
+    // console.log(data);
+    // console.log(data.image);
+    // $("#detail-title").text(data.title);
+    // $("#detail-id").text(o.displayName);
+    // $("#detail-modified_date").text(data.modified_date.substring(2,10));
+    // $("#detail-title-plus-left-bot").text("조회수: "+data.view_count +"    댓글수: "+data.countComments);
+    // $("#detail-image").text(data.image);
+    // $("#detail-content").text(data.content);
+    // $("#detail-cmt-count").text(data.commentCount);
+    // $.ajax({
+    //     type: 'GET',
+    //     data: {footprintId : data.footprint_id},
+    //     url: baseUrl+'/footprint/detail',
+    //     success: function(data) {
+    //         console.log(data);
+    //         console.log(data.imageUrls);
+    //         console.log(data.imageUrls[i]);
+    //         var $img;
+    //         for(i=0;i<data.imageUrls.length;i++){
+    //             $img = '<img src='+data.imageUrls[i]+'>';
+    //             $($img).appendTo($("#detail-images"));
+    //         }
+    //     }
+    // });
+    // var sideMap = new naver.maps.Map('sideMap', {
+    //     center: map.center, //지도의 초기 중심 좌표
+    //     zoom: 10, //지도의 초기 줌 레벨
+    //     minZoom: 2, //지도의 최소 줌 레벨 //축소
+    //     maxZoom: 14, //확대
+    //     zoomControl: true, //줌 컨트롤의 표시 여부
+    //     zoomControlOptions: { //줌 컨트롤의 옵션
+    //         style: naver.maps.ZoomControlStyle.SMALL, // 바가 아니라 확대 축소로.
+    //         position: naver.maps.Position.RIGHT_CENTER
+    //     },
+    //     logoControl: false, //네이버 로고 삭제
+    //     scaleControl: false, //거리 단위 표시 삭제
+    //     mapDataControl: false, //네이버 Corp. 삭제
+    // });
 
-    var icon_key = data.icon_key;
-    var $icon;
-    $.each( allIcon, function( key, value ) {
-        if(key == icon_key){
-            $icon = '<img src='+value+'>';
-        }
-    });
-    $($icon).appendTo($("#detail-icon"));
-    console.log(data);
-    console.log(data.image);
-    $("#detail-title").text(data.title);
-    $("#detail-id").text("API수정");
-    $("#detail-modified_date").text(data.modified_date.substring(2,10));
-    $("#detail-title-plus-left-bot").text("조회수: "+data.view_count +"    댓글수: "+data.countComments);
-    $("#detail-image").text(data.image);
-    $("#detail-content").text(data.content);
-    $("#detail-cmt-count").text(data.commentCount);
-    $.ajax({
-        type: 'GET',
-        data: {footprintId : data.footprint_id},
-        url: baseUrl+'/footprint/detail',
-        success: function(data) {
-            console.log(data);
-            console.log(data.imageUrls);
-            console.log(data.imageUrls[i]);
-            var $img;
-            for(i=0;i<data.imageUrls.length;i++){
-                $img = '<img src='+data.imageUrls[i]+'>';
-                $($img).appendTo($("#detail-images"));
-            }
-        }
-    });
-    history.pushState(null,null,'footprint/detail?id=1');
-    var sideMap = new naver.maps.Map('sideMap', {
-        center: map.center, //지도의 초기 중심 좌표
-        zoom: 10, //지도의 초기 줌 레벨
-        minZoom: 2, //지도의 최소 줌 레벨 //축소
-        maxZoom: 14, //확대
-        zoomControl: true, //줌 컨트롤의 표시 여부
-        zoomControlOptions: { //줌 컨트롤의 옵션
-            style: naver.maps.ZoomControlStyle.SMALL, // 바가 아니라 확대 축소로.
-            position: naver.maps.Position.RIGHT_CENTER
-        },
-        logoControl: false, //네이버 로고 삭제
-        scaleControl: false, //거리 단위 표시 삭제
-        mapDataControl: false, //네이버 Corp. 삭제
-    });
-    // $("#popUp").animate({left: "65vw"});
 }
 
 function cancel(page){
@@ -681,20 +720,40 @@ $(document).on('change', '#write-img', handleImgFileSelect);
 function handleImgFileSelect(e) {
     var files = e.target.files;
     var filesArr = Array.prototype.slice.call(files);
-
     filesArr.forEach(function(f) {
         if(!f.type.match("image.*")) {
             alert("확장자는 이미지 확장자만 가능합니다.");
             return false;
         }else {
-
             var reader = new FileReader();
+            reader.readAsDataURL(f);
             reader.onload = function(e) {
                 var img_html = "<img src=\"" + e.target.result + "\" />";
                 $("#write-images").append(img_html);
+                var formData = new FormData();
+                formData.append('files', f.value);
             }
-            reader.readAsDataURL(f);
+            var formData = new FormData();
+            formData.append('image', f);
+            $.ajax({
+                type: 'POST',
+                data: formData,
+                url: baseUrl+'/files/upload',
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    console.log(data);
+                    writeImages[writeImages.length] = data.imageKey;
+                }
+            });
         }
-
     });
 }
+
+function hideModal() {
+    $('#popUp').modal('hide');
+}
+
+$('#popUp').on('hidden.bs.modal', function (e) {
+    history.pushState(null,null,'http://localhost:8080/');
+})

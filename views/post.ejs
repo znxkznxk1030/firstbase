@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>FirstBase</title>
+
+        <!-- stylesheet -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/post.css">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/icomoon.css">
+        <link rel="shortcut icon" href="/fb_favicon.ico">
+
+        <!-- javascript -->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.js"
+                integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+                crossorigin="anonymous"></script>
+        <script type="text/javascript"
+                src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+                integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+                crossorigin="anonymous"></script>
+        <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=N4U9SJyL2gHum0hz1FK4"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="/js/underscore-min.js"></script>
+
+    </head>
+    <body>
+        <div id="loading"><div id="loader"></div></div>
+        <div id="main">
+            <div id="nav-area">
+                <div id="top-left-area">
+                    <div id="logo-img">
+                        <a href="/"><img src="/img/layout/logo.png"></a>
+                    </div>
+                    <div id="logo-img-letter">
+                        <a id="brand" href="#"><img src="/img/layout/logo-letter.png"></a>
+                    </div>
+                </div>
+                <div id="top-right-area">
+                    <div id="login-register-button">
+                        <button type="button" class="btn" data-toggle="modal" data-target="#footprint-detail">로그인</button>
+                    </div>
+                </div>
+            </div>
+            <div id="detail-area">
+                <% include detail.ejs %>
+            </div>
+        </div>
+        <script type="text/javascript" src="/js/post.js" defer></script>
+    </body>
+</html>
