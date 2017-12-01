@@ -26,6 +26,12 @@ router.post('/delete', auth.authMiddleware, controller.deleteFootprintByFootprin
  * view render functions
  */
 router.get('/new', auth.authMiddleware, function (req, res) {
+
+    console.log(req.user.id);
+    console.log(req.user.displayName);
+    console.log(req.user.provider);
+
+
     res.render('footprint/new', {
         user: req.user
     });
