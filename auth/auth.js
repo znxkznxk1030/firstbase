@@ -55,11 +55,6 @@ var findOneMiddleware = function (req, res, next) {
 var authMiddleware = function authMiddleware(req, res, next) {
     var token = req.cookies.jwt;
 
-    if(req.user){
-        console.log(req.user);
-        next();
-    }
-
     /**
      * verify token
      */
@@ -87,11 +82,6 @@ var authMiddleware = function authMiddleware(req, res, next) {
 
 var passMiddleware = function passMiddleware(req, res, next) {
     var token = req.cookies.jwt;
-
-    if(req.user){
-        console.log('social user info : ' + req.user);
-        next();
-    }
 
     if (!token) {
         jwt.verify(token, SECRET, function (err, decoded) {
