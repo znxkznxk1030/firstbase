@@ -405,7 +405,8 @@ var createFootprint = function (req, res) {
         "INSERT INTO footprint (id, title, icon_key, content, latitude, longitude, type) "
         + " VALUES (?, ?, ?, ?, ?, ?, ?)";
     const sqlCreateFootprintWithoutAuth =
-        "INSERT INTO footprint (title, displayName, password, content, latitude, longitude, type)";
+        "INSERT INTO footprint (title, displayName, password, content, latitude, longitude, type) " +
+        "VALUES (?, ?, ?, ?, ?, ?, ?)";
     const sqlInsertImage =
         "INSERT INTO image (footprint_id, image_key) " +
         "VALUES (?, ?) ";
@@ -419,6 +420,7 @@ var createFootprint = function (req, res) {
                 connection.query(sqlCreateFootprintWithAuth, [userId, title, iconKey, content, latitude, longitude, type],
                     function (err, result) {
                         if (err || !result) {
+                            console.log(err);
                             return cb(true);
                         }
                         else return cb(null, result.insertId);
