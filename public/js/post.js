@@ -67,7 +67,7 @@ $(document).ready(function(){
 
     var Bounds = map2.getBounds();
     getMarkers(Bounds);
-    naver.maps.Event.addListener(map, 'bounds_changed', function(bounds) {
+    naver.maps.Event.addListener(map2, 'bounds_changed', function(bounds) {
         getMarkers(bounds);
     });
 
@@ -122,7 +122,7 @@ function makeMarkers(data) {
             });
 
             var marker = new naver.maps.Marker({
-                map: map,
+                map: map2,
                 position: new naver.maps.LatLng(latitude, longitude),
                 icon: {
                     url: iconUrl,

@@ -1,4 +1,3 @@
-
 var baseUrl = "http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:8080";
 
 var mapWidth = $("#map").outerWidth();
@@ -6,12 +5,12 @@ var mapHeight = $("#map").outerHeight();
 var allIcon = {};
 var socket = io();
 
-$(window).resize(function() {
+$(window).resize(function () {
     mapWidth = $("#map").outerWidth();
     mapHeight = $("#map").outerHeight();
-    $("#add-button").css("margin-left",mapWidth-70);
-    $("#add-button").css("margin-top",mapHeight-70);
-    $("#radar-button").css("margin-left",mapWidth-38);
+    $("#add-button").css("margin-left", mapWidth - 70);
+    $("#add-button").css("margin-top", mapHeight - 70);
+    $("#radar-button").css("margin-left", mapWidth - 38);
 });
 
 //지도 생성시에 옵션을 지정할 수 있습니다.
@@ -36,13 +35,13 @@ map.setOptions("minZoom", 2);
 var markers = [];
 var contentsData;
 
-$(document).ready(function(){
+$(document).ready(function () {
 
     $.ajax({
         type: 'GET',
         data: "",
-        url: baseUrl+'/files/retrieveIconAll',
-        success: function(data) {
+        url: baseUrl + '/files/retrieveIconAll',
+        success: function (data) {
             saveIcons(data);
         }
     });
@@ -50,20 +49,20 @@ $(document).ready(function(){
     $.ajax({
         type: 'GET',
         data: "",
-        url: baseUrl+'/footprint/list/',
-        success: function(data) {
+        url: baseUrl + '/footprint/list/',
+        success: function (data) {
             makePage(data);
             contentsData = data;
         }
     });
 
-    $("#add-button").css("margin-left",mapWidth-70);
-    $("#add-button").css("margin-top",mapHeight-70);
-    $("#radar-button").css("margin-left",mapWidth-38);
+    $("#add-button").css("margin-left", mapWidth - 70);
+    $("#add-button").css("margin-top", mapHeight - 70);
+    $("#radar-button").css("margin-left", mapWidth - 38);
 
     var Bounds = map.getBounds();
     getMarkers(Bounds);
-    naver.maps.Event.addListener(map, 'bounds_changed', function(bounds) {
+    naver.maps.Event.addListener(map, 'bounds_changed', function (bounds) {
         getMarkers(bounds);
     });
 
@@ -85,23 +84,23 @@ var temp_Markers = [];
 var marker_temp;
 var ActivateWriteHere = false;
 
-$(document).on('mousedown', '.write-icons img', function(){
+$(document).on('mousedown', '.write-icons img', function () {
     /* lock icon in map. user could drag icon only in map */
     // ActivateWriteHere = true;
 
-    if(temp_Markers.length > 0){
+    if (temp_Markers.length > 0) {
         marker_temp.setMap(null);
     }
 
     var imgUrl = $(this).attr('src');
 
-    var writeListener = naver.maps.Event.addListener(map, 'mousemove', function(e) {
+    var writeListener = naver.maps.Event.addListener(map, 'mousemove', function (e) {
 
-        if(ActivateWriteHere == true && e.coord != undefined){
+        if (ActivateWriteHere == true && e.coord != undefined) {
             writeHere(e.coord, imgUrl);
             naver.maps.Event.removeListener(writeListener);
         }
-        else{
+        else {
             console.log("???");
             return;
         }
@@ -116,7 +115,7 @@ $(document).on('mousedown', '.write-icons img', function(){
 // });
 
 //$(".write-icon img").mouseup(function(e){                 //아직 아이콘 생성 안돼서 불가능.
-$(document).on('mouseup', '.write-icons img', function(e){  //document라서 중간에 아이콘 생성돼도 가능.
+$(document).on('mouseup', '.write-icons img', function (e) {  //document라서 중간에 아이콘 생성돼도 가능.
 
     // for(i = 0; i<temp_Markers.length; i++){
     //     // temp_Markers[i]
@@ -127,7 +126,7 @@ $(document).on('mouseup', '.write-icons img', function(e){  //document라서 중
     var mapX = $("#map").offset().left;
     var mapY = $("#map").offset().top;
 
-    if( mapX < x && x < mapX+mapWidth && mapY < y && y < mapY+mapHeight ){
+    if (mapX < x && x < mapX + mapWidth && mapY < y && y < mapY + mapHeight) {
         $('#write-change').html("");
         ActivateWriteHere = true;
 
@@ -165,18 +164,18 @@ function writeComplete() {
     var latitude = writeCoord.latitude;
     var longitude = writeCoord.longitude;
     var ajaxData = {
-        title : title,
-        icon_url : icon_url,
-        content : content,
-        imageKey : imageKey,
-        latitude : latitude,
-        longitude : longitude
+        title: title,
+        icon_url: icon_url,
+        content: content,
+        imageKey: imageKey,
+        latitude: latitude,
+        longitude: longitude
     }
     $.ajax({
         type: 'POST',
         data: ajaxData,
-        url: baseUrl+'/footprint/create',
-        success: function(data) {
+        url: baseUrl + '/footprint/create',
+        success: function (data) {
             console.log(data);
             cancel($('#writePage'));
         }
@@ -203,31 +202,29 @@ function writeHere(coord, imgUrl) {
 
     var write_form = '';
 
-    write_form+= '<form action="/footprint/create" method="post" enctype="application/json">';
+    write_form += '<form action="/footprint/create" method="post" enctype="application/json">';
 
-    write_form+= '<div id="write-top-div">';
-    write_form+= '<div id="write-div-icon"><img src='+ imgUrl +'></div>';
-    write_form+= '<div id="write-title"><input type="text" class="form-control" name="title" id="title" placeholder="제목"/></div>';
-    write_form+= '</div>';
+    write_form += '<div id="write-top-div">';
+    write_form += '<div id="write-div-icon"><img src=' + imgUrl + '></div>';
+    write_form += '<div id="write-title"><input type="text" class="form-control" name="title" id="title" placeholder="제목"/></div>';
+    write_form += '</div>';
 
-    write_form+= '<div id="write-images">';
-    write_form+= '</div>';
+    write_form += '<div id="write-images">';
+    write_form += '</div>';
 
-    write_form+= '<div id="write-mid-div">';
-    write_form+= '<div id="write-text-form"><textarea name="content" id="write-content" class="form-control" placeholder="내용" wrap="hard"></textarea></div>';
-    write_form+= '<div id="write-add-img"><input type="file" id="write-img" accept="image/*" multiple/><label for="write-img"><img src="/img/layout/add-img.png">사진 첨부하기</label></div>';
-    write_form+= '</div>';
+    write_form += '<div id="write-mid-div">';
+    write_form += '<div id="write-text-form"><textarea name="content" id="write-content" class="form-control" placeholder="내용" wrap="hard"></textarea></div>';
+    write_form += '<div id="write-add-img"><input type="file" id="write-img" accept="image/*" multiple/><label for="write-img"><img src="/img/layout/add-img.png">사진 첨부하기</label></div>';
+    write_form += '</div>';
 
-    write_form+= '<div id="write-bot-div">';
-    write_form+= '<button type="button" class="btn" id = "wbx" onclick="cancel($(\'#writePage\'));">취소</button>';
-    write_form+= '<button type="submit" class="btn" id = "wbo">작성완료</button>';
-    write_form+= '</div>'
+    write_form += '<div id="write-bot-div">';
+    write_form += '<button type="button" class="btn" id = "wbx" onclick="cancel($(\'#writePage\'));">취소</button>';
+    write_form += '<button type="submit" class="btn" id = "wbo">작성완료</button>';
+    write_form += '</div>'
 
-    write_form+= '</form>';
+    write_form += '</form>';
 
     $('#write-change').html(write_form);
-
-
 
 
     // $write_bot_div = $('<div id="write-bot-div"></div>');
@@ -349,14 +346,14 @@ function makeMarkers(data) {
         }
 
         function getClickHandler(seq) {
-            return function() {
+            return function () {
                 var id = markers[seq].getTitle();
                 $.each(contentsData, function (index, item) {
                     $.each(item, function (key, value) {
                         if (key == 'footprint_id' && value == id) {
 
-                            if( $("#popUp").data("change") == "true" ){
-                                if( id == $("#popUp").data("save") ){
+                            if ($("#popUp").data("change") == "true") {
+                                if (id == $("#popUp").data("save")) {
                                     cancel($("#popUp"));
                                 }
                                 else {
@@ -374,7 +371,7 @@ function makeMarkers(data) {
             }
         }
 
-        for (var i=0, ii=markers.length; i<ii; i++) {
+        for (var i = 0, ii = markers.length; i < ii; i++) {
             naver.maps.Event.addListener(markers[i], 'click', getClickHandler(i));
         }
     }
@@ -385,10 +382,10 @@ function makePage(data) {
     var $list = $('<div id="content-wrapper"></div>').appendTo($('#contents'));
 
     //data[i] 또는 foreach(data)
-    if(data.length > 0) {
-        var fnAppendPage = function(start){
+    if (data.length > 0) {
+        var fnAppendPage = function (start) {
             $('#content-wrapper').html("");
-            var end = Math.min(data.length, start+10);
+            var end = Math.min(data.length, start + 10);
 
             <!-- 게시판 -->
             var $board = $('<div id="board"></div>').appendTo($list);
@@ -398,23 +395,23 @@ function makePage(data) {
             $('<div id="board-hits">조회수</div>').appendTo($board);
 
 
-            for(var i=start; i<end; i++) {
+            for (var i = start; i < end; i++) {
                 var o = data[i];
-                var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($list).click(function(){
+                var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($list).click(function () {
                     popUp($(this).data('data'));
                     $("#popUp").data("save", o.id);
                 });
                 $content_img = $('<div class="content-img"></div>').appendTo($content);
                 $('<div class="content-title"></div>').text(o.title).appendTo($content);
                 $('<div class="content-author"></div>').text(o.displayName).appendTo($content);
-                $('<div class="content-date"></div>').text(o.modified_date.substring(5,10)).appendTo($content);
+                $('<div class="content-date"></div>').text(o.modified_date.substring(5, 10)).appendTo($content);
                 $('<div class="content-hits"></div>').text(o.view_count).appendTo($content);
 
                 var icon_key = o.icon_key;
                 var $icon;
-                $.each( allIcon, function( key, value ) {
-                    if(key == icon_key){
-                        $icon = '<img src='+value+'>';
+                $.each(allIcon, function (key, value) {
+                    if (key == icon_key) {
+                        $icon = '<img src=' + value + '>';
                     }
                 });
                 $($icon).prependTo($content_img);
@@ -425,11 +422,11 @@ function makePage(data) {
         };
 
         var $page = $('<div id="contents-page"></div>').appendTo($('#contents'));
-        console.log("asdfas"+data.length);
+        console.log("asdfas" + data.length);
         console.log(data);
         var pageCnt = data.length / 10;
-        for(i=0; i<pageCnt; i++) {
-            $('<span class="page"></span>').data('page', i).text(i+1).appendTo($page).click(function(){
+        for (i = 0; i < pageCnt; i++) {
+            $('<span class="page"></span>').data('page', i).text(i + 1).appendTo($page).click(function () {
                 var pageIdx = $(this).data('page');
                 fnAppendPage(pageIdx * 10);
             });
@@ -440,11 +437,11 @@ function makePage(data) {
 }
 
 function renderPage(data) {
-    if(data.length > 0) {
+    if (data.length > 0) {
         $('#contents-page').html("");
-        var fnAppendPage = function(start){
+        var fnAppendPage = function (start) {
             $('#content-wrapper').html("");
-            var end = Math.min(data.length, start+10);
+            var end = Math.min(data.length, start + 10);
 
             <!-- 게시판 -->
             var $board = $('<div id="board"></div>').appendTo($("#content-wrapper"));
@@ -453,23 +450,23 @@ function renderPage(data) {
             $('<div id="board-date">날짜</div>').appendTo($board);
             $('<div id="board-hits">조회수</div>').appendTo($board);
 
-            for(var i=start; i<end; i++) {
+            for (var i = start; i < end; i++) {
                 var o = data[i];
-                var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($("#content-wrapper")).click(function(){
+                var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($("#content-wrapper")).click(function () {
                     popUp($(this).data('data'));
                     $("#popUp").data("save", o.id);
                 });
                 $content_img = $('<div class="content-img"></div>').appendTo($content);
                 $('<div class="content-title"></div>').text(o.title).appendTo($content);
                 $('<div class="content-author"></div>').text(o.displayName).appendTo($content);
-                $('<div class="content-date"></div>').text(o.modified_date.substring(5,10)).appendTo($content);
+                $('<div class="content-date"></div>').text(o.modified_date.substring(5, 10)).appendTo($content);
                 $('<div class="content-hits"></div>').text(o.view_count).appendTo($content);
 
                 var icon_key = o.icon_key;
                 var $icon;
-                $.each( allIcon, function( key, value ) {
-                    if(key == icon_key){
-                        $icon = '<img src='+value+'>';
+                $.each(allIcon, function (key, value) {
+                    if (key == icon_key) {
+                        $icon = '<img src=' + value + '>';
                     }
                 });
                 $($icon).prependTo($content_img);
@@ -480,8 +477,8 @@ function renderPage(data) {
         };
 
         var pageCnt = data.length / 10;
-        for(i=0; i<pageCnt; i++) {
-            $('<span class="page"></span>').data('page', i).text(i+1).appendTo($("#contents-page")).click(function(){
+        for (i = 0; i < pageCnt; i++) {
+            $('<span class="page"></span>').data('page', i).text(i + 1).appendTo($("#contents-page")).click(function () {
                 var pageIdx = $(this).data('page');
                 fnAppendPage(pageIdx * 10);
             });
@@ -493,8 +490,7 @@ function renderPage(data) {
 
 function getMarkers(Bounds) {
 
-    var pickBounds = _.pick(Bounds,"_min","_max");
-
+    var pickBounds = _.pick(Bounds, "_min", "_max");
 
     var startlat = pickBounds._min._lat;
     var startlng = pickBounds._min._lng;
@@ -502,17 +498,17 @@ function getMarkers(Bounds) {
     var endlng = pickBounds._max._lng;
 
     var ajaxData = {
-        startlat : endlat,
-        startlng : startlng,
-        endlat : startlat,
-        endlng : endlng
+        startlat: endlat,
+        startlng: startlng,
+        endlat: startlat,
+        endlng: endlng
     };
 
     $.ajax({
         type: 'GET',
         data: ajaxData,
-        url: baseUrl+'/footprint/listbylocation/',
-        success: function(data) {
+        url: baseUrl + '/footprint/listbylocation/',
+        success: function (data) {
             renderPage(data);
             contentsData = data;
         }
@@ -530,13 +526,13 @@ function write_button_click() {
     var $write_icons;
     var $icon;
     var tempMax = 0;
-    $.each(allIcon, function( key, value ) {
+    $.each(allIcon, function (key, value) {
         $write_icons = $('<div class="write-icons"></div>');
-        $write_icons.appendTo( $('#write-change') );
-        $icon = $('<img src='+value+'>');
+        $write_icons.appendTo($('#write-change'));
+        $icon = $('<img src=' + value + '>');
         $icon.appendTo($write_icons);
         tempMax++;
-        if(tempMax == 10){
+        if (tempMax == 10) {
             return false;
         }
     });
@@ -554,7 +550,7 @@ function write_button_click() {
 
     $("#map").droppable({
         accept: ".write-icon img",
-        drop: function( event, ui ) {
+        drop: function (event, ui) {
 
         }
     });
@@ -620,18 +616,221 @@ if( (a>x) && (b>y) ){
 
 
 function popUp(data) {
+    console.log("이거 검토");
+    console.log(data);
+    var allIcon = {};
+    var markers = [];
+    var contentsData;
+
     $.ajax({
         type: 'GET',
-        data: '',
-        url: baseUrl+'/post/ajax',
-        success: function(data) {
-            console.log("dsafdsaf");
-            console.log(data);
+        data: "",
+        url: baseUrl + '/files/retrieveIconAll',
+        success: function (data) {
+            saveIcons(data);
         }
     });
 
-    $("#popUp").modal()
-    history.pushState(null,null,'http://localhost:8080/post?id='+data.footprint_id);
+    function saveIcons(data) {
+        var o = data.iconUrls;
+        for (i = 0; i < o.length; i++) {
+            var key = o[i].key;
+            var value = o[i].value;
+            allIcon[key] = value;
+        }
+        console.log(allIcon);
+    }
+
+    $.ajax({
+        type: 'GET',
+        data: '',
+        url: baseUrl + '/post/ajax',
+        success: function (htmlData) {
+            $("#detail-area").html(htmlData);
+        },
+        complete: function () {
+            history.pushState(null, null, 'http://localhost:8080/post?id=' + data.footprint_id);
+
+            var param = window.location.href.split('id=')[1];
+            console.log("param:" + param);
+            var ajaxData = {
+                footprintId: param
+            };
+
+            $.ajax({
+                type: 'GET',
+                data: ajaxData,
+                url: baseUrl + '/footprint/detail/',
+                success: function (data) {
+                    console.log("바로 밑");
+                    console.log(data);
+                    fillDetail(data);
+                },
+                error: function (error) {
+                    alert("잘못된 주소입니다.");
+                    //location.href = baseUrl;
+                }
+            });
+
+            var map2 = new naver.maps.Map('detail-map', {
+                size: new naver.maps.Size($(window).width()*0.9-20, 280),
+                center: new naver.maps.LatLng(data.latitude, data.longitude), //지도의 초기 중심 좌표
+                zoom: 10, //지도의 초기 줌 레벨
+                minZoom: 2, //지도의 최소 줌 레벨 //축소
+                maxZoom: 14, //확대
+                zoomControl: true, //줌 컨트롤의 표시 여부
+                zoomControlOptions: { //줌 컨트롤의 옵션
+                    style: naver.maps.ZoomControlStyle.SMALL, // 바가 아니라 확대 축소로.
+                    position: naver.maps.Position.RIGHT_CENTER
+                },
+                logoControl: false, //네이버 로고 삭제
+                scaleControl: false, //거리 단위 표시 삭제
+                mapDataControl: false, //네이버 Corp. 삭제
+            });
+
+            //setOptions 메서드를 통해 옵션을 조정할 수도 있습니다.
+            map2.setOptions("minZoom", 2);
+
+            var Bounds = map2.getBounds();
+            getMarkers(Bounds);
+            naver.maps.Event.addListener(map2, 'bounds_changed', function (bounds) {
+                getMarkers(bounds);
+            });
+
+            function getMarkers(Bounds) {
+
+                var pickBounds = _.pick(Bounds, "_min", "_max");
+
+                var startlat = pickBounds._min._lat;
+                var startlng = pickBounds._min._lng;
+                var endlat = pickBounds._max._lat;
+                var endlng = pickBounds._max._lng;
+
+                var ajaxData = {
+                    startlat: endlat,
+                    startlng: startlng,
+                    endlat: startlat,
+                    endlng: endlng
+                };
+
+                $.ajax({
+                    type: 'GET',
+                    data: ajaxData,
+                    url: baseUrl + '/footprint/listbylocation/',
+                    success: function (data) {
+                        contentsData = data;
+                        makeMarkers(data);
+                    }
+                });
+            }
+
+            function makeMarkers(data) {
+                if (data.length > 0) {
+                    for (var i = 0; i < data.length; i++) {
+                        var o = data[i];
+                        var latitude = o.latitude;
+                        var longitude = o.longitude;
+
+                        var icon_key = o.icon_key;
+                        var iconUrl = "";
+
+                        $.each(allIcon, function (key, value) {
+                            if (key == icon_key) {
+                                iconUrl = value;
+                            }
+                        });
+
+                        var marker = new naver.maps.Marker({
+                            map: map2,
+                            position: new naver.maps.LatLng(latitude, longitude),
+                            icon: {
+                                url: iconUrl,
+                                size: new naver.maps.Size(30, 30),
+                                scaledSize: new naver.maps.Size(30, 30),
+                                origin: new naver.maps.Point(0, 0),
+                                anchor: new naver.maps.Point(15, 15)
+                            },
+                            title: o.footprint_id
+                        });
+                        markers.push(marker);
+                    }
+
+                    function getClickHandler(seq) {
+                        return function () {
+                            var id = markers[seq].getTitle();
+                            $.ajax({
+                                type: 'GET',
+                                data: {footprintId: id},
+                                url: baseUrl + '/footprint/detail',
+                                success: function (data) {
+                                    fillDetail(data);
+                                },
+                                error: function (error) {
+                                    alert("죄송합니다. 에러가 발생했습니다.");
+                                    location.href = baseUrl;
+                                }
+                            });
+                        }
+                    }
+
+                    for (var i = 0, ii = markers.length; i < ii; i++) {
+                        naver.maps.Event.addListener(markers[i], 'click', getClickHandler(i));
+                    }
+                }
+            }
+
+            function fillDetail(data) {
+                var location = new naver.maps.LatLng(data.latitude, data.longitude);
+                map2.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.
+                map2.setZoom(10); // 지도의 줌 레벨을 변경합니다.
+                console.log("야호");
+                console.log(data);
+                $("#detail-icon").empty();
+                $("#detail-images").empty();
+                $("#detail-profileImg").empty();
+
+                var icon_key = data.icon_key;
+                var $icon;
+                $.each(allIcon, function (key, value) {
+                    if (key == icon_key) {
+                        $icon = '<img src=' + value + '>';
+                    }
+                });
+                $($icon).appendTo($("#detail-icon"));
+                $("#detail-title").text(data.title);
+                $("#detail-id").text(data.displayName);
+                $detailDate = '' + data.modified_date.substring(2, 10) + ' ' + data.modified_date.substring(11, 16);
+                $("#detail-modified_date").text($detailDate);
+                $("#detail-countView span").html('&nbsp;' + data.countView);
+                $("#detail-countComments span").html('&nbsp;' + data.countComments);
+
+                for (i = 0; i < data.imageUrls.length; i++) {
+                    $img = '<img src=' + data.imageUrls[i] + '>';
+                    $($img).appendTo($("#detail-images"));
+                }
+
+                $("#detail-content").text(data.content);
+                $("#detail-like-count").text(data.countLike);
+                $("#detail-dislike-count").text(data.countDisLike);
+
+                $profileImg = '<img src=' + data.profileUrl + '>';
+                // $($profileImg).appendTo($("#detail-profileImg"));
+
+                $("#detail-profileImg").css("background-image", 'url(' + data.profileUrl + ')');
+
+                $("#detail-cmt-count").text(data.countComments);
+
+                history.pushState(null, null, 'http://localhost:8080/post?id=' + data.footprint_id);
+            }
+            $("#popUp").modal();
+            $(window).resize(
+                function(){
+                    map2.setSize(new naver.maps.Size($(window).width()*0.9-20, 280));
+                    map2.setCenter(new naver.maps.LatLng(data.latitude, data.longitude));
+                }
+            );
+        }
+    });
 
     // $("#popUp").css("display", "flex");
     // $("#popUp").data("change", "true");
@@ -687,14 +886,14 @@ function popUp(data) {
 
 }
 
-function cancel(page){
+function cancel(page) {
     page.animate({left: "100vw"});
     page.data("change", "false");
 }
 
-function saveIcons(data){
+function saveIcons(data) {
     var o = data.iconUrls;
-    for(i = 0; i<o.length; i++){
+    for (i = 0; i < o.length; i++) {
         var key = o[i].key;
         var value = o[i].value;
         allIcon[key] = value;
@@ -703,7 +902,7 @@ function saveIcons(data){
 }
 
 //자기 위치 찾기 시작
-function search_position(){
+function search_position() {
     navigator.geolocation.getCurrentPosition(onSuccessGeolocation);
 }
 
@@ -720,14 +919,14 @@ $(document).on('change', '#write-img', handleImgFileSelect);
 function handleImgFileSelect(e) {
     var files = e.target.files;
     var filesArr = Array.prototype.slice.call(files);
-    filesArr.forEach(function(f) {
-        if(!f.type.match("image.*")) {
+    filesArr.forEach(function (f) {
+        if (!f.type.match("image.*")) {
             alert("확장자는 이미지 확장자만 가능합니다.");
             return false;
-        }else {
+        } else {
             var reader = new FileReader();
             reader.readAsDataURL(f);
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 var img_html = "<img src=\"" + e.target.result + "\" />";
                 $("#write-images").append(img_html);
                 var formData = new FormData();
@@ -738,10 +937,10 @@ function handleImgFileSelect(e) {
             $.ajax({
                 type: 'POST',
                 data: formData,
-                url: baseUrl+'/files/upload',
+                url: baseUrl + '/files/upload',
                 processData: false,
                 contentType: false,
-                success: function(data) {
+                success: function (data) {
                     console.log(data);
                     writeImages[writeImages.length] = data.imageKey;
                 }
@@ -755,5 +954,5 @@ function hideModal() {
 }
 
 $('#popUp').on('hidden.bs.modal', function (e) {
-    history.pushState(null,null,'http://localhost:8080/');
+    history.pushState(null, null, 'http://localhost:8080/index');
 })

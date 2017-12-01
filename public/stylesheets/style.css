@@ -1204,3 +1204,41 @@ body {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
+
+@media (min-width: 576px){
+    .modal-dialog {
+        max-width: 985px !important;
+        margin: auto !important;
+    }
+}
+
+.modal-dialog .modal-fullsize {
+    display: flex;
+    width: min(90vw, 985px) !important;
+    height: auto;
+    min-height: 90vh;
+    margin: 0;
+    margin-top: 5%;
+    padding: 0;
+    flex : 0 1 auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content .modal-fullsize {
+    display: flex;
+    width: 90vw;
+    height: auto;
+    min-height: 90vh;
+    border-radius: 0;
+    flex : 0 1 auto;
+    justify-content: center;
+    align-items: center;
+}
+
+#popUp{
+    padding: 5%;
+    flex : 0 1 auto;
+    justify-content: center;
+    align-items: center;
+}
