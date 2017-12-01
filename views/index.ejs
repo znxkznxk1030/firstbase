@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title><%= title %></title>
+    <title>FirstBase</title>
 
     <!-- stylesheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/post.css">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/icomoon.css">
     <link rel="shortcut icon" href="/fb_favicon.ico">
 
     <!-- javascript -->
@@ -28,7 +30,7 @@
 </head>
 
 <body>
-<div id = "load-area"></div>
+<div id="loading"><div id="loader"></div></div>
 <div id = "main">
     <div id = "nav-area">
         <div id = "top-left-area">
@@ -199,35 +201,42 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div id="detail-cancel" class="page-cancel">
-                <button type="button" class="close" onclick="cancel($('#popUp'));">&times;</button>
+                <button type="button" class="close" onclick="hideModal();">&times;</button>
             </div>
-            <div id ="detail-plus-menu">
-                <div id = "sideMap">
+            <div id="detail-area">
+                <div id="detail-map-area">
+                    <div id="detail-map"></div>
+                </div>
+                <div id="detail-content-area">
                 </div>
             </div>
-            <div id="detail-post">
-                <div id = "detail-top">
-                    <div id = "detail-icon" class="change"></div>
-                    <div id = "detail-top-right">
-                        <div id = "detail-title" class="change"></div>
-                        <div id = "detail-title-plus">
-                            <div id = "detail-title-plus-left">
-                                <div id = "detail-title-plus-left-top">
-                                    <div id = "detail-id" class="change"></div>
-                                    <div id = "detail-modified_date" class="change"></div>
-                                </div>
-                                <div id = "detail-title-plus-left-bot">
-                                </div>
-                            </div>
-                            <div id = "detail-title-plus-right">
-                                <button type="submit" class="btn" id = "detail-follow">팔로우</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id = "detail-images" class="change"></div>
-                <div id = "detail-content" class="change"></div>
-            </div>
+            <!--<div id ="detail-plus-menu">-->
+                <!--<div id = "sideMap">-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div id="detail-post">-->
+                <!--<div id = "detail-top">-->
+                    <!--<div id = "detail-icon" class="change"></div>-->
+                    <!--<div id = "detail-top-right">-->
+                        <!--<div id = "detail-title" class="change"></div>-->
+                        <!--<div id = "detail-title-plus">-->
+                            <!--<div id = "detail-title-plus-left">-->
+                                <!--<div id = "detail-title-plus-left-top">-->
+                                    <!--<div id = "detail-id" class="change"></div>-->
+                                    <!--<div id = "detail-modified_date" class="change"></div>-->
+                                <!--</div>-->
+                                <!--<div id = "detail-title-plus-left-bot">-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div id = "detail-title-plus-right">-->
+                                <!--<button type="submit" class="btn" id = "detail-follow">팔로우</button>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div id = "detail-images" class="change"></div>-->
+                <!--<div id = "detail-content" class="change"></div>-->
+            <!--</div>-->
         </div>
     </div>
 </div>
