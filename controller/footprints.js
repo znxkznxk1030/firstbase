@@ -15,6 +15,7 @@ var sendCreateFootprintFcmToFollowers = require("../fcm/fcm").sendCreateFootprin
 var sendFcm = require("../fcm/fcm").sendFcm;
 var getImageUrl = require("./files").getImageUrl;
 var retrieveByKey = require("./files").retrieveByKey;
+const profileDefaultKey = 'profiledefault.png';
 
 AWS.config.loadFromPath('s3config.json');
 
