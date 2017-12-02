@@ -32,7 +32,8 @@ const SQL_RETRIEVE_FOOTPRINT_BY_FOOTPRINT_ID =
     "LEFT JOIN link " +
     "ON footprint.footprint_id = link.linked_footprint_id " +
     "WHERE link.link_footprint_id = ? " +
-    "GROUP BY footprint_id";
+    "GROUP BY footprint_id " +
+    "ORDER BY link.rank";
 
 var Footprint = function(params){
 
