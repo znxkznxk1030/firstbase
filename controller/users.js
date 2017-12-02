@@ -580,7 +580,7 @@ var isDisplayNameVaild = function (displayName, oldDisplayName) {
     connection.query(sqlDisplayCheck, [displayName], function (err, result) {
         if (err) return '에러 났습니다';
 
-        if (result[0]) {
+        if (result.length > 0) {
             return '이미 존재하는 닉네임입니다';
         } else {
             return null;
