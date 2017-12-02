@@ -40,8 +40,8 @@ var route = function(app){
                                 //console.log(one);
 
                                 one = JSON.parse(JSON.stringify(one))[0];
-                                console.log(one);
-                                console.log(one.provider);
+                                console.log('debug# : ' + one);
+                                console.log('debug# : ' + one.provider);
 
                                 if(one.provider === profile.provider){
                                     return cb(true);
