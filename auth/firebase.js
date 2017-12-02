@@ -20,7 +20,7 @@ var route = function(app){
         admin.auth().verifyIdToken(loginToken)
             .then(function(decodedToken){
 
-                //decodedToken = JSON.parse(JSON.stringify(decodedToken));
+                decodedToken = JSON.parse(JSON.stringify(decodedToken));
 
                 const profile = {
                     id : decodedToken.email,
