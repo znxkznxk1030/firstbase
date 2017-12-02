@@ -180,6 +180,9 @@ function writeComplete() {
         success: function (data) {
             console.log(data);
             cancel($('#writePage'));
+        },
+        error: function (data) {
+            console.log(data);
         }
     });
 }
