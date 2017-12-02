@@ -36,6 +36,9 @@ var validateMarkerParams = function(req, res, next){
             return cb(null);
         },
         function(cb){
+
+        console.log(lat, lng);
+
             if(!lat) return cb(MSG_LATITUDE_EMPTY);
             if(!lng) return cb(MSG_LONGITUDE_EMPTY);
 
