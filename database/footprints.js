@@ -100,7 +100,7 @@ var Footprint = function(params){
         }
     };
     var imageLoad = function (footprint, cb) {
-        connection.query(SQL_IMAGE_LOAD, [footprintId],
+        connection.query(SQL_IMAGE_LOAD, [footprint.footprint_id],
             function (err, imageInfo) {
                 if (err) return cb(err);
 
