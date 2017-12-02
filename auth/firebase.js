@@ -23,7 +23,7 @@ var route = function (app) {
             });
         }
 
-        if (typeof data.displayname === 'undefined') {
+        if (typeof data.displayName === 'undefined') {
             return res.status(400).json({
                 code: -1,
                 message: '소셜 로그인 토큰이 유효하지 않습니다.'
