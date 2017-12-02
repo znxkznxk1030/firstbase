@@ -157,7 +157,7 @@ var writeCoord;
 $(document).on('click', '#wbo', writeComplete);
 
 function writeComplete() {
-    var title = $("#write-title").text();
+    var title = $("#write-title").val();
     var icon_url = $("#write-div-icon img").attr("src");
     var content = $("#write-content").val();
     var imageKey = writeImages;
