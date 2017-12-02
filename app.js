@@ -26,18 +26,10 @@ var config = require("./config");
 var http = require('http');
 
 
-//
-// var options = {
-//     host : config.host,
-//     key: fs.readFileSync('./server.key'),
-//     cert: fs.readFileSync('./server.crt'),
-//     agent: false
-// };
-
-
 // var https = require('https');
 
 var passport = require('./auth/index');
+var firebaseAuth = require('./auth/firebase');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -87,6 +79,7 @@ app.use('/swagger', function (req, res) {
 });
 
 passport.routes(app);
+firebaseAuth.route(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
