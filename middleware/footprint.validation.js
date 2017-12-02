@@ -11,8 +11,7 @@ const MSG_TITLE_EMPTY = '제목이 비어있습니다.',
     MSG_LATITUDE_NAN = 'latitude가 숫자가 아닙니다.',
     MSG_LONGITUDE_NAN = 'longitude가 숫자가 아닙니다.';
 
-var validateMarkerParams = function(req, res, next){
-    // todo : vaildate parameters
+var validateMarkerParams = function (req, res, next) {
 
     console.log(req.body);
 
@@ -21,36 +20,37 @@ var validateMarkerParams = function(req, res, next){
         lat = xss(req.body.latitude),
         lng = xss(req.body.longitude);
 
-    console.log(lat);
+    console.log("데이터가 어디로 사라졌을까1 : " + lat, lng);
 
     var task = [
         function (cb) {
-            if(!title || title.length <= 0) return cb(MSG_TITLE_EMPTY);
-            if(title.length > MAX_TITLE_LENGTH) return cb(MSG_TITLE_OVERFLOW);
+            console.log("데이터가 어디로 사라졌을까2 : " + lat, lng);
+            if (!title || title.length <= 0) return cb(MSG_TITLE_EMPTY);
+            if (title.length > MAX_TITLE_LENGTH) return cb(MSG_TITLE_OVERFLOW);
 
             return cb(null);
         },
         function (cb) {
-            if(content.length > MAX_CONTENT_LENGTH) return cb(MSG_CONTENT_OVERFLOW);
+            console.log("데이터가 어디로 사라졌을까3 : " + lat, lng);
+            if (content.length > MAX_CONTENT_LENGTH) return cb(MSG_CONTENT_OVERFLOW);
 
             return cb(null);
         },
-        function(cb){
+        function (cb) {
+            console.log("데이터가 어디로 사라졌을까4 : " + lat, lng);
 
-        console.log(lat, lng);
+            if (!lat) return cb(MSG_LATITUDE_EMPTY);
+            if (!lng) return cb(MSG_LONGITUDE_EMPTY);
 
-            if(!lat) return cb(MSG_LATITUDE_EMPTY);
-            if(!lng) return cb(MSG_LONGITUDE_EMPTY);
-
-            if(isNaN(lat)) return cb(MSG_LATITUDE_NAN);
-            if(isNaN(lng)) return cb(MSG_LONGITUDE_NAN);
+            if (isNaN(lat)) return cb(MSG_LATITUDE_NAN);
+            if (isNaN(lng)) return cb(MSG_LONGITUDE_NAN);
 
             return cb(null);
         }
     ];
 
-    async.series(task, function(err){
-        if(err) return res.status(400).json({
+    async.series(task, function (err) {
+        if (err) return res.status(400).json({
             code: -1,
             message: err
         });
