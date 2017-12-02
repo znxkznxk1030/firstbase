@@ -34,22 +34,22 @@ var route = function(app){
                     function(cb){
                         user.findOneWithProvider(profile, function (err, one) {
                             if (one) {
-                                return cb(profile);
+                                return cb(false);
                             } else {
-                                return cb(null);
+                                return cb();
                             }
                         });
                     },
                     function(cb){
                         user.registrateSocialUser(profile, function (err, result) {
-                            if (err) return cb(null, err);
+                            if (err) return cb(true);
                             //console.log("debug passport social user registration : " + result);
-                            return cb(profile);
+                            return cb();
                         });
                     }
                 ];
 
-                async.series(task, function(profile, err){
+                async.series(task, function(err){
                     if(err){
                         console.log(err);
                         res.status(400).json({
