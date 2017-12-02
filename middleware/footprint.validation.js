@@ -20,24 +20,21 @@ var validateMarkerParams = function (req, res, next) {
         lat = xss(req.body.latitude),
         lng = xss(req.body.longitude);
 
-    console.log("데이터가 어디로 사라졌을까1 : " + lat, lng);
+
 
     var task = [
         function (cb) {
-            console.log("데이터가 어디로 사라졌을까2 : " + lat, lng);
             if (!title || title.length <= 0) return cb(MSG_TITLE_EMPTY);
             if (title.length > MAX_TITLE_LENGTH) return cb(MSG_TITLE_OVERFLOW);
 
             return cb(null);
         },
         function (cb) {
-            console.log("데이터가 어디로 사라졌을까3 : " + lat, lng);
             if (content.length > MAX_CONTENT_LENGTH) return cb(MSG_CONTENT_OVERFLOW);
 
             return cb(null);
         },
         function (cb) {
-            console.log("데이터가 어디로 사라졌을까4 : " + lat, lng);
 
             if (!lat) return cb(MSG_LATITUDE_EMPTY);
             if (!lng) return cb(MSG_LONGITUDE_EMPTY);
