@@ -36,7 +36,7 @@ var route = function(app){
                     function(cb){
                         user.findOneWithProvider(profile, function (err, one) {
                             if (one) {
-                                return cb(false);
+                                return cb(true);
                             } else {
                                 return cb();
                             }
@@ -52,7 +52,7 @@ var route = function(app){
                 ];
 
                 async.series(task, function(err){
-                    if(err){
+                    if(err && err !== true){
                         console.log(err);
                         res.status(400).json({
                             code : -1,
