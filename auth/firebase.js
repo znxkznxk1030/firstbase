@@ -42,7 +42,7 @@ var route = function(app){
                     },
                     function(cb){
                         user.registrateSocialUser(profile, function (err, result) {
-                            if (err) return cb(true);
+                            if (err) return cb(err);
                             //console.log("debug passport social user registration : " + result);
                             return cb();
                         });
@@ -54,7 +54,7 @@ var route = function(app){
                         console.log(err);
                         res.status(400).json({
                             code : -1,
-                            message : '소셜 로그인 토큰이 만료되었습니다'
+                            message : '소셜 로그인 실패'
                         });
                     }else{
                         const token = signToken(profile);
