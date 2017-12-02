@@ -4,6 +4,7 @@ var mapWidth = $("#map").outerWidth();
 var mapHeight = $("#map").outerHeight();
 var allIcon = {};
 var socket = io();
+var isImageComplete = false;
 
 $(window).resize(function () {
     mapWidth = $("#map").outerWidth();
@@ -157,35 +158,36 @@ var writeCoord;
 $(document).on('click', '#wbo', writeComplete);
 
 function writeComplete() {
-    var title = $("#write-title input").val();
-    var icon_url = $("#write-div-icon img").attr("src");
-    var content = $("#write-text-form textarea").val();
-    var imageKey = writeImages;
-    var latitude = parseFloat(writeCoord.y);
-    var longitude = parseFloat(writeCoord.x);
+    if (isImageComplete) {
+        var title = $("#write-title input").val();
+        var icon_url = $("#write-div-icon img").attr("src");
+        var content = $("#write-text-form textarea").val();
+        var imageKey = writeImages;
+        var latitude = parseFloat(writeCoord.y);
+        var longitude = parseFloat(writeCoord.x);
 
-    var ajaxData = {
-        title: title,
-        icon_url: icon_url,
-        content: content,
-        imageKeys: imageKey,
-        latitude: latitude,
-        longitude: longitude
-    };
+        var ajaxData = {
+            "title": title,
+            "icon_url": icon_url,
+            "content": content,
+            "imageKeys": imageKey,
+            "latitude": latitude,
+            "longitude": longitude
+        };
 
-
-    $.ajax({
-        type: 'POST',
-        data: JSON.stringify(ajaxData),
-        url: baseUrl + '/footprint/create',
-        success: function (data) {
-            console.log(data);
-            cancel($('#writePage'));
-        },
-        error: function (data) {
-            console.log(data);
-        }
-    });
+        $.ajax({
+            type: 'POST',
+            data: JSON.stringify(ajaxData),
+            url: baseUrl + '/footprint/create',
+            success: function (data) {
+                console.log(data);
+                cancel($('#writePage'));
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
 }
 
 function writeHere(coord, imgUrl) {
@@ -655,7 +657,7 @@ function popUp(data) {
             $("#detail-area").html(htmlData);
         },
         complete: function () {
-            history.pushState(null, null, baseUrl+'/post?id=' + data.footprint_id);
+            history.pushState(null, null, baseUrl + '/post?id=' + data.footprint_id);
 
             var param = window.location.href.split('id=')[1];
             console.log("param:" + param);
@@ -679,7 +681,7 @@ function popUp(data) {
             });
 
             var map2 = new naver.maps.Map('detail-map', {
-                size: new naver.maps.Size($(window).width()*0.9-20, 280),
+                size: new naver.maps.Size($(window).width() * 0.9 - 20, 280),
                 center: new naver.maps.LatLng(data.latitude, data.longitude), //지도의 초기 중심 좌표
                 zoom: 10, //지도의 초기 줌 레벨
                 minZoom: 2, //지도의 최소 줌 레벨 //축소
@@ -826,12 +828,13 @@ function popUp(data) {
 
                 $("#detail-cmt-count").text(data.countComments);
 
-                history.pushState(null, null, baseUrl+'/post?id=' + data.footprint_id);
+                history.pushState(null, null, baseUrl + '/post?id=' + data.footprint_id);
             }
+
             $("#popUp").modal();
             $(window).resize(
-                function(){
-                    map2.setSize(new naver.maps.Size($(window).width()*0.9-20, 280));
+                function () {
+                    map2.setSize(new naver.maps.Size($(window).width() * 0.9 - 20, 280));
                     map2.setCenter(new naver.maps.LatLng(data.latitude, data.longitude));
                 }
             );
@@ -926,10 +929,13 @@ function handleImgFileSelect(e) {
 
     var files = e.target.files;
     var filesArr = Array.prototype.slice.call(files);
-    filesArr.forEach(function (f) {
+
+    isImageComplete = false;
+
+    async.times(filesArr.length, function (f, next) {
         if (!f.type.match("image.*")) {
             alert("확장자는 이미지 확장자만 가능합니다.");
-            return false;
+            return next("확장자는 이미지 확장자만 가능합니다.");
         } else {
             var reader = new FileReader();
             reader.readAsDataURL(f);
@@ -948,12 +954,43 @@ function handleImgFileSelect(e) {
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    console.log(data);
-                    writeImages[writeImages.length] = data.imageKey;
+                    return next(null, data.imageKey);
                 }
             });
         }
+    }, function (err, imageKeys) {
+        writeImages = imageKeys;
+        isImageComplete = true;
     });
+
+    // filesArr.forEach(function (f) {
+    //     if (!f.type.match("image.*")) {
+    //         alert("확장자는 이미지 확장자만 가능합니다.");
+    //         return false;
+    //     } else {
+    //         var reader = new FileReader();
+    //         reader.readAsDataURL(f);
+    //         reader.onload = function (e) {
+    //             var img_html = "<img src=\"" + e.target.result + "\" />";
+    //             $("#write-images").append(img_html);
+    //             var formData = new FormData();
+    //             formData.append('files', f.value);
+    //         }
+    //         var formData = new FormData();
+    //         formData.append('image', f);
+    //         $.ajax({
+    //             type: 'POST',
+    //             data: formData,
+    //             url: baseUrl + '/files/upload',
+    //             processData: false,
+    //             contentType: false,
+    //             success: function (data) {
+    //                 console.log(data);
+    //                 writeImages[writeImages.length] = data.imageKey;
+    //             }
+    //         });
+    //     }
+    // });
 }
 
 function hideModal() {
@@ -961,5 +998,5 @@ function hideModal() {
 }
 
 $('#popUp').on('hidden.bs.modal', function (e) {
-    history.pushState(null, null, baseUrl+'/index');
+    history.pushState(null, null, baseUrl + '/index');
 })
