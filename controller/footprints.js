@@ -379,7 +379,7 @@ var createFootprint = function (req, res) {
     const user = req.user;
     const body = req.body;
 
-    console.log(body.latitude);
+    console.log(body);
 
     var userId = user.id, displayName = null, footprintPassword = null;
 
