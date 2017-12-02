@@ -177,7 +177,7 @@ function writeComplete() {
 
         $.ajax({
             type: 'POST',
-            data: JSON.stringify(ajaxData),
+            data: ajaxData,
             url: baseUrl + '/footprint/create',
             success: function (data) {
                 console.log(data);
