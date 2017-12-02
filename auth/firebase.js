@@ -31,9 +31,9 @@ var route = function (app) {
             });
         }
 
-        function isDisplayNameVaild(cb){
+        var isDisplayNameVaild = function(cb){
             return cb(user.isDisplayNameVaild(data.displayName, null));
-        }
+        };
 
         if (typeof data.deviceToken === 'undefined') {
             return res.status(400).json({
