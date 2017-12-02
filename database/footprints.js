@@ -1,6 +1,7 @@
 const connection = require('./db');
 var getImageUrl = require("../controller/files").getImageUrl;
 const _ = require('underscore');
+var async = require("async");
 
 const SQL_RETRIEVE_FOOTPRINT_BY_FOOTPRINT_ID =
     "SELECT footprint.*, view_count AS countView, count(comment.comment_id) AS countComments " +
@@ -27,7 +28,7 @@ const SQL_RETRIEVE_FOOTPRINT_BY_FOOTPRINT_ID =
     , SQL_GET_LINKED_FOOTPRINT =
     "SELECT linked_footprint_id AS linkedFootprintId, rank FROM link WHERE link_footprint_id = ? ORDER BY rank"
     , SQL_GET_LINKED_FOOTPRINTS =
-    "SELECT footprint.* " +
+    "SELECT footprint.*" +
     "FROM footprint " +
     "LEFT JOIN link " +
     "ON footprint.footprint_id = link.linked_footprint_id " +
@@ -80,8 +81,18 @@ var Footprint = function(params){
                     return cb(true);
                 }else{
                     linkedFootprintList = JSON.parse(JSON.stringify(linkedFootprintList));
-                    console.log(linkedFootprintList);
-                    return cb(null, _.extend(footprint, {linkedFootprintList : linkedFootprintList}));
+
+                    async.map(linkedFootprintList, function(linkedFootprint, callback){
+                        imageLoad(linkedFootprint, function(err, result){
+                            if(err) callback(err);
+                            callback(null, result);
+                        });
+                    }, function(err, linkedFoorprintListWithImages){
+                        if(err) return cb(true);
+                        else{
+                            return cb(null, _.extend(footprint, {linkedFootprintList : linkedFoorprintListWithImages}));
+                        }
+                    });
                 }
             });
         }else{
