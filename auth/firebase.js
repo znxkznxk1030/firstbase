@@ -38,6 +38,12 @@ var route = function (app) {
             });
         }
 
+
+        const loginToken = data.loginToken
+            , displayName = xss(data.displayName)
+            , deviceToken = data.deviceToken;
+
+        
         async.series([
             function(cb){
                 user.isDisplayNameVaild(displayName, function(err){
@@ -52,10 +58,6 @@ var route = function (app) {
                     message: err
                 });
             }else{
-                const loginToken = data.loginToken
-                    , displayName = xss(data.displayName)
-                    , deviceToken = data.deviceToken;
-
                 admin.auth().verifyIdToken(loginToken)
                     .then(function (decodedToken) {
                         decodedToken = JSON.parse(JSON.stringify(decodedToken));
