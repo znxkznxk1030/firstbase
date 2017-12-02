@@ -554,36 +554,36 @@ var registrateUser = function registrateUser(req, res) {
             1. length (5 < && < 25)
          */
 
-var isDisplayNameVaild = function (displayName, oldDisplayName) {
+var isDisplayNameVaild = function (displayName, cb) {
 
     // if (!oldDisplayName && displayName === oldDisplayName) {
     //     return null;
     // }
 
     if (acceptTokenRe.test(displayName)) {
-        return '닉네임은 한글,영문,숫자만 가능합니다';
+        return cb('닉네임은 한글,영문,숫자만 가능합니다');
     }
 
     //todo: 띄어쓰기 방지, 영문, 숫자
     if (displayName === null || displayName === '' || displayName === 'undefined')
-        return '닉네임 입력 칸이 비어있습니다.';
+        return cb('닉네임 입력 칸이 비어있습니다.');
 
     const length = displayName.length;
 
     if (length < 2)
-        return '닉네임의 길이가 너무 짧습니다.';
+        return cb('닉네임의 길이가 너무 짧습니다.');
     if (length > 10)
-        return '닉네임의 길이가 너무 깁니다.';
+        return cb('닉네임의 길이가 너무 깁니다.');
 
     const sqlDisplayCheck = "SELECT * FROM user WHERE displayName = ? ";
 
     connection.query(sqlDisplayCheck, [displayName], function (err, result) {
-        if (err) return '에러 났습니다';
+        if (err) return cb('에러 났습니다');
 
         if (result.length > 0) {
-            return '이미 존재하는 닉네임입니다';
+            return cb('이미 존재하는 닉네임입니다');
         } else {
-            return null;
+            return cb(null);
         }
     });
 };
@@ -770,7 +770,10 @@ var isFormVaild = function (req, res, next) {
 
     const task = [
         function (cb) {
-            return cb(isDisplayNameVaild(displayName));
+            isDisplayNameVaild(displayName, function(err){
+                if(err) return cb(err);
+                else cb();
+            })
         },
         function (cb) {
             return cb(isIDVaild(id));

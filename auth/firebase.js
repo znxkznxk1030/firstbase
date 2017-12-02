@@ -40,7 +40,10 @@ var route = function (app) {
 
         async.series([
             function(cb){
-                return cb(user.isDisplayNameVaild(data.displayName));
+                user.isDisplayNameVaild(displayName, function(err){
+                    if(err) return cb(err);
+                    else cb();
+                })
             }
         ], function(err, result){
             if(err){
