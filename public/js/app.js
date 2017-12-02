@@ -178,6 +178,8 @@ function writeComplete() {
         type: 'POST',
         data: ajaxData,
         url: baseUrl + '/footprint/create',
+        processData: false,
+        contentType: false,
         success: function (data) {
             console.log(data);
             cancel($('#writePage'));
