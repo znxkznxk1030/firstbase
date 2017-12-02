@@ -170,7 +170,7 @@ function writeComplete() {
             "title": title,
             "icon_url": icon_url,
             "content": content,
-            "imageKeys": imageKey,
+            "keys": imageKey,
             "latitude": latitude,
             "longitude": longitude
         };
