@@ -156,36 +156,43 @@ var writeCoord;
 
 $(document).on('click', '#wbo', writeComplete);
 
+var uploadComplete = true;
 function writeComplete() {
-    var title = $("#write-title input").val();
-    var icon_url = $("#write-div-icon img").attr("src");
-    var content = $("#write-text-form textarea").val();
-    var imageKey = writeImages;
-    var latitude = parseFloat(writeCoord.y);
-    var longitude = parseFloat(writeCoord.x);
+    while(uploadComplete){
 
-    var ajaxData = {
-        title: title,
-        icon_url: icon_url,
-        content: content,
-        imageKeys: imageKey,
-        latitude: latitude,
-        longitude: longitude
-    };
+        var title = $("#write-title input").val();
+        var icon_url = $("#write-div-icon img").attr("src");
+        var content = $("#write-text-form textarea").val();
+        var imageKey = writeImages;
+        var latitude = parseFloat(writeCoord.y);
+        var longitude = parseFloat(writeCoord.x);
+
+        var ajaxData = {
+            title: title,
+            icon_url: icon_url,
+            content: content,
+            imageKeys: imageKey,
+            latitude: latitude,
+            longitude: longitude
+        };
 
 
-    $.ajax({
-        type: 'POST',
-        data: JSON.stringify(ajaxData),
-        url: baseUrl + '/footprint/create',
-        success: function (data) {
-            console.log(data);
-            cancel($('#writePage'));
-        },
-        error: function (data) {
-            console.log(data);
-        }
-    });
+        $.ajax({
+            type: 'POST',
+            data: JSON.stringify(ajaxData),
+            url: baseUrl + '/footprint/create',
+            success: function (data) {
+                console.log(data);
+                cancel($('#writePage'));
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+
+    }
+
+    uploadComplete = true;
 }
 
 function writeHere(coord, imgUrl) {
@@ -923,6 +930,7 @@ function onSuccessGeolocation(position) {
 $(document).on('change', '#write-img', handleImgFileSelect);
 
 function handleImgFileSelect(e) {
+    uploadComplete = true;
     var files = e.target.files;
     var filesArr = Array.prototype.slice.call(files);
     filesArr.forEach(function (f) {
@@ -952,6 +960,7 @@ function handleImgFileSelect(e) {
                 }
             });
         }
+        uploadComplete = false;
     });
 }
 
