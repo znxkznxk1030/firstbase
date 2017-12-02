@@ -172,7 +172,7 @@ function writeComplete() {
         longitude: longitude
     }
 
-    
+
     $.ajax({
         type: 'POST',
         data: ajaxData,
@@ -204,7 +204,7 @@ function writeHere(coord, imgUrl) {
 
     var write_form = '';
 
-    write_form += '<form action="/footprint/create" method="post" enctype="application/json">';
+    // write_form += '<form action="/footprint/create" method="post" enctype="application/json">';
 
     write_form += '<div id="write-top-div">';
     write_form += '<div id="write-div-icon"><img src=' + imgUrl + '></div>';
@@ -224,7 +224,7 @@ function writeHere(coord, imgUrl) {
     write_form += '<button type="submit" class="btn" id = "wbo">작성완료</button>';
     write_form += '</div>'
 
-    write_form += '</form>';
+    // write_form += '</form>';
 
     $('#write-change').html(write_form);
 
