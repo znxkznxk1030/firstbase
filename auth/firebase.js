@@ -36,11 +36,12 @@ var route = function(app){
                     function(cb){
                         user.findOne(profile, function (err, one) {
                             if (one) {
+                                console.log(one);
 
                                 one = JSON.parse(JSON.stringify(one))[0];
                                 console.log(one.provider);
 
-                                if(one.provider === 'google.com'){
+                                if(one.provider === profile.provider){
                                     return cb(true);
                                 }else{
                                     return cb('이미 가입한 아이디 입니다.');
