@@ -102,8 +102,8 @@ var updateDeviceToken = function (id, deviceToken, cb) {
     var sql = 'UPDATE user SET device_token = ? WHERE id = ?';
 
     connection.query(sql, [id, deviceToken], function (err, result) {
-        if (err) cb(err);
-        else cb(null);
+        if (err) return cb(err);
+        else return cb(null);
     });
 };
 
