@@ -161,8 +161,8 @@ function writeComplete() {
     var icon_url = $("#write-div-icon img").attr("src");
     var content = $("#write-content").val();
     var imageKey = writeImages;
-    var latitude = Number(writeCoord.y);
-    var longitude = Number(writeCoord.x);
+    var latitude = parseFloat(writeCoord.y);
+    var longitude = parseFloat(writeCoord.x);
     var ajaxData = {
         title: title,
         icon_url: icon_url,
