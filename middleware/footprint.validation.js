@@ -19,6 +19,8 @@ var validateMarkerParams = function(req, res, next){
         lat = xss(req.body.latitude),
         lng = xss(req.body.longitude);
 
+    console.log(lat);
+
     var task = [
         function (cb) {
             if(!title || title.length <= 0) return cb(MSG_TITLE_EMPTY);
