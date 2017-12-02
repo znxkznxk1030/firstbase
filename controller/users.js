@@ -73,6 +73,19 @@ var findOne = function findOne(id, cb) {
     });
 };
 
+var findOneWithProvider = function findOne(profile, cb) {
+    var sql = 'SELECT * FROM user WHERE id = ? AND provider = ?';
+    connection.query(sql, [profile.id, profile.provider], function (err, result) {
+        if (err) {
+            return cb('해당 유저가 존재하지 않습니다.');
+        }
+
+        var user = JSON.parse(JSON.stringify(result))[0];
+        console.log(user);
+        return cb(null, user);
+    });
+};
+
 var updateDeviceToken = function (id, deviceToken, cb) {
     var sql = 'UPDATE user SET device_token = ? WHERE id = ?';
 
@@ -403,7 +416,10 @@ var updateUserImage = function (req, res) {
 var registrateSocialUser = function registrateSocialLoginUser(data, cb) {
     var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
     connection.query(sql, [data.id, data.displayName, data.provider], function (err, result) {
-        if (err) throw err;
+        if (err){
+            console.log(err);
+            return cb(true);
+        }
         console.log('#debug registrateSocialUser result : ' + result);
         cb(null, true);
     });
@@ -756,6 +772,7 @@ module.exports = {
     nicknameCheck: nicknameCheck,
 
     findOne: findOne,
+    findOneWithProvider : findOneWithProvider,
     findPassword: findPassword,
 
     getUserInfoByReqHeader: getUserInfoByReqHeader,
