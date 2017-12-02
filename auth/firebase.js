@@ -31,16 +31,16 @@ var route = function (app) {
             });
         }
 
-        var isDisplayNameVaild = function(cb){
-            return cb(user.isDisplayNameVaild(data.displayName, null));
-        };
-
         if (typeof data.deviceToken === 'undefined') {
             return res.status(400).json({
                 code: -1,
                 message: '디바이스 토큰이 유효하지 않습니다.'
             });
         }
+
+        var isDisplayNameVaild = function(cb){
+            return cb(user.isDisplayNameVaild(data.displayName, null));
+        };
 
         isDisplayNameVaild(function(err){
             if(err){
@@ -79,7 +79,6 @@ var route = function (app) {
                                 });
                             }
                         });
-
                     })
                     .catch(function (err) {
                         return res.status(400).json({

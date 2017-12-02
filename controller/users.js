@@ -545,10 +545,7 @@ var isDisplayNameVaild = function (displayName, oldDisplayName) {
     }
 
     if (acceptTokenRe.test(displayName)) {
-        return res.status(401).json({
-            code: -2,
-            message: '닉네임은 한글,영문,숫자만 가능합니다'
-        });
+        return '닉네임은 한글,영문,숫자만 가능합니다';
     }
 
     //todo: 띄어쓰기 방지, 영문, 숫자
@@ -565,7 +562,7 @@ var isDisplayNameVaild = function (displayName, oldDisplayName) {
     const sqlDisplayCheck = "SELECT * FROM user WHERE displayName = ? ";
 
     connection.query(sqlDisplayCheck, [displayName], function (err, result) {
-        if (err) return err;
+        if (err) return '에러 났습니다';
 
         if (result[0]) {
             return '이미 존재하는 닉네임입니다';
@@ -800,5 +797,6 @@ module.exports = {
 
     isFormVaild: isFormVaild,
     updateDeviceToken: updateDeviceToken,
-    isExistDisplayName: isExistDisplayName
+    isExistDisplayName: isExistDisplayName,
+    isDisplayNameVaild:isDisplayNameVaild
 };
