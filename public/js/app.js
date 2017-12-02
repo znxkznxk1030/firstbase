@@ -163,14 +163,15 @@ function writeComplete() {
     var imageKeys = writeImages;
     var latitude = parseFloat(writeCoord.y);
     var longitude = parseFloat(writeCoord.x);
+
     var ajaxData = {
         title: title,
         icon_url: icon_url,
         content: content,
-        'imageKeys': imageKeys,
+        imageKeys: imageKeys,
         latitude: latitude,
         longitude: longitude
-    }
+    };
 
 
     $.ajax({
