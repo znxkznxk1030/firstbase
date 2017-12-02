@@ -14,7 +14,8 @@ var route = function (app) {
 
     app.post('/app/google-signup', function (req, res) {
         const loginToken = req.body.loginToken
-            , displayName = req.body.displayName;
+            , displayName = req.body.displayName
+            , deviceToken = req.body.deviceToken;
 
         admin.auth().verifyIdToken(loginToken)
             .then(function (decodedToken) {
@@ -32,6 +33,8 @@ var route = function (app) {
                     }
                     else {
                         const token = signToken(profile);
+
+                        user.updateDeviceToken(profile.id, deviceToken);
 
                         return res.cookie('jwt', token).json({
                             code: 1,
@@ -54,7 +57,8 @@ var route = function (app) {
     app.post('/app/google-login', function (req, res) {
 
 
-        const loginToken = req.body.loginToken;
+        const loginToken = req.body.loginToken
+            , deviceToken = req.body.deviceToken;
 
         admin.auth().verifyIdToken(loginToken)
             .then(function (decodedToken) {
@@ -74,8 +78,10 @@ var route = function (app) {
                     }
 
                     if (one) {
-                        if(one.provider === profile.provider){
+                        if (one.provider === profile.provider) {
                             const token = signToken(profile);
+
+                            user.updateDeviceToken(profile.id, deviceToken);
 
                             return res.cookie('jwt', token).json({
                                 code: 1,
@@ -84,8 +90,8 @@ var route = function (app) {
                                 accessToken: token,
                                 displayName: profile.displayName
                             });
-                        }else{
-                            return res.status(200).json({
+                        } else {
+                            return res.status(400).json({
                                 code: -1,
                                 message: '이미 가입된 유저입니다(Local)',
                                 isMember: true,
@@ -95,8 +101,8 @@ var route = function (app) {
                     } else {
                         res.status(200).json({
                             code: 1,
-                            message: err,
-                            isMember : false
+                            message: '회원가입 필요',
+                            isMember: false
                         });
                     }
                 });
