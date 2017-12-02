@@ -2,7 +2,7 @@ var firebase = require('firebase');
 var admin = require('firebase-admin');
 const user = require('../controller/users');
 
-var serviceAccount = require('./firstbase-7b7c4-firebase-adminsdk-rv8l5-85509a741d.json');
+var serviceAccount = require('./serviceAccount.json');
 var async = require("async");
 var signToken = require("./auth").signToken;
 
@@ -51,6 +51,7 @@ var route = function(app){
 
                 async.series(task, function(profile, err){
                     if(err){
+                        console.log(err);
                         res.status(400).json({
                             code : -1,
                             message : '소셜 로그인 토큰이 만료되었습니다'
