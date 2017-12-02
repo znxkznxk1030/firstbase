@@ -56,6 +56,17 @@ var nicknameCheck = function (req, res) {
         })
 };
 
+var isExistDisplayName = function(displayName , cb){
+    const sqlIsExistDisplayName = "SELECT * FROM user WHERE displayName = ?";
+
+    connection.query(sqlIsExistDisplayName, displayName, function(err, result){
+        if (err || result.length > 0) return cb('이미 존재하는 닉네임 입니다.');
+        else{
+            return cb();
+        }
+    });
+};
+
 
 /*
     find operations
@@ -788,5 +799,6 @@ module.exports = {
     isUpdateFormVaild: isUpdateFormVaild,
 
     isFormVaild: isFormVaild,
-    updateDeviceToken: updateDeviceToken
+    updateDeviceToken: updateDeviceToken,
+    isExistDisplayName: isExistDisplayName
 };

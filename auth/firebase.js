@@ -26,21 +26,25 @@ var route = function (app) {
                     displayName: displayName,
                     provider: decodedToken.firebase.sign_in_provider
                 };
+                user.isExistDisplayName(profile.displayName, function(err){
+                    if (err) return res.status(400).json({code: -2, message: err});
+                    else{
+                        user.registrateSocialUser(profile, function (err, result) {
+                            if (err) {
+                                return res.status(400).json({code: -2, message: '소셜로그인 회원가입 오류'});
+                            }
+                            else {
+                                const token = signToken(profile);
 
-                user.registrateSocialUser(profile, function (err, result) {
-                    if (err) {
-                        return res.status(400).json({code: -2, message: '소셜로그인 회원가입 오류'});
-                    }
-                    else {
-                        const token = signToken(profile);
+                                user.updateDeviceToken(profile.id, deviceToken);
 
-                        user.updateDeviceToken(profile.id, deviceToken);
-
-                        return res.cookie('jwt', token).json({
-                            code: 1,
-                            message: '로그인 성공',
-                            accessToken: token,
-                            displayName: profile.displayName
+                                return res.cookie('jwt', token).json({
+                                    code: 1,
+                                    message: '로그인 성공',
+                                    accessToken: token,
+                                    displayName: profile.displayName
+                                });
+                            }
                         });
                     }
                 });
