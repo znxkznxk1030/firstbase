@@ -22,4 +22,10 @@ router.get('/test', function(req, res){
   res.render('teststepview');
 });
 
+router.get('/404', function(req, res){
+    res.render('error');
+});
+
+
+
 module.exports = router;
