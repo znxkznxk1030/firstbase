@@ -42,7 +42,11 @@ var route = function (app) {
             return cb(user.isDisplayNameVaild(data.displayName, null));
         };
 
-        isDisplayNameVaild(function(err){
+        async.series([
+            function(cb){
+                return cb(user.isDisplayNameVaild(data.displayName, null));
+            }
+        ], function(err, result){
             if(err){
                 return res.status(400).json({
                     code: -1,
