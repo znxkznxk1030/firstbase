@@ -1,3 +1,21 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<!DOCTYPE html>
+<html lang="ko">
+
+<body>
+<div id = "main">
+    <div id = "intro-text">
+        에러가 발생했습니다.
+    </div>
+    <a href="/index">
+        <div id = "intro-logo">
+            <img src="/img/layout/intro-2.png">
+        </div>
+    </a>
+    <div id = "intro-text2">
+        <h1><%= message %></h1>
+        <h2><%= error.status %></h2>
+        <pre><%= error.stack %></pre>
+    </div>
+</div>
+</body>
+</html>

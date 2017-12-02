@@ -37,6 +37,7 @@ var markers = [];
 var contentsData;
 
 $(document).ready(function () {
+    $("body").css("overflow-y",  "hidden");
 
     $.ajax({
         type: 'GET',
@@ -999,9 +1000,30 @@ function handleImgFileSelect(e) {
 }
 
 function hideModal() {
-    $('#popUp').modal('hide');
+    $('#popUp').modal('hide');//버튼용
 }
 
 $('#popUp').on('hidden.bs.modal', function (e) {
     history.pushState(null, null, baseUrl + '/index');
 })
+
+$(document).on('click', '#loginSubmit', loginComplete);
+function loginComplete() {
+    var id = $("#loginId").val();
+    var password = $("#loginPw").val();
+    var ajaxData = {
+        "id" : id,
+        "password" : password
+    }
+    $.ajax({
+        type: 'POST',
+        data: ajaxData,
+        url: "http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:8080" + '/users/login',
+        success: function (data) {
+            $('#popUp').modal('hide');
+        }
+        error: function (error) {
+            $('#popUp').modal('hide');
+        }
+    });
+}

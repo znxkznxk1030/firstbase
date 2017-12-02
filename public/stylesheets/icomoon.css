@@ -1,6 +1,7 @@
 @font-face {
 	font-family: icomoon;
-	src: url(icomoon.eot) format("embedded-opentype"), url(icomoon.ttf) format("truetype"), url(icomoon.woff) format("woff"), url(http://graphicburger.com/preview/html-templates/guide/fonts/icomoon/icomoon.svg?qtatmt#icomoon) format("svg");
+	/*src: url(icomoon.eot) format("embedded-opentype"), url(icomoon.ttf) format("truetype"), url(icomoon.woff) format("woff"), url(http://graphicburger.com/preview/html-templates/guide/fonts/icomoon/icomoon.svg?qtatmt#icomoon) format("svg");*/
+	src: url(icomoon.eot) format("embedded-opentype");
 	font-weight: normal;
 	font-style: normal;
 }

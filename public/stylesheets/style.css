@@ -1006,19 +1006,25 @@ body {
     top : 0;
     left : 100vw;
     background-color: white;
+    justify-content: center;
 }
 
 #write-change, #chat-change {
     display: flex;
     flex: 0 1 auto;
-    width: 100%;
+    width: calc(100% - 10px);
     height: calc(100vh - 70px);
     justify-content: flex-start;
-    align-items: center;
+    align-content: flex-start;
+    /*align-content는 여러줄*/
     flex-flow: row wrap;
     overflow-x: hidden;
     overflow-y: scroll;
 }
+
+#write-change::-webkit-scrollbar { width: 0 !important }
+#write-change { -ms-overflow-style: none; }
+#write-change { overflow: -moz-scrollbars-none; }
 
 .write-icons{
     display: flex;
@@ -1037,16 +1043,11 @@ body {
     z-index: 200;
 }
 
-#write-change form{
-    width: 100%;
-    height: 100%;
-}
-
 #write-top-div{
     display: flex;
     flex: 0 1 auto;
     width: 100%;
-    height: 10%;
+    height: 40px;
     align-items: center;
 }
 
@@ -1069,8 +1070,14 @@ body {
 #write-title{
     display: flex;
     flex: 0 1 auto;
-    width: calc( 100% - 39px );
-    margin-left: 5px;
+    width: calc( 100% - 24px );
+    height: 100%;
+    padding: 5px;
+}
+
+#write-title input{
+    width: 100%;
+    height: 100%;
 }
 
 #write-mid-div{
@@ -1189,6 +1196,7 @@ body {
     flex: 0 1 auto;
     width: 100%;
     height: auto;
+    margin: 5px;
     justify-content: center;
     align-items: center;
     flex-flow: column nowrap;
@@ -1197,9 +1205,9 @@ body {
 #write-images img{
     display: flex;
     flex: 0 1 auto;
-    margin-bottom: 8%;
     width: 70%;
     height: auto;
+    margin: 5px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
