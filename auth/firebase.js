@@ -4,6 +4,7 @@ const user = require('../controller/users');
 
 var serviceAccount = require('./serviceAccount.json');
 var async = require("async");
+var xss = require("xss");
 var signToken = require("./auth").signToken;
 
 admin.initializeApp({
