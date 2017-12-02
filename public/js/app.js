@@ -178,7 +178,6 @@ function writeComplete() {
         console.log("이거 ajaxData");
         console.log(ajaxData);
         console.log(JSON.stringify(ajaxData));
-        console.log(JSON.parse(ajaxData));
 
         $.ajax({
             type: 'POST',
