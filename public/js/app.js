@@ -160,14 +160,14 @@ function writeComplete() {
     var title = $("#write-title input").val();
     var icon_url = $("#write-div-icon img").attr("src");
     var content = $("#write-text-form textarea").val();
-    var imageKey = writeImages;
+    var imageKeys = writeImages;
     var latitude = parseFloat(writeCoord.y);
     var longitude = parseFloat(writeCoord.x);
     var ajaxData = {
         title: title,
         icon_url: icon_url,
         content: content,
-        imageKeys: imageKey,
+        'imageKeys': imageKeys,
         latitude: latitude,
         longitude: longitude
     }
