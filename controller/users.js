@@ -556,9 +556,9 @@ var registrateUser = function registrateUser(req, res) {
 
 var isDisplayNameVaild = function (displayName, oldDisplayName) {
 
-    if (!oldDisplayName && displayName === oldDisplayName) {
-        return null;
-    }
+    // if (!oldDisplayName && displayName === oldDisplayName) {
+    //     return null;
+    // }
 
     if (acceptTokenRe.test(displayName)) {
         return '닉네임은 한글,영문,숫자만 가능합니다';
