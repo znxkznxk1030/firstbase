@@ -34,7 +34,7 @@ var route = function(app){
 
                 const task = [
                     function(cb){
-                        user.findOne(profile, function (err, one) {
+                        user.findOne(profile.id, function (err, one) {
                             if (one) {
                                 console.log(one);
 
