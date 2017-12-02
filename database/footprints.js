@@ -25,7 +25,14 @@ const SQL_RETRIEVE_FOOTPRINT_BY_FOOTPRINT_ID =
     , SQL_GET_PROFILE_IMAGE =
     "SELECT profile_key, displayName FROM user WHERE id = ?"
     , SQL_GET_LINKED_FOOTPRINT =
-    "SELECT linked_footprint_id AS linkedFootprintId, rank FROM link WHERE link_footprint_id = ? ORDER BY rank";
+    "SELECT linked_footprint_id AS linkedFootprintId, rank FROM link WHERE link_footprint_id = ? ORDER BY rank"
+    , SQL_GET_LINKED_FOOTPRINTS =
+    "SELECT footprint.* " +
+    "FROM footprint " +
+    "LEFT JOIN link " +
+    "ON footprint.footprint_id = link.linked_footprint_id " +
+    "WHERE link.link_footprint_id = ? " +
+    "GROUP BY footprint_id";
 
 var Footprint = function(params){
 
@@ -67,7 +74,7 @@ var Footprint = function(params){
     };
     var getLinkedFootprint = function (footprint, cb){
         if(footprint.type === 'link'){
-            connection.query(SQL_GET_LINKED_FOOTPRINT, [footprintId], function(err, linkedFootprintList){
+            connection.query(SQL_GET_LINKED_FOOTPRINTS, [footprintId], function(err, linkedFootprintList){
                 if(err){
                     return cb(true);
                 }else{
