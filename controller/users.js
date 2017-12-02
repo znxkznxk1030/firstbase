@@ -360,19 +360,19 @@ var updateUserInfo = function (req, res) {
         },
         function (cb) {
             connection.query(sqlCheckDisplayNameExist, displayName, function (err, isExist) {
-                if (err || isExist.length > 0) cb('이미 존재하는 닉네입 입니다');
+                if (err || isExist.length > 0) return cb('이미 존재하는 닉네입 입니다');
                 else {
-                    cb(null);
+                    return cb(null);
                 }
             });
         },
         function (cb) {
             connection.query(sql, [displayName, description, user.id],
                 function (err, userUpdated) {
-                    if (err) cb('유저 정보 수정 실패');
+                    if (err) return cb('유저 정보 수정 실패');
                     else {
                         userUpdated = JSON.parse(JSON.stringify(userUpdated));
-                        cb(null, userUpdated);
+                        return cb(null, userUpdated);
                     }
                 });
         }
