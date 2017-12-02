@@ -172,6 +172,7 @@ function writeComplete() {
         longitude: longitude
     }
 
+    
     $.ajax({
         type: 'POST',
         data: ajaxData,
