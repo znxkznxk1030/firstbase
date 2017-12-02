@@ -37,11 +37,6 @@ var route = function(app){
                         user.findOne(profile.id, function (err, one) {
                             console.log(one);
                             if (one) {
-                                //console.log(one);
-
-                                one = JSON.parse(JSON.stringify(one))[0];
-                                console.log('debug# : ' + one);
-                                console.log('debug# : ' + one.provider);
 
                                 if(one.provider === profile.provider){
                                     return cb(true);
