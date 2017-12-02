@@ -98,12 +98,12 @@ var findOneWithProvider = function findOne(profile, cb) {
     });
 };
 
-var updateDeviceToken = function (id, deviceToken, cb) {
+var updateDeviceToken = function (id, deviceToken) {
     var sql = 'UPDATE user SET device_token = ? WHERE id = ?';
 
     connection.query(sql, [id, deviceToken], function (err, result) {
-        if (err) return cb(err);
-        else return cb(null);
+        if (err) return false;
+        else return true;
     });
 };
 
