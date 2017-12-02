@@ -34,9 +34,16 @@ var route = function(app){
 
                 const task = [
                     function(cb){
-                        user.findOneWithProvider(profile, function (err, one) {
+                        user.findOne(profile, function (err, one) {
                             if (one) {
-                                return cb(true);
+
+                                one = JSON.parse(JSON.stringify(one))[0];
+
+                                if(one.provider === 'google.com'){
+                                    return cb(true);
+                                }else{
+                                    return cb('이미 가입한 아이디 입니다.');
+                                }
                             } else {
                                 return cb();
                             }
@@ -44,7 +51,7 @@ var route = function(app){
                     },
                     function(cb){
                         user.registrateSocialUser(profile, function (err, result) {
-                            if (err) return cb(err);
+                            if (err) return cb('소셜로그인 회원가입 오류');
                             //console.log("debug passport social user registration : " + result);
                             return cb();
                         });
@@ -56,7 +63,7 @@ var route = function(app){
                         console.log(err);
                         res.status(400).json({
                             code : -1,
-                            message : '소셜 로그인 실패'
+                            message : err
                         });
                     }else{
                         const token = signToken(profile);
