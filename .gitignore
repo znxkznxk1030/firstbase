@@ -8,3 +8,4 @@ config.js
 server.*
 *.xml
 /auth/firstbase-7b7c4-firebase-adminsdk-rv8l5-85509a741d.json
+/auth/serviceAccount.json
