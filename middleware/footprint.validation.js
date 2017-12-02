@@ -15,12 +15,17 @@ var validateMarkerParams = function (req, res, next) {
 
     console.log(req.body);
 
-    const title = xss(req.body.title),
-        content = xss(req.body.content),
-        lat = xss(req.body.latitude),
-        lng = xss(req.body.longitude);
+    var body = req.body;
 
+    if(typeof body === 'string')
+    {
+        body = JSON.parse(body);
+    }
 
+    const title = xss(body.title),
+        content = xss(body.content),
+        lat = xss(body.latitude),
+        lng = xss(body.longitude);
 
     var task = [
         function (cb) {
