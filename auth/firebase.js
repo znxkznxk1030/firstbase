@@ -16,15 +16,17 @@ var route = function(app){
 
 
         const loginToken = req.body.loginToken;
+        console.log(loginToken);
 
         admin.auth().verifyIdToken(loginToken)
             .then(function(decodedToken){
+                console.log(decodedToken);
 
                 decodedToken = JSON.parse(JSON.stringify(decodedToken));
 
                 const profile = {
                     id : decodedToken.email,
-                    displayName : decodedToken.name,
+                    displayName : decodedToken.user_id,
                     provider : decodedToken.firebase.sign_in_provider
                 };
 
