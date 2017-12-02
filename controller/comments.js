@@ -2,15 +2,21 @@ var connection = require('../database/db');
 var user = require('./users');
 var async = require('async');
 var util = require("../utils/util");
+var xss = require("xss");
 var sendCommentFcm = require("../fcm/fcm").sendCommentFcm;
 
 
 var createComment = function (req, res) {
 
+    const user = req.user;
     const id = req.user.id,
         displayName = req.user.displayName,
         footprintId = req.body.footprintId,
-        content = req.body.content;
+        content = xss(req.body.content);
+
+    if(user){
+
+    }
 
     if (content !== null && content !== 'undefined' && content.length > 500) {
         return res.status(400)
@@ -47,7 +53,7 @@ var updateComment = function (req, res) {
 
     const id = req.user.id,
         commentId = req.body.commentId,
-        content = req.body.content;
+        content = xss(req.body.content);
 
     if (commentId === null || typeof commentId === 'undefined' || commentId === '') {
         return res.status(400).json({code: -1, message: "comment id가 잘못 들어왔습니다."});

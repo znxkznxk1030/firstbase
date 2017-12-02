@@ -5,6 +5,7 @@ const profileDefaultKey = 'profiledefault.png';
 const _ = require('underscore');
 var passwordUtil = require("../auth/password");
 var xss = require("xss");
+var signToken = require("../auth/auth").signToken;
 var uploadUserImage = require("./files").uploadUserImage;
 
 // language=JSRegexp
@@ -363,18 +364,21 @@ var updateUserInfo = function (req, res) {
                 else {
                     cb(null);
                 }
-            })
+            });
         },
         function (cb) {
             connection.query(sql, [displayName, description, user.id],
                 function (err, userUpdated) {
                     if (err) cb('유저 정보 수정 실패');
-                    else cb(null);
+                    else {
+                        userUpdated = JSON.parse(JSON.stringify(userUpdated));
+                        cb(null, userUpdated);
+                    }
                 });
         }
     ];
 
-    async.series(task, function (err) {
+    async.series(task, function (err, userUpdated) {
         if (err)
             return res.status(400)
                 .json({
@@ -382,11 +386,23 @@ var updateUserInfo = function (req, res) {
                     message: err
                 });
 
-        return res.status(200)
-            .json({
+        else{
+            console.log(userUpdated);
+
+            var profile = {
+                id : user.id,
+                displayName: displayName,
+                provider: user.provider
+            };
+            const token = signToken(profile);
+
+            return res.cookie('jwt', token).json({
                 code: 1,
-                message: 'success to update profile'
+                message: '로그인 성공',
+                accessToken: token,
+                displayName: profile.displayName
             });
+        }
     });
 };
 
