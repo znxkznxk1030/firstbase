@@ -16,11 +16,11 @@ var route = function(app){
 
 
         const loginToken = req.body.loginToken;
-        console.log(loginToken);
+        //console.log(loginToken);
 
         admin.auth().verifyIdToken(loginToken)
             .then(function(decodedToken){
-                console.log(decodedToken);
+                //console.log(decodedToken);
 
                 decodedToken = JSON.parse(JSON.stringify(decodedToken));
 
