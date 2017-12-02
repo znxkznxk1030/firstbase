@@ -38,6 +38,7 @@ var route = function(app){
                             if (one) {
 
                                 one = JSON.parse(JSON.stringify(one))[0];
+                                console.log(one.provider);
 
                                 if(one.provider === 'google.com'){
                                     return cb(true);
