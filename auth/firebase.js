@@ -38,13 +38,9 @@ var route = function (app) {
             });
         }
 
-        var isDisplayNameVaild = function(cb){
-            return cb(user.isDisplayNameVaild(data.displayName, null));
-        };
-
         async.series([
             function(cb){
-                return cb(user.isDisplayNameVaild(data.displayName, null));
+                return cb(user.isDisplayNameVaild(data.displayName));
             }
         ], function(err, result){
             if(err){
