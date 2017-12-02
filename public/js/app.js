@@ -157,22 +157,22 @@ var writeCoord;
 $(document).on('click', '#wbo', writeComplete);
 
 function writeComplete() {
-    var title = $("#write-title").text();
+    var title = $("#write-title input").val();
     var icon_url = $("#write-div-icon img").attr("src");
-    var content = $("#write-content").val();
-    var imageKey = writeImages;
+    var content = $("#write-text-form textarea").val();
+    var imageKeys = writeImages;
     var latitude = parseFloat(writeCoord.y);
     var longitude = parseFloat(writeCoord.x);
     var ajaxData = {
         title: title,
         icon_url: icon_url,
         content: content,
-        imageKey: imageKey,
+        'imageKeys': imageKeys,
         latitude: latitude,
         longitude: longitude
     }
 
-    
+
     $.ajax({
         type: 'POST',
         data: ajaxData,
@@ -180,6 +180,9 @@ function writeComplete() {
         success: function (data) {
             console.log(data);
             cancel($('#writePage'));
+        },
+        error: function (data) {
+            console.log(data);
         }
     });
 }
@@ -204,7 +207,7 @@ function writeHere(coord, imgUrl) {
 
     var write_form = '';
 
-    write_form += '<form action="/footprint/create" method="post" enctype="application/json">';
+    // write_form += '<form action="/footprint/create" method="post" enctype="application/json">';
 
     write_form += '<div id="write-top-div">';
     write_form += '<div id="write-div-icon"><img src=' + imgUrl + '></div>';
@@ -224,7 +227,7 @@ function writeHere(coord, imgUrl) {
     write_form += '<button type="submit" class="btn" id = "wbo">작성완료</button>';
     write_form += '</div>'
 
-    write_form += '</form>';
+    // write_form += '</form>';
 
     $('#write-change').html(write_form);
 
