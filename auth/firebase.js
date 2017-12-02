@@ -13,22 +13,54 @@ admin.initializeApp({
 var route = function (app) {
 
     app.post('/app/google-signup', function (req, res) {
-        const loginToken = req.body.loginToken
-            , displayName = req.body.displayName
-            , deviceToken = req.body.deviceToken;
 
-        admin.auth().verifyIdToken(loginToken)
-            .then(function (decodedToken) {
-                decodedToken = JSON.parse(JSON.stringify(decodedToken));
+        const data = req.body;
 
-                const profile = {
-                    id: decodedToken.email,
-                    displayName: displayName,
-                    provider: decodedToken.firebase.sign_in_provider
-                };
-                user.isExistDisplayName(profile.displayName, function(err){
-                    if (err) return res.status(400).json({code: -2, message: err});
-                    else{
+        if (typeof data.loginToken === 'undefined') {
+            return res.status(400).json({
+                code: -1,
+                message: '소셜 로그인 토큰이 존재하지 않습니다.'
+            });
+        }
+
+        if (typeof data.displayname === 'undefined') {
+            return res.status(400).json({
+                code: -1,
+                message: '소셜 로그인 토큰이 유효하지 않습니다.'
+            });
+        }
+
+        function isDisplayNameVaild(cb){
+            return cb(user.isDisplayNameVaild(data.displayName, null));
+        }
+
+        if (typeof data.deviceToken === 'undefined') {
+            return res.status(400).json({
+                code: -1,
+                message: '소셜 로그인 토큰이 유효하지 않습니다.'
+            });
+        }
+
+        isDisplayNameVaild(function(err){
+            if(err){
+                return res.status(400).json({
+                    code: -1,
+                    message: err
+                });
+            }else{
+                const loginToken = data.loginToken
+                    , displayName = xss(data.displayName)
+                    , deviceToken = data.deviceToken;
+
+                admin.auth().verifyIdToken(loginToken)
+                    .then(function (decodedToken) {
+                        decodedToken = JSON.parse(JSON.stringify(decodedToken));
+
+                        const profile = {
+                            id: decodedToken.email,
+                            displayName: displayName,
+                            provider: decodedToken.firebase.sign_in_provider
+                        };
                         user.registrateSocialUser(profile, function (err, result) {
                             if (err) {
                                 return res.status(400).json({code: -2, message: '소셜로그인 회원가입 오류'});
@@ -46,16 +78,16 @@ var route = function (app) {
                                 });
                             }
                         });
-                    }
-                });
-            })
-            .catch(function (err) {
-                return res.status(400).json({
-                    code: -1,
-                    message: '소셜 로그인 토큰이 유효하지 않습니다.'
-                });
-            });
 
+                    })
+                    .catch(function (err) {
+                        return res.status(400).json({
+                            code: -1,
+                            message: '소셜 로그인 토큰이 유효하지 않습니다.'
+                        });
+                    });
+            }
+        });
     });
 
     app.post('/app/google-login', function (req, res) {
