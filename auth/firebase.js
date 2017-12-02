@@ -30,15 +30,16 @@ var route = function(app){
                     provider : decodedToken.firebase.sign_in_provider
                 };
 
-                console.log(profile);
+                //console.log(profile);
 
                 const task = [
                     function(cb){
                         user.findOne(profile.id, function (err, one) {
                             if (one) {
-                                console.log(one);
+                                //console.log(one);
 
                                 one = JSON.parse(JSON.stringify(one))[0];
+                                console.log(one);
                                 console.log(one.provider);
 
                                 if(one.provider === profile.provider){
