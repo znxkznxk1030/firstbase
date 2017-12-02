@@ -26,7 +26,7 @@ var route = function (app) {
         if (typeof data.displayName === 'undefined') {
             return res.status(400).json({
                 code: -1,
-                message: '소셜 로그인 토큰이 유효하지 않습니다.'
+                message: '닉네임란이 존재하지 않습니다.'
             });
         }
 
@@ -37,7 +37,7 @@ var route = function (app) {
         if (typeof data.deviceToken === 'undefined') {
             return res.status(400).json({
                 code: -1,
-                message: '소셜 로그인 토큰이 유효하지 않습니다.'
+                message: '디바이스 토큰이 유효하지 않습니다.'
             });
         }
 
