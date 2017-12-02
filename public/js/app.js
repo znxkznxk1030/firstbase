@@ -157,9 +157,9 @@ var writeCoord;
 $(document).on('click', '#wbo', writeComplete);
 
 function writeComplete() {
-    var title = $("#write-title").val();
+    var title = $("#write-title input").val();
     var icon_url = $("#write-div-icon img").attr("src");
-    var content = $("#write-content").val();
+    var content = $("#write-text-form textarea").val();
     var imageKey = writeImages;
     var latitude = parseFloat(writeCoord.y);
     var longitude = parseFloat(writeCoord.x);
