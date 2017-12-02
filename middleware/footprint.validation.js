@@ -14,6 +14,8 @@ const MSG_TITLE_EMPTY = '제목이 비어있습니다.',
 var validateMarkerParams = function(req, res, next){
     // todo : vaildate parameters
 
+    console.log(req.body);
+
     const title = xss(req.body.title),
         content = xss(req.body.content),
         lat = xss(req.body.latitude),
@@ -45,7 +47,7 @@ var validateMarkerParams = function(req, res, next){
     ];
 
     async.series(task, function(err){
-        if(err) return res.status(200).json({
+        if(err) return res.status(400).json({
             code: -1,
             message: err
         });
