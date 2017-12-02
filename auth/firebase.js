@@ -26,7 +26,7 @@ var route = function(app){
 
                 const profile = {
                     id : decodedToken.email,
-                    displayName : decodedToken.user_id,
+                    displayName : decodedToken.name,
                     provider : decodedToken.firebase.sign_in_provider
                 };
 
