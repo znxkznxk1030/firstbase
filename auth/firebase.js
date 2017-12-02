@@ -14,15 +14,21 @@ var route = function(app){
 
     app.post('/app/google-login', function(req, res){
 
+
         const loginToken = req.body.loginToken;
+
         admin.auth().verifyIdToken(loginToken)
             .then(function(decodedToken){
+
+                decodedToken = JSON.parse(JSON.stringify(decodedToken));
 
                 const profile = {
                     id : decodedToken.email,
                     displayName : decodedToken.name,
                     provider : decodedToken.firebase.sign_in_provider
                 };
+
+                console.log(profile);
 
                 const task = [
                     function(cb){
