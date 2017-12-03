@@ -851,9 +851,7 @@ function loginComplete() {
             $('#myModal').modal('hide');
         },
         error: function (error) {
-            $('#myModal').modal('hide');
-            location.href = baseUrl + "/404";
-            console.log(error);
+            alert(error);
             debugger;
         },
         complete: function () {
