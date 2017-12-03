@@ -25,7 +25,7 @@ var linkArrays = [];
 var htmlUserInfo = function(profile){
     var content = '';
 
-    content += '<li> <div>';
+    content += '<li id=\'modal-li\'> <div>';
     content += '<a href=\'?displayName=' + profile.displayName + '\'>\n' +
         '                <img src=\'' + profile.profileUrl + '\'' +
         '                     alt=\"http://d2w40mi5mo8vk7.cloudfront.net/profile-default.png\"\n' +
@@ -51,8 +51,8 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data);
                 const followers = data.followers;
+                $('#modal-list').html('');
                 followers.forEach(function(profile){
-                    $('#modal-list').html('');
                     $('#modal-list').append(htmlUserInfo(profile));
                 });
             }
@@ -67,8 +67,8 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data);
                 const followings = data.followings;
+                $('#modal-list').html('');
                 followings.forEach(function(profile){
-                    $('#modal-list').html('');
                     $('#modal-list').append(htmlUserInfo(profile));
                 });
             }

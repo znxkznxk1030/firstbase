@@ -423,7 +423,6 @@ hr {
 }
 
 li{
-    margin-left: 40px;
     margin-top:10px;
     height: 100px;
 }
@@ -432,10 +431,21 @@ li{
     margin-top: 300px;
 }
 
+.modal-li{
+    margin-left: 40px;
+}
+
 
 @media only screen and (max-width: 1279px) and (min-width: 768px){
     #myModal{
         margin-top: 200px;
+    }
+
+    .activity-col{
+        display: inline;
+        float: left;
+        font-size: 16px;
+        margin-right: 25px;
     }
 
     #main-area {
@@ -452,6 +462,14 @@ li{
     #myModal{
         margin-top: 100px;
     }
+
+    .activity-col{
+        display: inline;
+        float: left;
+        font-size: 16px;
+        margin-right: 5px;
+    }
+
     #main-area {
         width: 100%;
         position: relative;
