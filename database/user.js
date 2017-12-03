@@ -4,17 +4,18 @@ var async = require("async");
 var getImageUrl = require("../controller/files").getImageUrl;
 const profileDefaultKey = 'profiledefault.png';
 
-const SQL_FIND_USER_BY_DISPLAYNAME = "SELECT * " +
+const SQL_FIND_USER_BY_DISPLAYNAME =
+    "SELECT * " +
     "FROM user " +
-    "WHERE user.displayName = ? ";
+    "WHERE user.displayName = ? "
 
-const SQL_GET_FOLLOWER_COUNT =
-    "SELECT count(*) AS countFollower FROM follow WHERE follow.target_id = ? ";
+    , SQL_GET_FOLLOWER_COUNT =
+    "SELECT count(*) AS countFollower FROM follow WHERE follow.target_id = ? "
 
-const SQL_GET_FOLLOWING_COUNT =
-    "SELECT count(*) AS countFollowing FROM follow WHERE follow.follower_id = ? ";
+    , SQL_GET_FOLLOWING_COUNT =
+    "SELECT count(*) AS countFollowing FROM follow WHERE follow.follower_id = ? "
 
-const SQL_IS_FOLLOW =
+    , SQL_IS_FOLLOW =
     "SELECT * FROM follow WHERE follower_id = ? AND target_id = ?";
 
 const MSG_USER_NOT_EXIST = '유저가 존재하지 않습니다'
@@ -92,6 +93,7 @@ var User = function(params){
             function (err, profile) {
                 if (err) return cb('해당 유저를 찾을 수 없습니다');
                 else {
+                    console.log('#debug : ' + profile);
                     delete profile.id;
                     return cb(null, profile);
                 }
