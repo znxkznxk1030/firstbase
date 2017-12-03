@@ -765,7 +765,7 @@ var isFormVaild = function (req, res, next) {
 
     const task = [
         function (cb) {
-            isDisplayNameVaild(displayName, function(err){
+            isDisplayNameVaild(displayName, null, function(err){
                 if(err) return cb(err);
                 else cb();
             })
