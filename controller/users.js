@@ -5,6 +5,7 @@ const profileDefaultKey = 'profiledefault.png';
 const _ = require('underscore');
 var passwordUtil = require("../auth/password");
 var xss = require("xss");
+var util = require("../utils/util");
 var User = require("../database/user").User;
 var signToken = require("../auth/auth").signToken;
 var uploadUserImage = require("./files").uploadUserImage;
@@ -192,8 +193,15 @@ var getUserInfoByReqHeader = function (req, res) {
 };
 
 var getUserInfoByUserDisplayName = function (req, res) {
+
+    if(req.query.displayName.isNullOrUndefined){
+        return res.status(400).json(util.message(-1, '닉네임 파라미터 오류'));
+    }
+
     User({
-        user: req.user
+        user: {
+            displayName: req.query.displayName
+        }
     }).getUserInfoByUserDisplayName(function (err, result) {
         if (err) return res.status(400).json(util.message(-1, err));
         else {
