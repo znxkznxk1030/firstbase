@@ -132,7 +132,7 @@ $.ajax({
 
             $("#detail-cmt-count").text(data.countComments);
 
-            history.pushState(null, null, baseUrl2 + '/post?id=' + data.footprint_id);
+            history.pushState(null, null, baseUrl + '/post?id=' + data.footprint_id);
         }
 
         function getMarkers(Bounds) {
