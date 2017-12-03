@@ -40,45 +40,14 @@ var getAuthor = function (footprintId, cb) {
 };
 
 var getFootprintListByDisplayName = function (req, res) {
-    const id = req.author.id
-        , displayName = req.query.displayName;
-
-    const sqlRetrieveFootprint =
-        "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
-        "FROM footprint LEFT JOIN view " +
-        "ON footprint.footprint_id = view.footprint_id " +
-        "LEFT JOIN comment " +
-        "ON footprint.footprint_id = comment.footprint_id " +
-        "WHERE footprint.id = ? " +
-        "GROUP BY footprint_id ";
-
-    connection.query(sqlRetrieveFootprint, [id],
-        function (err, footprintList) {
-            if (err)
-                return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
-
-            var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
-
-            async.map(footprintListJSON, function (footprint, cb) {
-                delete footprint.id;
-                delete footprint.displayName;
-
-                var tasksForGetFootprintByUserDisplayName = Footprint({
-                    footprintId: footprint.footprint_id,
-                    user: req.author
-                }).tasksForGetFootprintByUserDisplayName;
-
-                async.waterfall(tasksForGetFootprintByUserDisplayName, function (err, tails) {
-                    if (err) return cb(err);
-                    return cb(null, _.extend(footprint, tails));
-                });
-            }, function (err, result) {
-                if (err) return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
-                else {
-                    res.status(200).json(result);
-                }
-            });
-        });
+    Footprint({
+        user: req.author
+    }).getFootprintListByDisplayName(function (err, result) {
+        if (err) return res.status(400).json(util.message(-1, err));
+        else {
+            res.status(200).json(result);
+        }
+    });
 };
 var getFootprintList = function (req, res) {
 

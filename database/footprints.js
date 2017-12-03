@@ -12,7 +12,6 @@ const SQL_RETRIEVE_FOOTPRINT_BY_FOOTPRINT_ID =
     "ON footprint.footprint_id = comment.footprint_id " +
     "WHERE footprint.footprint_id = ? " +
     "GROUP BY footprint_id "
-
     , SQL_WATCH = "UPDATE footprint SET view_count = view_count + 1 WHERE footprint_id = ? "
     , SQL_IMAGE_LOAD = "SELECT * FROM image WHERE footprint_id = ?"
     , SQL_COUNT_LIKE =
@@ -40,7 +39,15 @@ const SQL_RETRIEVE_FOOTPRINT_BY_FOOTPRINT_ID =
     "ORDER BY link.rank"
     , SQL_FIND_AUTHOR = "SELECT * " +
     "FROM user " +
-    "WHERE user.id = ? ";
+    "WHERE user.id = ? "
+    , SQL_GET_FOOTPRINT_LIST_BY_ID =
+    "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
+    "FROM footprint LEFT JOIN view " +
+    "ON footprint.footprint_id = view.footprint_id " +
+    "LEFT JOIN comment " +
+    "ON footprint.footprint_id = comment.footprint_id " +
+    "WHERE footprint.id = ? " +
+    "GROUP BY footprint_id ";
 
 var Footprint = function(params){
 
@@ -230,9 +237,36 @@ var Footprint = function(params){
         countDislike
     ];
 
+    var getFootprintListByDisplayName = function(callback){
+        connection.query(SQL_GET_FOOTPRINT_LIST_BY_ID, [user.id],
+            function (err, footprintList) {
+                if (err)
+                    return callback('게시물 리스트 불러오기 오류');
+
+                var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
+
+                async.map(footprintListJSON, function (footprint, cb) {
+                    delete footprint.id;
+                    delete footprint.displayName;
+
+                    async.waterfall(tasksForGetFootprintByUserDisplayName, function (err, tails) {
+                        if (err) return cb(err);
+                        return cb(null, _.extend(footprint, tails));
+                    });
+
+                }, function (err, result) {
+                    if (err) return callback('게시물 리스트 불러오기 오류');
+                    else {
+                        callback(null, result);
+                    }
+                });
+            });
+    };
+
     return {
         tasksForGetFootprint : tasksForGetFootprint,
-        tasksForGetFootprintByUserDisplayName: tasksForGetFootprintByUserDisplayName
+        tasksForGetFootprintByUserDisplayName: tasksForGetFootprintByUserDisplayName,
+        getFootprintListByDisplayName: getFootprintListByDisplayName
     }
 };
 
