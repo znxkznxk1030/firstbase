@@ -25,7 +25,7 @@ var linkArrays = [];
 var htmlUserInfo = function(profile){
     var content = '';
 
-    content += '<li id="\'modal-list\'">';
+    content += '<li id="\'modal-list\'"> <div>';
     content += '<a href=\'?displayName=' + profile.displayName + '\'>\n' +
         '                <img src=\'' + profile.profileUrl + '\'' +
         '                     alt=\"http://d2w40mi5mo8vk7.cloudfront.net/profile-default.png\"\n' +
@@ -35,7 +35,7 @@ var htmlUserInfo = function(profile){
         '                >' +
         '            </a>';
     content += '<h4 id=\'displayName\'>' + profile.displayName + '</h4>';
-    content += '</li>';
+    content += '</div></li>';
 
     return content;
 };
