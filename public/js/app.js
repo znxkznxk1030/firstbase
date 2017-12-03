@@ -1029,8 +1029,8 @@ $('#popUp').on('hidden.bs.modal', function (e) {
 
 $(document).on('click', '#loginSubmit', loginComplete);
 function loginComplete() {
-    var id = $("#loginId").val();
-    var password = $("#loginPw").val();
+    var id = $("#loginId input").val();
+    var password = $("#loginPw input").val();
     var ajaxData = {
         "id" : id,
         "password" : password
