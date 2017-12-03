@@ -454,6 +454,7 @@ hr {
 @media only screen and (max-width: 768px){
 
     .content-title-area {
+        width:95%;
         margin:0;
     }
 
