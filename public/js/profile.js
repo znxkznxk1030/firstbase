@@ -1,4 +1,5 @@
 var baseUrl = "http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:8080";
+var localUrl = "http://localhost:8080";
 //지도 생성시에 옵션을 지정할 수 있습니다.
 var map = new naver.maps.Map('profile-map', {
     center: new naver.maps.LatLng(37.504479, 127.048941), //지도의 초기 중심 좌표
@@ -19,6 +20,7 @@ map.setOptions("minZoom", 2);
 
 var markers = [];
 var allIcon = {};
+var linkArrays = [];
 
 $(document).ready(function () {
     $.ajax({
@@ -37,24 +39,7 @@ $(document).ready(function () {
         data: 'displayName=' + param,
         url: baseUrl + '/footprint/history',
         success: function (data) {
-            console.log(data);
-            new naver.maps.Marker({
-                map: map,
-                position: new naver.maps.LatLng(data.latitude, data.longitude),
-                icon: {
-                    url: data.iconUrl,
-                    size: new naver.maps.Size(30, 30),
-                    scaledSize: new naver.maps.Size(30, 30),
-                    origin: new naver.maps.Point(0, 0),
-                    anchor: new naver.maps.Point(15, 15)
-                },
-                title: data.footprint_id
-            });
-
             makeMarkers(data);
-
-            map.setZoom(13, true);
-            map.panTo(new naver.maps.LatLng(data.latitude, data.longitude));
         }
     });
 
@@ -70,7 +55,16 @@ function saveIcons(data) {
     console.log(allIcon);
 }
 
+function min(a, b){
+    return a>b?b:a;
+}
+function max(a, b){
+    return a>b?a:b;
+}
+
 function makeMarkers(links) {
+    var minlat = maxlat = 37.504479;
+    var minlng = maxlng = 127.048941;
 
     links.forEach(function (link) {
         console.log(link);
@@ -78,6 +72,11 @@ function makeMarkers(links) {
         var longitude = link.longitude;
         var iconKey = link.icon_key;
         var title = link.footprint_id;
+
+        minlat = min(minlat, latitude);
+        minlng = min(minlng, longitude);
+        maxlat = max(maxlat, latitude);
+        maxlng = max(maxlng, longitude);
 
         var marker = new naver.maps.Marker({
             map: map,
@@ -108,6 +107,11 @@ function makeMarkers(links) {
             });
         }
     }
+
+    map.fitBounds(new naver.maps.LatLngBounds(
+        new naver.maps.LatLng(minlat, minlng),
+        new naver.maps.LatLng(maxlat, maxlng)
+    ));
 
     markers.forEach(function (marker, index) {
         naver.maps.Event.addListener(marker, 'click', getClickHandler(index));
