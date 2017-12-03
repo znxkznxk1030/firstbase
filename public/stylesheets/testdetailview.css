@@ -458,6 +458,10 @@ hr {
         margin:0;
     }
 
+    .activity-col{
+        margin-right: 10px;
+    }
+
     #main-area {
         width: 100%;
         position: relative;
