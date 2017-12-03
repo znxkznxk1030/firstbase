@@ -454,11 +454,7 @@ hr {
 @media only screen and (max-width: 768px){
 
     .content-title-area {
-        text-align: center;
-        flex-flow: row nowrap;
-        width: 70%;
-        padding: 60px 20px 0;
-        /*text-align: center;*/
+        margin:0;
     }
 
     #main-area {
