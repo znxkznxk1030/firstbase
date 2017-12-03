@@ -313,7 +313,6 @@ ol, ul{
     display: inline;
     float: left;
     font-size: 16px;
-    margin-right: 40px;
 }
 
 .activity-col:last-child{
@@ -423,7 +422,7 @@ hr {
 }
 
 li{
-    margin-top:10px;
+    margin-left:40px;
     height: 100px;
 }
 
@@ -439,13 +438,6 @@ li{
 
 @media only screen and (max-width: 1279px) and (min-width: 768px){
 
-    .activity-col{
-        display: inline;
-        float: left;
-        font-size: 16px;
-        margin-right: 25px;
-    }
-
     #main-area {
         width: 100%;
         position: relative;
@@ -457,12 +449,6 @@ li{
 }
 
 @media only screen and (max-width: 768px){
-    .activity-col{
-        display: inline;
-        float: left;
-        font-size: 16px;
-        margin-right: 5px;
-    }
 
     #main-area {
         width: 100%;
