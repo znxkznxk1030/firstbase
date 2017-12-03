@@ -52,6 +52,7 @@ $(document).ready(function () {
                 console.log(data);
                 const followers = data.followers;
                 followers.forEach(function(profile){
+                    $('#modal-list').html('');
                     $('#modal-list').append(htmlUserInfo(profile));
                 });
             }
@@ -67,7 +68,8 @@ $(document).ready(function () {
                 console.log(data);
                 const followings = data.followings;
                 followings.forEach(function(profile){
-                    $('#content').append(htmlUserInfo(profile));
+                    $('#modal-list').html('');
+                    $('#modal-list').append(htmlUserInfo(profile));
                 });
             }
         });
