@@ -63,7 +63,7 @@ var User = function(params){
     };
 
     var sqlIsFollow = function (profile, cb) {
-        connection.query(SQL_IS_FOLLOW, [id, profile.id], function (err, Follow) {
+        connection.query(SQL_IS_FOLLOW, [user.id, profile.id], function (err, Follow) {
             if (err) return cb(err, null);
 
             var isFollow = false;
@@ -87,16 +87,18 @@ var User = function(params){
 
 
 
-    var getUserInfoByUserDisplayName = function(cb){
-        if (displayName.isNullOrUndefined) return cb('Not Authenticated');
+    var getUserInfoByUserDisplayName = function(callback){
+        if (displayName.isNullOrUndefined) return callback('Not Authenticated');
 
         async.waterfall(tasksForGetUserInfoByUserDisplayName,
             function (err, profile) {
-                if (err) return cb(MSG_FIND_USER_ERROR);
+                if (err) {
+                    return callback(MSG_FIND_USER_ERROR);
+                }
                 else {
                     console.log('#debug : ' + profile);
                     delete profile.id;
-                    return cb(null, profile);
+                    return callback(null, profile);
                 }
             });
     };
