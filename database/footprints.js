@@ -3,6 +3,8 @@ var getImageUrl = require("../controller/files").getImageUrl;
 const _ = require('underscore');
 var async = require("async");
 
+const profileDefaultKey = 'profiledefault.png';
+
 const SQL_RETRIEVE_FOOTPRINT_BY_FOOTPRINT_ID =
     "SELECT footprint.*, view_count AS countView, count(comment.comment_id) AS countComments " +
     "FROM footprint " +
@@ -197,16 +199,17 @@ var Footprint = function(params){
     };
 
     var findAuthor = function(cb){
-        connection.query(SQL_FIND_AUTHOR, footprintId, function (err, profile) {
+        console.log('foorpintId : ' + footprintId);
+        connection.query(SQL_FIND_AUTHOR, user.id, function (err, profile) {
             if (err) return cb(err);
 
             profile = JSON.parse(JSON.stringify(profile))[0];
-
+            console.log(profile);
             var profileUrl, profileKey = profile.profile_key;
             if (profileKey) profileUrl = getImageUrl(profileKey);
             else profileUrl = getImageUrl(profileDefaultKey);
 
-            return cb(null, {profileUrl: profileUrl});
+            return cb(null, {displayName : profile.displayName, profileUrl: profileUrl});
         });
     };
 

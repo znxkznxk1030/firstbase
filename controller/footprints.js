@@ -59,13 +59,13 @@ var getFootprintListByDisplayName = function (req, res) {
 
             var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
 
-            console.log()
-
             async.map(footprintListJSON, function (footprint, cb) {
+                delete footprint.id;
+                delete footprint.displayName;
 
                 var tasksForGetFootprintByUserDisplayName = Footprint({
                     footprintId: footprint.footprint_id,
-                    user: user
+                    user: req.author
                 }).tasksForGetFootprintByUserDisplayName;
 
                 async.waterfall(tasksForGetFootprintByUserDisplayName, function (err, tails) {
