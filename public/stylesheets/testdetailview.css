@@ -1261,3 +1261,7 @@ hr {
 #modal-list{
     flex-flow: row nowrap;
 }
+
+li{
+    height: 100px;
+}
