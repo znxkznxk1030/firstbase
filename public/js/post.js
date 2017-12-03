@@ -42,6 +42,9 @@ $(document).ready(function(){
         url: baseUrl+'/files/retrieveIconAll',
         success: function(data) {
             saveIcons(data);
+        },
+        error: function (error) {
+            location.href = baseUrl + "/404";
         }
     });
 
@@ -61,7 +64,7 @@ $(document).ready(function(){
         },
         error: function (error) {
             alert("잘못된 주소입니다.");
-            location.href = baseUrl;
+            location.href = baseUrl + "/404";
         }
     });
 
@@ -101,6 +104,9 @@ function getMarkers(Bounds) {
         success: function(data) {
             contentsData = data;
             makeMarkers(data);
+        },
+        error: function (error) {
+            location.href = baseUrl + "/404";
         }
     });
 }
@@ -147,8 +153,7 @@ function makeMarkers(data) {
                         fillDetail(data);
                     },
                     error: function (error) {
-                        alert("죄송합니다. 에러가 발생했습니다.");
-                        location.href = baseUrl;
+                        location.href = baseUrl + "404";
                     }
                 });
             }
