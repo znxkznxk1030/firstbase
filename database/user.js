@@ -7,7 +7,7 @@ const profileDefaultKey = 'profiledefault.png';
 const SQL_FIND_USER_BY_DISPLAYNAME =
     "SELECT * " +
     "FROM user " +
-    "WHERE user.displayName = ? "
+    "WHERE displayName = ? "
 
     , SQL_GET_FOLLOWER_COUNT =
     "SELECT count(*) AS countFollower FROM follow WHERE follow.target_id = ? "
@@ -27,7 +27,6 @@ var User = function(params){
         displayName = params.displayName;
 
     var findUser = function(cb){
-        console.log('#debug1 : ' + profile);
         connection.query(SQL_FIND_USER_BY_DISPLAYNAME, displayName, function (err, profile) {
             if (err) return cb(MSG_FIND_USER_ERROR, null);
 
@@ -40,7 +39,6 @@ var User = function(params){
     };
 
     var attachProfileUrl = function (profile, cb) {
-        console.log('#debug2 : ' + profile);
         var profileUrl, profileKey = profile.profile_key;
         //console.log(profileKey);
         if (profileKey) profileUrl = getImageUrl(profileKey);
@@ -50,7 +48,6 @@ var User = function(params){
     };
 
     var sqlGetFollowerCount = function (profile, cb) {
-        console.log('#debug3 : ' + profile);
         connection.query(SQL_GET_FOLLOWER_COUNT, [profile.id], function (err, countFollower) {
             if (err) return cb(err, null);
             return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollower[0]))));
@@ -58,7 +55,6 @@ var User = function(params){
     };
 
     var sqlGetFollowingCount = function (profile, cb) {
-        console.log('#debug4 : ' + profile);
         connection.query(SQL_GET_FOLLOWING_COUNT, [profile.id], function (err, countFollowing) {
             if (err) return cb(err, null);
             return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollowing[0]))));
@@ -70,7 +66,6 @@ var User = function(params){
             if (err) return cb(err, null);
 
             var isFollow = false;
-            console.log('#debug5 : ' + profile);
             if (JSON.parse(JSON.stringify(Follow))[0]) {
                 isFollow = true;
             }
@@ -78,7 +73,6 @@ var User = function(params){
             return cb(null, _.extend(profile, {isFollow: isFollow}));
         });
     };
-
 
 
     var tasksForGetUserInfoByUserDisplayName = [
@@ -93,7 +87,7 @@ var User = function(params){
 
     var getUserInfoByUserDisplayName = function(callback){
 
-        console.log('#debug0 : ');
+        if (displayName.isNullOrUndefined) return callback('Not Authenticated');
 
         async.waterfall(tasksForGetUserInfoByUserDisplayName,
             function (err, profile) {
@@ -101,7 +95,6 @@ var User = function(params){
                     return callback(MSG_FIND_USER_ERROR);
                 }
                 else {
-                    console.log('#debug : ' + profile);
                     delete profile.id;
                     return callback(null, profile);
                 }
