@@ -872,6 +872,7 @@ function logOut() {
         $('#login-register-button button').text("로그인");
         $('#login-register-button button').attr("data-toggle", "modal");
         $('#login-register-button button').attr("data-target", "#myModal");
+        $('#myModal').modal('hide');
         $('#login-register-button button').attr("onclick", "");
     }
     else if(checkOut == false){
