@@ -67,10 +67,11 @@ var User = function(params){
             if (err) return cb(err, null);
 
             var isFollow = false;
-
+            console.log('#debug : ' + profile);
             if (JSON.parse(JSON.stringify(Follow))[0]) {
                 isFollow = true;
             }
+
             return cb(null, _.extend(profile, {isFollow: isFollow}));
         });
     };
