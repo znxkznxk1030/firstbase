@@ -346,7 +346,6 @@ var getUserInfoByUserId = function (req, res) {
  */
 var updateUserInfo = function (req, res) {
     const sql = "UPDATE user SET displayName = ?, description = ? WHERE user.id = ? ";
-    const sqlCheckDisplayNameExist = "SELECT displayName FROM user WHERE user.displayName = ?";
     const body = req.body;
 
     const user = req.user;
@@ -545,9 +544,10 @@ var registrateUser = function registrateUser(req, res) {
 
 var isDisplayNameVaild = function (displayName, oldDisplayName, cb) {
 
-    console.log(displayName, oldDisplayName);
-
     if (!oldDisplayName && displayName === oldDisplayName) {
+
+        console.log(displayName, oldDisplayName);
+
         return cb(null);
     }
 
