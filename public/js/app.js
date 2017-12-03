@@ -856,9 +856,9 @@ function loginComplete() {
         },
         complete: function () {
             $('#login-register-button button').text("로그아웃");
-            $('#login-register-button button').css("data-toggle", "");
-            $('#login-register-button button').css("data-target", "");
-            $('#login-register-button button').css("onclick", "logOut();");
+            $('#login-register-button button').attr("data-toggle", "");
+            $('#login-register-button button').attr("data-target", "");
+            $('#login-register-button button').attr("onclick", "logOut();");
         }
     });
 }
