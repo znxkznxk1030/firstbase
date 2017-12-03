@@ -22,10 +22,49 @@ var markers = [];
 var allIcon = {};
 var linkArrays = [];
 
+var htmlUserInfo = function(profile){
+    var content = '';
+
+    content += '<li>';
+    content += profile.displayName;
+    content += profile.profileUrl;
+    content += '</li>';
+
+    return content;
+};
+
 $(document).ready(function () {
     var param = window.location.href.split('displayName=')[1];
 
     $('#btn-follower').click(function(){
+        $.ajax({
+            type: 'GET',
+            data: "displayName=" + param,
+            url: baseUrl + '/follow/followers',
+            success: function (data) {
+                console.log(data);
+                data.forEach(function(profile){
+                    $('#content').append(htmlUserInfo(profile));
+                });
+            }
+        });
+    });
+
+    $('#btn-following').click(function(){
+        $.ajax({
+            type: 'GET',
+            data: "displayName=" + param,
+            url: baseUrl + '/follow/followings',
+            success: function (data) {
+                console.log(data);
+                data.forEach(function(profile){
+                    $('#content').append(htmlUserInfo(profile));
+                });
+            }
+        });
+    });
+
+    $('#btn-following').click(function(){
         $.ajax({
             type: 'GET',
             data: "displayName=" + param,

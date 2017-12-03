@@ -337,8 +337,6 @@ var createFootprint = function (req, res) {
 
     var task = [
         function (cb) {
-            console.log('1');
-            // if (user) {
             connection.query(sqlCreateFootprintWithAuth, [userId, title, iconKey, content, latitude, longitude, type],
                 function (err, result) {
                     if (err || !result) {
@@ -347,18 +345,8 @@ var createFootprint = function (req, res) {
                     }
                     else return cb(null, result.insertId);
                 });
-            // } else {
-            //     connection.query(sqlCreateFootprintWithoutAuth, [title, displayName, footprintPassword, iconKey, content, latitude, longitude, type],
-            //         function (err, result) {
-            //             if (err || !result) {
-            //                 return cb(true);
-            //             }
-            //             else return cb(null, result.insertId);
-            //         });
-            // }
         },
         function (footprintId, cb) {
-            console.log('2');
             const length = imageKeys.length;
 
             async.times(length, function (i, next) {
@@ -380,7 +368,6 @@ var createFootprint = function (req, res) {
             });
         },
         function (footprintId, cb) {
-            console.log('3');
             if (type === 'link') {
                 const length = footprintIdList.length;
 
