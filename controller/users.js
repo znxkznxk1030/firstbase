@@ -546,7 +546,7 @@ var registrateUser = function registrateUser(req, res) {
 var isDisplayNameVaild = function (displayName, oldDisplayName, cb) {
 
     if (!oldDisplayName && displayName === oldDisplayName) {
-        return null;
+        return cb(null);
     }
 
     if (acceptTokenRe.test(displayName)) {
