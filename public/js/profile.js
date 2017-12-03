@@ -52,6 +52,7 @@ $(document).ready(function () {
                 console.log(data);
                 const followers = data.followers;
                 $('#modal-list').html('');
+                $('.modal-title').text('팔로워 리스트');
                 followers.forEach(function(profile){
                     $('#modal-list').append(htmlUserInfo(profile));
                 });
@@ -68,6 +69,7 @@ $(document).ready(function () {
                 console.log(data);
                 const followings = data.followings;
                 $('#modal-list').html('');
+                $('.modal-title').text('팔로우 리스트');
                 followings.forEach(function(profile){
                     $('#modal-list').append(htmlUserInfo(profile));
                 });
