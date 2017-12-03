@@ -103,6 +103,9 @@ var Footprint = function(params){
                             if(err) callback(err);
                             callback(null, result);
                         });
+
+                        linkedFootprint.iconUrl = getImageUrl(linkedFootprint.icon_key);
+
                     }, function(err, linkedFoorprintListWithImages){
                         if(err) return cb(true);
                         else{
