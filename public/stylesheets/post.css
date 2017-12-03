@@ -147,15 +147,15 @@ body { overflow: -moz-scrollbars-none; }
     flex: 0 1 auto;
     flex-flow: row nowrap;
     width: 100vw;
-    height: 8vh;
+    height: 55px;
     background-color: #FFFFFF;
 }
 
-#top-left-area{
+#detail-top-left-area{
     display: flex;
     flex: 0 1 auto;
-    width: 65%;
-    height: 100%;
+    width: 156px;
+    height: 55px;
     flex-flow: row nowrap;
     align-items: center;
 }
@@ -178,7 +178,7 @@ body { overflow: -moz-scrollbars-none; }
 #logo-img-letter{
     display: flex;
     flex : 0 0 auto;
-    width: auto;
+    width: 100px;
     height: 40px;
     margin-left: 8px;
 }
@@ -204,14 +204,14 @@ body { overflow: -moz-scrollbars-none; }
     text-decoration: none;
 }
 
-#top-right-area{
+#detail-top-right-area{
     display: flex;
     flex : 0 1 auto;
-    width: 35%;
-    height: 100%;
+    width: 210px;
+    height: 55px;
     flex-flow: row nowrap;
+    margin-left: auto;
     justify-content: flex-end;
-    align-items: center;
 }
 
 #login-register-button{
@@ -219,8 +219,8 @@ body { overflow: -moz-scrollbars-none; }
     flex : 0 1 auto;
     width: 80px;
     height: 75%;
-    align-items: center;
-    margin-right: 30px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 #login-register-button button{
@@ -286,4 +286,19 @@ body { overflow: -moz-scrollbars-none; }
         width: 100%;
     }
 
+}
+
+.floating {
+    position: fixed;
+    width: 55px;
+    height: 55px;
+    top: 50%;
+}
+
+.floatLeft{
+    left: 0;
+}
+
+.floatRight{
+    right: 0;
 }

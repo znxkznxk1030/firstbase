@@ -24,15 +24,16 @@
         <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=N4U9SJyL2gHum0hz1FK4"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
-        <script type="text/javascript" src="/js/login.js"></script>
-        <script type="text/javascript" src="/js/underscore-min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js" defer></script>
+        <script type="text/javascript" src="/js/login.js" defer></script>
+        <script type="text/javascript" src="/js/underscore-min.js" defer></script>
 
     </head>
     <body>
         <div id="loading"><div id="loader"></div></div>
         <div id="main">
             <div id="nav-area">
-                <div id="top-left-area">
+                <div id="detail-top-left-area">
                     <div id="logo-img">
                         <a href="/"><img src="/img/layout/logo.png"></a>
                     </div>
@@ -40,7 +41,13 @@
                         <a id="brand" href="#"><img src="/img/layout/logo-letter.png"></a>
                     </div>
                 </div>
-                <div id="top-right-area">
+                <div id="detail-top-right-area">
+                    <div id="detail-left-icon">
+                        <img src="/img/layout/left.png">
+                    </div>
+                    <div id="detail-right-icon">
+                        <img src="/img/layout/right.png">
+                    </div>
                     <div id="login-register-button">
                         <button type="button" class="btn" data-toggle="modal" data-target="#footprint-detail">로그인</button>
                     </div>
@@ -50,6 +57,19 @@
                 <% include detail.ejs %>
             </div>
         </div>
+
+        <div class="floating floatLeft">
+            <div id="detail-left-icon">
+                <img src="/img/layout/left.png">
+            </div>
+        </div>
+
+        <div class="floating floatRight">
+            <div id="detail-right-icon">
+                <img src="/img/layout/right.png">
+            </div>
+        </div>
+
         <script type="text/javascript" src="/js/post.js" defer></script>
     </body>
 </html>
