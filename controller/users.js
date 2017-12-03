@@ -200,6 +200,7 @@ var getUserInfoByUserDisplayName = function (req, res) {
 
     User({
         user: {
+            user: req.user,
             displayName: req.query.displayName
         }
     }).getUserInfoByUserDisplayName(function (err, result) {

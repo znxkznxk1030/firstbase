@@ -23,7 +23,7 @@ const MSG_USER_NOT_EXIST = '유저가 존재하지 않습니다'
 var User = function(params){
 
     const user = params.user,
-        displayName = user.displayName;
+        displayName = params.displayName;
 
     var findUser = function(cb){
         connection.query(SQL_FIND_USER_BY_DISPLAYNAME, displayName, function (err, profile) {
