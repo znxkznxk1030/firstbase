@@ -79,8 +79,6 @@ router.get('/web/detail',auth.authMiddleware, function (req, res){
     const user = req.user,
         displayName = req.query.displayName;
 
-
-
     var task = [
         function(cb){
             User({
@@ -115,7 +113,8 @@ router.get('/web/detail',auth.authMiddleware, function (req, res){
                 description : result.description,
                 countFollower : result.countFollower,
                 countFollowing : result.countFollowing,
-                history: result.history
+                history: result.history,
+                profileUrl: result.profileUrl
             });
         }
     })
