@@ -544,10 +544,11 @@ var registrateUser = function registrateUser(req, res) {
 
 var isDisplayNameVaild = function (displayName, oldDisplayName, cb) {
 
-    if (!oldDisplayName && displayName === oldDisplayName) {
+    console.log(displayName, oldDisplayName);
+    console.log(typeof displayName, typeof oldDisplayName);
 
+    if (typeof oldDisplayName !== 'undefined' && displayName === oldDisplayName) {
         console.log(displayName, oldDisplayName);
-
         return cb(null);
     }
 
