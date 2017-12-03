@@ -545,6 +545,8 @@ var registrateUser = function registrateUser(req, res) {
 
 var isDisplayNameVaild = function (displayName, oldDisplayName, cb) {
 
+    console.log(displayName, oldDisplayName);
+
     if (!oldDisplayName && displayName === oldDisplayName) {
         return cb(null);
     }
