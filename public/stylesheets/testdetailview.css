@@ -352,6 +352,7 @@ hr {
 
 #description {
     color : #f1f1f1;
+    overflow: auto;
 }
 
 .content-title-area {
