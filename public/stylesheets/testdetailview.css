@@ -457,7 +457,6 @@ hr {
         text-align: center;
         flex-flow: row nowrap;
         width: 70%;
-        margin-bottom: 15px;
         padding: 60px 20px 0;
         /*text-align: center;*/
     }
