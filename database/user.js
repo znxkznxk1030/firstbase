@@ -1,6 +1,8 @@
 const connection = require('./db');
 const _ = require('underscore');
 var async = require("async");
+var getImageUrl = require("../controller/files").getImageUrl;
+const profileDefaultKey = 'profiledefault.png';
 
 const SQL_FIND_USER_BY_DISPLAYNAME = "SELECT * " +
     "FROM user " +
