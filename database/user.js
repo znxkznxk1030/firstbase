@@ -91,6 +91,9 @@ var User = function(params){
 
 
     var getUserInfoByUserDisplayName = function(callback){
+
+        console.log('#debug0 : ');
+
         if (displayName.isNullOrUndefined) return callback('Not Authenticated');
 
         async.waterfall(tasksForGetUserInfoByUserDisplayName,
