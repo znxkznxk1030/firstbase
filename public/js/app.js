@@ -1040,10 +1040,10 @@ function loginComplete() {
         data: ajaxData,
         url: baseUrl + '/users/login',
         success: function (data) {
-            $('#popUp').modal('hide');
+            $('#myModal').modal('hide');
         },
         error: function (error) {
-            $('#popUp').modal('hide');
+            $('#myModal').modal('hide');
             location.href = baseUrl + "/404";
         }
     });
