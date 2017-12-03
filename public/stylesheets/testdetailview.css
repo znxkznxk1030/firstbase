@@ -1259,5 +1259,5 @@ hr {
 }
 
 #modal-list{
-    height: 30px;
+    flex-flow: row nowrap;
 }
