@@ -735,7 +735,10 @@ var isUpdateFormVaild = function (req, res, next) {
 
     const task = [
         function (cb) {
-            cb(isDisplayNameVaild(displayName));
+            isDisplayNameVaild(displayName, function(err){
+                if(err) return cb(err);
+                else cb();
+            })
         }
     ];
 
