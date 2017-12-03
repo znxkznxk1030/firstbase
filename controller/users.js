@@ -5,6 +5,7 @@ const profileDefaultKey = 'profiledefault.png';
 const _ = require('underscore');
 var passwordUtil = require("../auth/password");
 var xss = require("xss");
+var User = require("../database/user").User;
 var signToken = require("../auth/auth").signToken;
 var uploadUserImage = require("./files").uploadUserImage;
 
@@ -191,88 +192,14 @@ var getUserInfoByReqHeader = function (req, res) {
 };
 
 var getUserInfoByUserDisplayName = function (req, res) {
-    const sql = "SELECT * " +
-        "FROM user " +
-        "WHERE user.displayName = ? ";
-
-    const sqlGetFollowerCount =
-        "SELECT count(*) AS countFollower FROM follow WHERE follow.target_id = ? ";
-
-    const sqlGetFollowingCount =
-        "SELECT count(*) AS countFollowing FROM follow WHERE follow.follower_id = ? ";
-
-    const sqlIsFollow =
-        "SELECT * FROM follow WHERE follower_id = ? AND target_id = ?";
-
-    const displayName = req.query.displayName;
-
-    const id = req.user.id;
-
-    const task = [
-        function (cb) {
-            //console.log("dd" + req.user.id);
-            if (!displayName.isNullOrUndefined) return cb(null, displayName);
-            else return cb({code: -1, message: 'Not Authenticated'}, null);
-        },
-        function (displayName, cb) {
-            connection.query(sql, displayName, function (err, profile) {
-                if (err) return cb({code: -1, message: err}, null);
-
-                if (profile[0])
-                    return cb(null, profile);
-                else return cb('user is not existed', null);
-            });
-        },
-        function (profile, cb) {
-            var profileUrl, profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
-            //console.log(profileKey);
-            if (profileKey) profileUrl = getImageUrl(profileKey);
-            else profileUrl = getImageUrl(profileDefaultKey);
-
-            return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], {profileUrl: profileUrl}));
-        },
-        function (profile, cb) {
-            console.log(profile.id);
-            connection.query(sqlGetFollowerCount, [profile.id], function (err, countFollower) {
-                if (err) return cb(err, null);
-                return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollower[0]))));
-            });
-        },
-        function (profile, cb) {
-            connection.query(sqlGetFollowingCount, [profile.id], function (err, countFollowing) {
-                if (err) return cb(err, null);
-                return cb(null, _.extend(profile, JSON.parse(JSON.stringify(countFollowing[0]))));
-            });
-        },
-        function (profile, cb) {
-            connection.query(sqlIsFollow, [id, profile.id], function (err, Follow) {
-                if (err) return cb(err, null);
-
-                var isFollow = false;
-
-                if (JSON.parse(JSON.stringify(Follow))[0]) {
-                    isFollow = true;
-                }
-                return cb(null, _.extend(profile, {isFollow: isFollow}));
-            });
+    User({
+        user: req.user
+    }).getUserInfoByUserDisplayName(function (err, result) {
+        if (err) return res.status(400).json(util.message(-1, err));
+        else {
+            res.status(200).json(result);
         }
-    ];
-
-    async.waterfall(task,
-        function (err, profile) {
-            if (err) return res.status(400)
-                .json({
-                    code: -1,
-                    message: '해당 유저를 찾을 수 없습니다'
-                });
-
-            else {
-                delete profile.id;
-
-                return res.status(200)
-                    .json(profile);
-            }
-        });
+    });
 };
 
 var getUserInfoByUserId = function (req, res) {
@@ -542,40 +469,40 @@ var registrateUser = function registrateUser(req, res) {
             1. length (5 < && < 25)
          */
 
-var isDisplayNameVaild = function (displayName, oldDisplayName, callback) {
+var isDisplayNameVaild = function (displayName, oldDisplayName, cb) {
 
     // console.log(displayName, oldDisplayName);
     // console.log(typeof displayName, typeof oldDisplayName);
 
     if (typeof oldDisplayName !== 'undefined' && displayName === oldDisplayName) {
         // console.log(displayName, oldDisplayName);
-        return callback(null);
+        return cb(null);
     }
 
     if (acceptTokenRe.test(displayName)) {
-        return callback('닉네임은 한글,영문,숫자만 가능합니다');
+        return cb('닉네임은 한글,영문,숫자만 가능합니다');
     }
 
     //todo: 띄어쓰기 방지, 영문, 숫자
     if (displayName === null || displayName === '' || displayName === 'undefined')
-        return callback('닉네임 입력 칸이 비어있습니다.');
+        return cb('닉네임 입력 칸이 비어있습니다.');
 
     const length = displayName.length;
 
     if (length < 2)
-        return callback('닉네임의 길이가 너무 짧습니다.');
+        return cb('닉네임의 길이가 너무 짧습니다.');
     if (length > 10)
-        return callback('닉네임의 길이가 너무 깁니다.');
+        return cb('닉네임의 길이가 너무 깁니다.');
 
     const sqlDisplayCheck = "SELECT * FROM user WHERE displayName = ? ";
 
     connection.query(sqlDisplayCheck, [displayName], function (err, result) {
-        if (err) return callback('에러 났습니다');
+        if (err) return cb('에러 났습니다');
 
         if (result.length > 0) {
-            return callback('이미 존재하는 닉네임입니다');
+            return cb('이미 존재하는 닉네임입니다');
         } else {
-            return callback(null);
+            return cb(null);
         }
     });
 };
