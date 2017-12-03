@@ -80,8 +80,6 @@ var Footprint = function(params){
             });
     };
 
-
-
     var watch = function (footprint, cb) {
         connection.query(SQL_WATCH, [footprintId],
             function (err) {
@@ -90,6 +88,7 @@ var Footprint = function(params){
                 return cb(null, footprint);
             });
     };
+
     var getLinkedFootprint = function (footprint, cb){
         if(footprint.type === 'link'){
             connection.query(SQL_GET_LINKED_FOOTPRINTS, [footprintId], function(err, linkedFootprintList){
@@ -118,6 +117,7 @@ var Footprint = function(params){
             return cb(null, footprint);
         }
     };
+
     var imageLoad = function (footprint, cb) {
         connection.query(SQL_IMAGE_LOAD, [footprint.footprint_id],
             function (err, imageInfo) {
@@ -136,6 +136,7 @@ var Footprint = function(params){
                 return cb(null, _.extend(footprint, {imageUrls: imageUrls}));
             });
     };
+
     var retrieveComments = function (footprint, cb) {
         connection.query(SQL_GET_COMMENTS, [footprintId],
             function (err, comments) {
@@ -165,6 +166,7 @@ var Footprint = function(params){
                 return cb(null, _.extend(footprint, {comments: ret}));
             });
     };
+
     var countLike = function (footprint, cb) {
         connection.query(SQL_COUNT_LIKE, [footprintId],
             function (err, countLike) {
@@ -173,6 +175,7 @@ var Footprint = function(params){
                 return cb(null, _.extend(footprint, JSON.parse(JSON.stringify(countLike))[0]));
             });
     };
+
     var countDislike = function (footprint, cb) {
         connection.query(SQL_COUNT_DISLIKE, [footprintId],
             function (err, Dislike) {
@@ -181,6 +184,7 @@ var Footprint = function(params){
                 return cb(null, _.extend(footprint, JSON.parse(JSON.stringify(Dislike))[0]));
             });
     };
+
     var getProfileImage = function (footprint, cb) {
         connection.query(SQL_GET_PROFILE_IMAGE, [footprint.id],
             function (err, profile) {

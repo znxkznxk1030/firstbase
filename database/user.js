@@ -83,8 +83,6 @@ var User = function(params){
         sqlIsFollow
     ];
 
-
-
     var getUserInfoByUserDisplayName = function(callback){
 
         if (displayName.isNullOrUndefined) return callback('Not Authenticated');
@@ -95,7 +93,6 @@ var User = function(params){
                     return callback(MSG_FIND_USER_ERROR);
                 }
                 else {
-                    delete profile.id;
                     return callback(null, profile);
                 }
             });

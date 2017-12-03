@@ -203,7 +203,8 @@ var getUserInfoByUserDisplayName = function (req, res) {
     }).getUserInfoByUserDisplayName(function (err, result) {
         if (err) return res.status(400).json(util.message(-1, err));
         else {
-            res.status(200).json(result);
+            delete result.id;
+            return res.status(200).json(result);
         }
     });
 };

@@ -1,0 +1,89 @@
+@charset "UTF-8";
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: "icomoon", "Noto Scans CJK KR", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color : #252525;
+    overflow: hidden;
+}
+
+#main {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    flex-flow: column nowrap;
+    margin: 0 auto;
+}
+
+#nav-area {
+    display: flex;
+    flex: 0 1 auto;
+    flex-flow: row nowrap;
+    width: 100vw;
+    height: 8vh;
+    background-color: #FFFFFF;
+}
+
+header{
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+
+}
+
+._main{
+    margin-bottom: 44px;
+    padding: 13px 35px;
+}
+
+.inarea{
+    flex-flow: row nowrap;
+    display: flex;
+}
+
+.img-area{
+    flex: 0 0 auto;
+    margin: 0 0 0 0;
+    display: inline-block;
+    position: relative;
+    height: 124px;
+    width: 30%;
+    order: 1;
+}
+
+
+img{
+    height: 124px;
+}
+
+.txt-info{
+    float: left;
+    position: relative;
+    display: inline-block;
+    height: 124px;
+    width: 70%;
+    padding: 6px 0 3px;
+    flex-flow: row wrap;
+    order: 2;
+}
+
+.tit{
+    display: block;
+    color: #000000;
+    font-size: 18px;
+    height: 24px;
+    overflow: hidden;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+.txt{
+    display: block;
+    color: #9f9f9f;
+    font-size: 14px;
+    width: 71%;
+    height: 18px;
+    white-space: nowrap;
+    overflow: visible;
+}

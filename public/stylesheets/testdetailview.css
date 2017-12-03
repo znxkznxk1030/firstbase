@@ -286,13 +286,76 @@ body {
     position:relative;
 }
 
+.profile-detail{
+    flex-flow: column nowrap;
+}
+
+.profile-activity-list{
+    margin-bottom: 20px;
+    flex-direction: row;
+}
+
+ol, ul{
+    list-style: none;
+    padding:0;
+    margin:0;
+    text-align: center;
+    overflow:hidden;
+}
+
+.activity-col{
+    display: inline;
+    float: left;
+    font-size: 16px;
+    margin-right: 40px;
+}
+
+.activity-col:last-child{
+    font-size: 16px;
+    margin-right: 0;
+}
+
+.activity-col a{
+    color :#FFFFFF;
+}
+
+.activity-col a:active{
+    color : #587FB2;
+}
+
+.activity-col a:hover{
+    color : #00bbd2;
+}
+
+#displayName {
+    padding-top : 20px;
+    text-align: left;
+    color :#00bbd2;
+}
+
 .content-area {
 
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+.profile-description{
+    color : #ffcf15;
 }
 
 .content-title-area {
     text-align: center;
     flex-flow: row nowrap;
+    width: 70%;
+    margin : 0 auto 15px;
+    padding: 60px 20px 0;
     /*text-align: center;*/
 }
 
@@ -332,6 +395,14 @@ body {
 #profile-image {
     height: 80px;
     width: 80px;
+}
+
+.profile-description{
+    text-align: center;
+    flex-flow: row nowrap;
+    width: 70%;
+    margin : 0 auto 15px;
+    padding: 10px 20px 0;
 }
 
 @media only screen and (max-width: 1279px) and (min-width: 768px){
