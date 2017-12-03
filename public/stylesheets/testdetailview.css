@@ -1257,3 +1257,7 @@ hr {
     border: 1px solid rgba(0,0,0,.15);
     border-radius: .25rem;
 }
+
+#modal-list{
+    height: 30px;
+}

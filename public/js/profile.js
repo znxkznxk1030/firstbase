@@ -25,8 +25,8 @@ var linkArrays = [];
 var htmlUserInfo = function(profile){
     var content = '';
 
-    content += '<li>';
-    content += '<a href=\'../displayName=' + profile.displayName + '\'>\n' +
+    content += '<li id="\'modal-list\'">';
+    content += '<a href=\'?displayName=' + profile.displayName + '\'>\n' +
         '                <img src=\'' + profile.profileUrl + '\'' +
         '                     alt=\"http://d2w40mi5mo8vk7.cloudfront.net/profile-default.png\"\n' +
         '                     class=\"img-thumbnail\"\n' +
