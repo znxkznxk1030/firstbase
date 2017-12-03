@@ -356,20 +356,6 @@ var updateUserInfo = function (req, res) {
 
     var task = [
         function (cb) {
-            isDisplayNameVaild(displayName, function(err){
-                if(err) return cb(err);
-                else return cb();
-            })
-        },
-        function (cb) {
-            connection.query(sqlCheckDisplayNameExist, displayName, function (err, isExist) {
-                if (err || isExist.length > 0) return cb('이미 존재하는 닉네입 입니다');
-                else {
-                    return cb(null);
-                }
-            });
-        },
-        function (cb) {
             connection.query(sql, [displayName, description, user.id],
                 function (err, userUpdated) {
                     if (err) return cb('유저 정보 수정 실패');
@@ -557,11 +543,11 @@ var registrateUser = function registrateUser(req, res) {
             1. length (5 < && < 25)
          */
 
-var isDisplayNameVaild = function (displayName, cb) {
+var isDisplayNameVaild = function (displayName, oldDisplayName, cb) {
 
-    // if (!oldDisplayName && displayName === oldDisplayName) {
-    //     return null;
-    // }
+    if (!oldDisplayName && displayName === oldDisplayName) {
+        return null;
+    }
 
     if (acceptTokenRe.test(displayName)) {
         return cb('닉네임은 한글,영문,숫자만 가능합니다');
@@ -738,7 +724,7 @@ var isUpdateFormVaild = function (req, res, next) {
 
     const task = [
         function (cb) {
-            isDisplayNameVaild(displayName, function(err){
+            isDisplayNameVaild(displayName, req.user.displayName, function(err){
                 if(err) return cb(err);
                 else return cb();
             })
