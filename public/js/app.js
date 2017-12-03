@@ -42,6 +42,8 @@ var markers = [];
 var contentsData;
 
 $(document).ready(function () {
+
+    checkLogin();
     $("body").css("overflow-y",  "hidden");
 
     $.ajax({
@@ -866,9 +868,26 @@ function loginComplete() {
 function logOut() {
     var checkOut = confirm("로그아웃하시겠습니까?");
     if(checkOut == true){
-        $.cookie('jwt',null)
+        $.cookie('jwt',null);
     }
     else if(checkOut == false){
+        $('#login-register-button button').text("로그인");
+        $('#login-register-button button').attr("data-toggle", "modal");
+        $('#login-register-button button').attr("data-target", "#myModal");
+    }
+}
+
+function checkLogin() {
+    if($.cookie('jwt') != null){
+        $('#login-register-button button').text("로그아웃");
+        $('#login-register-button button').attr("data-toggle", "");
+        $('#login-register-button button').attr("data-target", "");
+        $('#login-register-button button').attr("onclick", "logOut();");
+    }
+    else {
+        $('#login-register-button button').text("로그인");
+        $('#login-register-button button').attr("data-toggle", "modal");
+        $('#login-register-button button').attr("data-target", "#myModal");
     }
 }
 
