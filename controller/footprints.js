@@ -40,31 +40,8 @@ var getAuthor = function (footprintId, cb) {
 };
 
 var getFootprintListByDisplayName = function (req, res) {
-    const id = req.author.id;
-    const displayName = req.query.displayName;
-
-    //console.log(displayName);
-
-    const sqlRetrieveFootprint =
-        "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
-        "FROM footprint LEFT JOIN view " +
-        "ON footprint.footprint_id = view.footprint_id " +
-        "LEFT JOIN comment " +
-        "ON footprint.footprint_id = comment.footprint_id " +
-        "WHERE footprint.id = ? " +
-        "GROUP BY footprint_id ";
-
-    const sqlFindUser = "SELECT profile_key " +
-        "FROM user " +
-        "WHERE user.id = ? ";
-
-    const sqlCountLike =
-        "SELECT count(*) AS countLike " +
-        "FROM eval WHERE footprint_id = ? AND state = 1";
-
-    const sqlCountDislike =
-        "SELECT count(*) AS countDisLike " +
-        "FROM eval WHERE footprint_id = ? AND state = 2";
+    const id = req.author.id
+        , displayName = req.query.displayName;
 
     connection.query(sqlRetrieveFootprint, [id],
         function (err, footprintList) {
@@ -75,49 +52,12 @@ var getFootprintListByDisplayName = function (req, res) {
 
             async.map(footprintListJSON, function (footprint, cb) {
 
-                var task = [
-                    function (callback) {
-                        connection.query(sqlFindUser, footprint.id, function (err, profile) {
-                            if (err) return callback(err);
+                var tasksForGetFootprintByUserDisplayName = Footprint({
+                    footprintId: footprint.footprint_id,
+                    user: user
+                }).tasksForGetFootprintByUserDisplayName;
 
-                            profile = JSON.parse(JSON.stringify(profile))[0];
-
-                            delete footprint.id;
-                            footprint.displayName = displayName;
-
-                            //console.log(profile);
-
-                            var profileUrl, profileKey = profile.profile_key;
-                            if (profileKey) profileUrl = getImageUrl(profileKey);
-                            else profileUrl = getImageUrl(profileDefaultKey);
-
-                            return callback(null, {profileUrl: profileUrl});
-                        });
-                    },
-                    function (tails, callback) {
-                        connection.query(sqlCountLike, [footprint.footprint_id],
-                            function (err, countLike) {
-                                if (err) return callback(err);
-
-                                const ret = JSON.parse(JSON.stringify(countLike))[0];
-
-                                return callback(null, _.extend(tails, ret));
-                            });
-                    },
-                    function (tails, callback) {
-                        connection.query(sqlCountDislike, [footprint.footprint_id],
-                            function (err, Dislike) {
-                                if (err) return callback(err);
-
-                                const ret = JSON.parse(JSON.stringify(Dislike))[0];
-
-                                return callback(null, _.extend(tails, ret));
-                            });
-                    }
-
-                ];
-
-                async.waterfall(task, function (err, tails) {
+                async.waterfall(tasksForGetFootprintByUserDisplayName, function (err, tails) {
                     if (err) return cb(err);
                     return cb(null, _.extend(footprint, tails));
                 });

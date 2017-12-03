@@ -10,6 +10,7 @@ const SQL_RETRIEVE_FOOTPRINT_BY_FOOTPRINT_ID =
     "ON footprint.footprint_id = comment.footprint_id " +
     "WHERE footprint.footprint_id = ? " +
     "GROUP BY footprint_id "
+
     , SQL_WATCH = "UPDATE footprint SET view_count = view_count + 1 WHERE footprint_id = ? "
     , SQL_IMAGE_LOAD = "SELECT * FROM image WHERE footprint_id = ?"
     , SQL_COUNT_LIKE =
@@ -34,7 +35,10 @@ const SQL_RETRIEVE_FOOTPRINT_BY_FOOTPRINT_ID =
     "ON footprint.footprint_id = link.linked_footprint_id " +
     "WHERE link.link_footprint_id = ? " +
     "GROUP BY footprint_id " +
-    "ORDER BY link.rank";
+    "ORDER BY link.rank"
+    , SQL_FIND_AUTHOR = "SELECT * " +
+    "FROM user " +
+    "WHERE user.id = ? ";
 
 var Footprint = function(params){
 
@@ -66,6 +70,9 @@ var Footprint = function(params){
                 }
             });
     };
+
+
+
     var watch = function (footprint, cb) {
         connection.query(SQL_WATCH, [footprintId],
             function (err) {
@@ -189,6 +196,20 @@ var Footprint = function(params){
             });
     };
 
+    var findUser = function(cb){
+        connection.query(SQL_FIND_AUTHOR, footprintId, function (err, profile) {
+            if (err) return cb(err);
+
+            profile = JSON.parse(JSON.stringify(profile))[0];
+
+            var profileUrl, profileKey = profile.profile_key;
+            if (profileKey) profileUrl = getImageUrl(profileKey);
+            else profileUrl = getImageUrl(profileDefaultKey);
+
+            return cb(null, {profileUrl: profileUrl});
+        });
+    };
+
     var tasksForGetFootprint = [
         retrieveFootprintByFootprintId,
         watch,
@@ -200,8 +221,16 @@ var Footprint = function(params){
         getProfileImage
     ];
 
+    var tasksForGetFootprintByUserDisplayName = [
+        findUser,
+        retrieveFootprintByFootprintId,
+        countLike,
+        countDislike
+    ];
+
     return {
-        tasksForGetFootprint : tasksForGetFootprint
+        tasksForGetFootprint : tasksForGetFootprint,
+        tasksForGetFootprintByUserDisplayName: tasksForGetFootprintByUserDisplayName
     }
 };
 

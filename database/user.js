@@ -6,8 +6,10 @@ var User = function(){
 
 
 
-
     return {
+    }
+};
 
-    };
+module.exports = {
+    User: User
 };
