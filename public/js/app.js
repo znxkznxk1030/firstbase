@@ -869,11 +869,12 @@ function logOut() {
     var checkOut = confirm("로그아웃하시겠습니까?");
     if(checkOut == true){
         Cookies.remove('jwt');
-    }
-    else if(checkOut == false){
         $('#login-register-button button').text("로그인");
         $('#login-register-button button').attr("data-toggle", "modal");
         $('#login-register-button button').attr("data-target", "#myModal");
+        $('#login-register-button button').attr("onclick", "");
+    }
+    else if(checkOut == false){
     }
 }
 
@@ -890,6 +891,7 @@ function checkLogin() {
         $('#login-register-button button').text("로그인");
         $('#login-register-button button').attr("data-toggle", "modal");
         $('#login-register-button button').attr("data-target", "#myModal");
+        $('#login-register-button button').attr("onclick", "");
     }
 }
 
