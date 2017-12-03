@@ -428,18 +428,16 @@ li{
 }
 
 #myModal{
-    margin-top: 300px;
+    margin-top: 10%;
+    margin-bottom: 10%;
 }
 
 .modal-li{
-    margin-left: 40px;
+    margin-left: 20%;
 }
 
 
 @media only screen and (max-width: 1279px) and (min-width: 768px){
-    #myModal{
-        margin-top: 200px;
-    }
 
     .activity-col{
         display: inline;
@@ -459,10 +457,6 @@ li{
 }
 
 @media only screen and (max-width: 768px){
-    #myModal{
-        margin-top: 100px;
-    }
-
     .activity-col{
         display: inline;
         float: left;
