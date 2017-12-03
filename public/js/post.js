@@ -2,33 +2,10 @@
 var baseUrl = "http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:8080";
 var baseUrl2 = "http://localhost:8080";
 
-var allIcon = {};
 var markers = [];
+var linkArrays = [];
+var currentIndex;
 var currentData;
-
-$.ajax({
-    type: 'GET',
-    data: "",
-    url: baseUrl + '/files/retrieveIconAll',
-    success: function (data) {
-        saveIcons(data);
-    },
-    error: function (error) {
-        location.href = baseUrl + "/404";
-        console.log(error);
-        debugger;
-    }
-});
-
-function saveIcons(data) {
-    var o = data.iconUrls;
-    for (i = 0; i < o.length; i++) {
-        var key = o[i].key;
-        var value = o[i].value;
-        allIcon[key] = value;
-    }
-    console.log(allIcon);
-}
 
 $.ajax({
     type: 'GET',
@@ -47,7 +24,7 @@ $.ajax({
         var map2 = new naver.maps.Map('detail-map', {
             size: new naver.maps.Size($(window).width() * 0.9 - 20, 280),
             center: new naver.maps.LatLng(37.504479, 127.048941), //지도의 초기 중심 좌표
-            zoom: 10, //지도의 초기 줌 레벨
+            zoom: 11, //지도의 초기 줌 레벨
             minZoom: 2, //지도의 최소 줌 레벨 //축소
             maxZoom: 14, //확대
             zoomControl: true, //줌 컨트롤의 표시 여부
@@ -58,12 +35,6 @@ $.ajax({
             logoControl: false, //네이버 로고 삭제
             scaleControl: false, //거리 단위 표시 삭제
             mapDataControl: false, //네이버 Corp. 삭제
-        });
-
-        var Bounds = map2.getBounds();
-        getMarkers(Bounds);
-        naver.maps.Event.addListener(map2, 'bounds_changed', function (bounds) {
-            getMarkers(bounds);
         });
 
         var param = window.location.href.split('id=')[1];
@@ -80,7 +51,7 @@ $.ajax({
             success: function (data) {
                 console.log("바로 밑");
                 console.log(data);
-                fillDetail(data);
+                checkLink(data);
             },
             error: function (error) {
                 location.href = baseUrl + "/404";
@@ -89,11 +60,33 @@ $.ajax({
             }
         });
 
-        function fillDetail(data) {
+        function checkLink(data) {
+            linkArrays = [];
 
-            currentData = data;
+            if(data.type != 'single'){
+                linkArrays.push(data);
+
+                var linkedFootprintList = data.linkedFootprintList;
+
+                linkedFootprintList.forEach(function (item, index) {
+                    linkArrays.push(item);
+                });
+            }
+            else {
+                linkArrays.push(data);
+            }
+
+            fillDetail(data, 0);
+            fillMarkers(data);
+
+        }
+
+        function fillDetail(data, index) {
+
+            currentIndex = index;
+            currentData = linkArrays[index];
             map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude)); // 얻은 좌표를 지도의 중심으로 설정합니다.
-            map2.setZoom(10); // 지도의 줌 레벨을 변경합니다.
+            map2.setZoom(11); // 지도의 줌 레벨을 변경합니다.
 
             console.log("야호");
             console.log(data);
@@ -101,20 +94,14 @@ $.ajax({
             $("#detail-images").empty();
             $("#detail-profileImg").empty();
 
-            var icon_key = data.icon_key;
-            var $icon;
-            $.each(allIcon, function (key, value) {
-                if (key == icon_key) {
-                    $icon = '<img src=' + value + '>';
-                }
-            });
+            var $icon = '<img src=' + data.iconUrl + '>';
             $($icon).appendTo($("#detail-icon"));
             $("#detail-title").text(data.title);
             $("#detail-id").text(data.displayName);
             $detailDate = '' + data.modified_date.substring(2, 10) + ' ' + data.modified_date.substring(11, 16);
             $("#detail-modified_date").text($detailDate);
-            $("#detail-countView span").html('&nbsp;' + data.countView);
-            $("#detail-countComments span").html('&nbsp;' + data.countComments);
+            $("#detail-countView span").html('&nbsp;' + linkArrays[0].countView);
+            $("#detail-countComments span").html('&nbsp;' + linkArrays[0].countComments);
 
             for (i = 0; i < data.imageUrls.length; i++) {
                 $img = '<img src=' + data.imageUrls[i] + '>';
@@ -122,109 +109,96 @@ $.ajax({
             }
 
             $("#detail-content").text(data.content);
-            $("#detail-like-count").text(data.countLike);
-            $("#detail-dislike-count").text(data.countDisLike);
+            $("#detail-like-count").text(linkArrays[0].countLike);
+            $("#detail-dislike-count").text(linkArrays[0].countDisLike);
 
             $profileImg = '<img src=' + data.profileUrl + '>';
             // $($profileImg).appendTo($("#detail-profileImg"));
 
-            $("#detail-profileImg").css("background-image", 'url(' + data.profileUrl + ')');
+            $("#detail-profileImg").css("background-image", 'url(' + linkArrays[0].profileUrl + ')');
 
-            $("#detail-cmt-count").text(data.countComments);
-
-            history.pushState(null, null, baseUrl + '/post?id=' + data.footprint_id);
+            $("#detail-cmt-count").text(linkArrays[0].countComments);
         }
 
-        function getMarkers(Bounds) {
+        function fillMarkers(data) {
 
-            var pickBounds = _.pick(Bounds, "_min", "_max");
+            if( data.type == 'single'){
 
-            var startlat = pickBounds._min._lat;
-            var startlng = pickBounds._min._lng;
-            var endlat = pickBounds._max._lat;
-            var endlng = pickBounds._max._lng;
+                var marker = new naver.maps.Marker({
+                    map: map2,
+                    position: new naver.maps.LatLng(data.latitude, data.longitude),
+                    icon: {
+                        url: data.iconUrl,
+                        size: new naver.maps.Size(30, 30),
+                        scaledSize: new naver.maps.Size(30, 30),
+                        origin: new naver.maps.Point(0, 0),
+                        anchor: new naver.maps.Point(15, 15)
+                    },
+                    // title: o.footprint_id
+                });
 
-            var ajaxData = {
-                startlat: endlat,
-                startlng: startlng,
-                endlat: startlat,
-                endlng: endlng
-            };
+                $(".floating").css("display","none");
+                $(".detail-left-icon").css("display","none");
+                $(".detail-right-icon").css("display","none");
+            }
+            else {
 
-            $.ajax({
-                type: 'GET',
-                data: ajaxData,
-                url: baseUrl + '/footprint/listbylocation/',
-                success: function (data) {
-                    makeMarkers(data);
-                },
-                error: function (error) {
-                    location.href = baseUrl + "/404";
-                    console.log(error);
-                    debugger;
-                }
-            });
-        }
-
-        function makeMarkers(data) {
-            if (data.length > 0) {
-                for (var i = 0; i < data.length; i++) {
-                    var o = data[i];
-                    var latitude = o.latitude;
-                    var longitude = o.longitude;
-
-                    var icon_key = o.icon_key;
-                    var iconUrl = "";
-
-                    $.each(allIcon, function (key, value) {
-                        if (key == icon_key) {
-                            iconUrl = value;
-                        }
-                    });
-
+                linkArrays.forEach(function (item, index) {
                     var marker = new naver.maps.Marker({
                         map: map2,
-                        position: new naver.maps.LatLng(latitude, longitude),
+                        position: new naver.maps.LatLng(item.latitude, item.longitude),
                         icon: {
-                            url: iconUrl,
+                            url: item.iconUrl,
                             size: new naver.maps.Size(30, 30),
                             scaledSize: new naver.maps.Size(30, 30),
                             origin: new naver.maps.Point(0, 0),
                             anchor: new naver.maps.Point(15, 15)
                         },
-                        title: o.footprint_id
+                        title: index
                     });
                     markers.push(marker);
-                }
+                    naver.maps.Event.addListener(markers[index], 'click', getClickHandler(index));
 
-                function getClickHandler(seq) {
-                    return function () {
-                        var id = markers[seq].getTitle();
-                        $.ajax({
-                            type: 'GET',
-                            data: {footprintId: id},
-                            url: baseUrl + '/footprint/detail',
-                            success: function (data) {
-                                fillDetail(data);
-                            },
-                            error: function (error) {
-                                location.href = baseUrl + "/404";
-                                console.log(error);
-                                debugger;
-                            }
+                    if(index < linkArrays.length-1){
+                        var openArrowLine = new naver.maps.Polyline({
+                            path: [
+                                new naver.maps.LatLng(item.latitude, item.longitude),
+                                new naver.maps.LatLng(linkArrays[index+1].latitude, linkArrays[index+1].longitude)
+                            ],
+                            map: map2,
+                            endIcon: naver.maps.PointingIcon.OPEN_ARROW,
+                            strokeColor: '#ffcf15',
+                            strokeWeight: 6
                         });
                     }
+
+                });
+
+                function getClickHandler(index) {
+                    return function () {
+                        fillDetail(linkArrays[index], index);
+                    };
                 }
 
-                for (var i = 0, ii = markers.length; i < ii; i++) {
-                    naver.maps.Event.addListener(markers[i], 'click', getClickHandler(i));
-                }
             }
+
         }
+
+        $(document).on('click', '.detail-left-icon', function(){
+            if(currentIndex > 0){
+                fillDetail(linkArrays[currentIndex-1], currentIndex-1);
+            }
+        });
+
+        $(document).on('click', '.detail-right-icon', function(){
+            if(currentIndex < linkArrays.length-1){
+                fillDetail(linkArrays[currentIndex+1], currentIndex+1);
+            }
+        });
 
         $(window).resize(
             function () {
-                map2.setSize(new naver.maps.Size($(window).width() * 0.9 - 20, 280));
+                map2.setSize(new naver.maps.Size($(window).width() - 20, 280));
                 map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude));
             }
         );

@@ -353,7 +353,7 @@
     height: 100%;
 }
 
-#detail-left-icon{
+.detail-left-icon{
     display: flex;
     flex: 0 1 auto;
     padding: 15px;
@@ -361,7 +361,7 @@
     height: 55px;
 }
 
-#detail-left-icon img{
+.detail-left-icon img{
     display: flex;
     flex: 0 1 auto;
     width: 100%;
@@ -369,7 +369,7 @@
     cursor: pointer;
 }
 
-#detail-right-icon{
+.detail-right-icon{
     display: flex;
     flex: 0 1 auto;
     padding: 15px;
@@ -377,7 +377,7 @@
     height: 55px;
 }
 
-#detail-right-icon img{
+.detail-right-icon img{
     display: flex;
     flex: 0 1 auto;
     width: 100%;
