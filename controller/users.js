@@ -547,7 +547,7 @@ var isDisplayNameVaild = function (displayName, oldDisplayName, callback) {
     // console.log(displayName, oldDisplayName);
     // console.log(typeof displayName, typeof oldDisplayName);
 
-    if (typeof oldDisplayName !== 'undefined' && oldDisplayName !== null && displayName === oldDisplayName) {
+    if (typeof oldDisplayName !== 'undefined' && displayName === oldDisplayName) {
         // console.log(displayName, oldDisplayName);
         return callback(null);
     }
@@ -569,22 +569,15 @@ var isDisplayNameVaild = function (displayName, oldDisplayName, callback) {
 
     const sqlDisplayCheck = "SELECT * FROM user WHERE displayName = ? ";
 
-    async.series([
-        function(cb){
-            connection.query(sqlDisplayCheck, [displayName], function (err, result) {
-                if (err) return cb('에러 났습니다');
+    connection.query(sqlDisplayCheck, [displayName], function (err, result) {
+        if (err) return callback('에러 났습니다');
 
-                if (result.length > 0) {
-                    return cb('이미 존재하는 닉네임입니다');
-                } else {
-                    return cb(null);
-                }
-            });
+        if (result.length > 0) {
+            return callback('이미 존재하는 닉네임입니다');
+        } else {
+            return callback(null);
         }
-    ], function(err){
-        return callback(err);
     });
-
 };
 
 /*
