@@ -29,19 +29,21 @@ var User = function(params){
         connection.query(SQL_FIND_USER_BY_DISPLAYNAME, displayName, function (err, profile) {
             if (err) return cb(MSG_FIND_USER_ERROR, null);
 
-            if (profile[0])
+            if (profile[0]){
+                profile = JSON.parse(JSON.stringify(profile))[0];
                 return cb(null, profile);
+            }
             else return cb(MSG_USER_NOT_EXIST, null);
         });
     };
 
     var attachProfileUrl = function (profile, cb) {
-        var profileUrl, profileKey = JSON.parse(JSON.stringify(profile))[0].profile_key;
+        var profileUrl, profileKey = profile.profile_key;
         //console.log(profileKey);
         if (profileKey) profileUrl = getImageUrl(profileKey);
         else profileUrl = getImageUrl(profileDefaultKey);
 
-        return cb(null, _.extend(JSON.parse(JSON.stringify(profile))[0], {profileUrl: profileUrl}));
+        return cb(null, _.extend(profile, {profileUrl: profileUrl}));
     };
 
     var sqlGetFollowerCount = function (profile, cb) {
