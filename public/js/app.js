@@ -45,6 +45,9 @@ $(document).ready(function () {
         url: baseUrl + '/files/retrieveIconAll',
         success: function (data) {
             saveIcons(data);
+        },
+        error: function (error) {
+            location.href = baseUrl + "/404";
         }
     });
 
@@ -55,6 +58,9 @@ $(document).ready(function () {
         success: function (data) {
             makePage(data);
             contentsData = data;
+        },
+        error: function (error) {
+            location.href = baseUrl + "/404";
         }
     });
 
@@ -188,8 +194,8 @@ function writeComplete() {
                 console.log(data);
                 cancel($('#writePage'));
             },
-            error: function (data) {
-                console.log(data);
+            error: function (error) {
+                location.href = baseUrl + "/404";
             }
         });
     }
@@ -524,6 +530,9 @@ function getMarkers(Bounds) {
         success: function (data) {
             renderPage(data);
             contentsData = data;
+        },
+        error: function (error) {
+            location.href = baseUrl + "/404";
         }
     });
 }
@@ -641,6 +650,9 @@ function popUp(data) {
         url: baseUrl + '/files/retrieveIconAll',
         success: function (data) {
             saveIcons(data);
+        },
+        error: function (error) {
+            location.href = baseUrl + "/404";
         }
     });
 
@@ -660,6 +672,9 @@ function popUp(data) {
         url: baseUrl + '/post/ajax',
         success: function (htmlData) {
             $("#detail-area").html(htmlData);
+        },
+        error: function (error) {
+            location.href = baseUrl + "/404";
         },
         complete: function () {
             history.pushState(null, null, baseUrl + '/post?id=' + data.footprint_id);
@@ -681,7 +696,7 @@ function popUp(data) {
                 },
                 error: function (error) {
                     alert("잘못된 주소입니다.");
-                    //location.href = baseUrl;
+                    location.href = baseUrl + "/404";
                 }
             });
 
@@ -733,6 +748,9 @@ function popUp(data) {
                     success: function (data) {
                         contentsData = data;
                         makeMarkers(data);
+                    },
+                    error: function (error) {
+                        location.href = baseUrl + "/404";
                     }
                 });
             }
@@ -779,8 +797,7 @@ function popUp(data) {
                                     fillDetail(data);
                                 },
                                 error: function (error) {
-                                    alert("죄송합니다. 에러가 발생했습니다.");
-                                    location.href = baseUrl;
+                                    location.href = baseUrl + "/404";
                                 }
                             });
                         }
@@ -961,6 +978,9 @@ function handleImgFileSelect(e) {
                 contentType: false,
                 success: function (data) {
                     return next(null, data.imageKey);
+                },
+                error: function (error) {
+                    location.href = baseUrl + "/404";
                 }
             });
         }
@@ -1018,12 +1038,13 @@ function loginComplete() {
     $.ajax({
         type: 'POST',
         data: ajaxData,
-        url: "http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:8080" + '/users/login',
+        url: baseUrl + '/users/login',
         success: function (data) {
             $('#popUp').modal('hide');
-        }
+        },
         error: function (error) {
             $('#popUp').modal('hide');
+            location.href = baseUrl + "/404";
         }
     });
 }
