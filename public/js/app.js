@@ -399,7 +399,7 @@ function makeMarkers(data) {
                         }
                     });
                 });
-            }
+            };
         }
 
         for (var i = 0, ii = markers.length; i < ii; i++) {
