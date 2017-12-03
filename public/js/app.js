@@ -868,7 +868,7 @@ function loginComplete() {
 function logOut() {
     var checkOut = confirm("로그아웃하시겠습니까?");
     if(checkOut == true){
-        $.cookie('jwt',null);
+        Cookies.remove('jwt');
     }
     else if(checkOut == false){
         $('#login-register-button button').text("로그인");
@@ -878,7 +878,9 @@ function logOut() {
 }
 
 function checkLogin() {
-    if($.cookie('jwt') != null){
+    console.log("쿠키 값 확인");
+    console.log(Cookies.get('jwt'));
+    if(Cookies.get('jwt') != null){
         $('#login-register-button button').text("로그아웃");
         $('#login-register-button button').attr("data-toggle", "");
         $('#login-register-button button').attr("data-target", "");
