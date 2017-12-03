@@ -356,7 +356,10 @@ var updateUserInfo = function (req, res) {
 
     var task = [
         function (cb) {
-            return cb(isDisplayNameVaild(displayName, user.displayName));
+            isDisplayNameVaild(displayName, function(err){
+                if(err) return cb(err);
+                else return cb();
+            })
         },
         function (cb) {
             connection.query(sqlCheckDisplayNameExist, displayName, function (err, isExist) {
@@ -737,7 +740,7 @@ var isUpdateFormVaild = function (req, res, next) {
         function (cb) {
             isDisplayNameVaild(displayName, function(err){
                 if(err) return cb(err);
-                else cb();
+                else return cb();
             })
         }
     ];
