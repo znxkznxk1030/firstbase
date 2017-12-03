@@ -43,10 +43,10 @@ var route = function (app) {
             , displayName = xss(data.displayName)
             , deviceToken = data.deviceToken;
 
-        
+
         async.series([
             function(cb){
-                user.isDisplayNameVaild(displayName, function(err){
+                user.isDisplayNameVaild(displayName, null, function(err){
                     if(err) return cb(err);
                     else cb();
                 })
