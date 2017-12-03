@@ -43,7 +43,8 @@ $(document).ready(function () {
             url: baseUrl + '/follow/followers',
             success: function (data) {
                 console.log(data);
-                data.forEach(function(profile){
+                const followers = data.followers;
+                followers.forEach(function(profile){
                     $('#content').append(htmlUserInfo(profile));
                 });
             }
@@ -57,7 +58,8 @@ $(document).ready(function () {
             url: baseUrl + '/follow/followings',
             success: function (data) {
                 console.log(data);
-                data.forEach(function(profile){
+                const followings = data.followings;
+                followings.forEach(function(profile){
                     $('#content').append(htmlUserInfo(profile));
                 });
             }
