@@ -92,7 +92,7 @@ var User = function(params){
 
         async.waterfall(tasksForGetUserInfoByUserDisplayName,
             function (err, profile) {
-                if (err) return cb('해당 유저를 찾을 수 없습니다');
+                if (err) return cb(MSG_FIND_USER_ERROR);
                 else {
                     console.log('#debug : ' + profile);
                     delete profile.id;
