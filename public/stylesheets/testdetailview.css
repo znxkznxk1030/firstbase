@@ -350,6 +350,10 @@ hr {
     color : #ffcf15;
 }
 
+#description {
+    color : #f1f1f1;
+}
+
 .content-title-area {
     text-align: center;
     flex-flow: row nowrap;
