@@ -23,6 +23,19 @@ var allIcon = {};
 var linkArrays = [];
 
 $(document).ready(function () {
+    var param = window.location.href.split('displayName=')[1];
+
+    $('#btn-follower').click(function(){
+        $.ajax({
+            type: 'GET',
+            data: "displayName=" + param,
+            url: baseUrl + '/follow/followers',
+            success: function (data) {
+                console.log(data);
+            }
+        });
+    });
+
     $.ajax({
         type: 'GET',
         data: "",
@@ -31,8 +44,6 @@ $(document).ready(function () {
             saveIcons(data);
         }
     });
-
-    var param = window.location.href.split('displayName=')[1];
 
     $.ajax({
         type: 'GET',

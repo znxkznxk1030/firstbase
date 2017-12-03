@@ -177,7 +177,7 @@ var getFollowerList = function(req, res){
     var task = [
         function(cb){
             connection.query(sqlGetId, displayName, function(err, id){
-                if(err) return cb('아이디가 존재하지 않습니다');
+                if(err || id.length < 0) return cb('아이디가 존재하지 않습니다');
                 else{
                     id = JSON.parse(JSON.stringify(id))[0].id;
 
