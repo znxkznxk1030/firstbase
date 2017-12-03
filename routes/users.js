@@ -75,7 +75,7 @@ router.post('/updateImage', auth.authMiddleware, controller.updateUserImage);
 router.get('/detail', auth.authMiddleware, controller.getUserInfoByUserDisplayName);
 router.get('/more', auth.authMiddleware, controller.getUserInfoByUserId);
 
-router.get('/web/detail',auth.authMiddleware, function (req, res){
+router.get('/web/detail', function (req, res){
     const user = req.user,
         displayName = req.query.displayName;
 
