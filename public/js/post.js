@@ -21,22 +21,6 @@ $.ajax({
     },
     complete: function () {
 
-        var map2 = new naver.maps.Map('detail-map', {
-            size: new naver.maps.Size($(window).width() * 0.9 - 20, 280),
-            center: new naver.maps.LatLng(37.504479, 127.048941), //지도의 초기 중심 좌표
-            zoom: 11, //지도의 초기 줌 레벨
-            minZoom: 2, //지도의 최소 줌 레벨 //축소
-            maxZoom: 14, //확대
-            zoomControl: true, //줌 컨트롤의 표시 여부
-            zoomControlOptions: { //줌 컨트롤의 옵션
-                style: naver.maps.ZoomControlStyle.SMALL, // 바가 아니라 확대 축소로.
-                position: naver.maps.Position.RIGHT_CENTER
-            },
-            logoControl: false, //네이버 로고 삭제
-            scaleControl: false, //거리 단위 표시 삭제
-            mapDataControl: false, //네이버 Corp. 삭제
-        });
-
         var param = window.location.href.split('id=')[1];
         console.log("param:" + param);
 
@@ -62,6 +46,8 @@ $.ajax({
 
         function checkLink(data) {
             linkArrays = [];
+            currentIndex = 0;
+            currentData = data;
 
             if(data.type != 'single'){
                 linkArrays.push(data);
@@ -77,7 +63,9 @@ $.ajax({
             }
 
             fillDetail(data, 0);
+            initialMap();
             fillMarkers(data);
+            setCenter(data);
 
         }
 
@@ -85,8 +73,8 @@ $.ajax({
 
             currentIndex = index;
             currentData = linkArrays[index];
-            map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude)); // 얻은 좌표를 지도의 중심으로 설정합니다.
-            map2.setZoom(11); // 지도의 줌 레벨을 변경합니다.
+            // map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude)); // 얻은 좌표를 지도의 중심으로 설정합니다.
+            // map2.setZoom(11); // 지도의 줌 레벨을 변경합니다.
 
             console.log("야호");
             console.log(data);
@@ -118,6 +106,24 @@ $.ajax({
             $("#detail-profileImg").css("background-image", 'url(' + linkArrays[0].profileUrl + ')');
 
             $("#detail-cmt-count").text(linkArrays[0].countComments);
+        }
+
+        function initialMap() {
+            map2 = new naver.maps.Map('detail-map', {
+                size: new naver.maps.Size($("#detail-map").width(), 280),
+                center: new naver.maps.LatLng(37.504479, 127.048941), //지도의 초기 중심 좌표
+                zoom: 11, //지도의 초기 줌 레벨
+                minZoom: 2, //지도의 최소 줌 레벨 //축소
+                maxZoom: 14, //확대
+                zoomControl: true, //줌 컨트롤의 표시 여부
+                zoomControlOptions: { //줌 컨트롤의 옵션
+                    style: naver.maps.ZoomControlStyle.SMALL, // 바가 아니라 확대 축소로.
+                    position: naver.maps.Position.RIGHT_CENTER
+                },
+                logoControl: false, //네이버 로고 삭제
+                scaleControl: false, //거리 단위 표시 삭제
+                mapDataControl: false, //네이버 Corp. 삭제
+            });
         }
 
         function fillMarkers(data) {
@@ -182,23 +188,34 @@ $.ajax({
 
             }
 
+            function setCenter(data) {
+                map2.setCenter(new naver.maps.LatLng(data.latitude, data.longitude)); // 얻은 좌표를 지도의 중심으로 설정합니다.
+                map2.setZoom(11); // 지도의 줌 레벨을 변경합니다.
+            }
+
         }
 
         $(document).on('click', '.detail-left-icon', function(){
-            if(currentIndex > 0){
+            if(currentIndex -1 < 0){
+                fillDetail(linkArrays[linkArrays.length-1], linkArrays.length-1);
+            }
+            else {
                 fillDetail(linkArrays[currentIndex-1], currentIndex-1);
             }
         });
 
         $(document).on('click', '.detail-right-icon', function(){
-            if(currentIndex < linkArrays.length-1){
+            if(currentIndex + 1 > linkArrays.length-1){
+                fillDetail(linkArrays[0], 0);
+            }
+            else {
                 fillDetail(linkArrays[currentIndex+1], currentIndex+1);
             }
         });
 
         $(window).resize(
             function () {
-                map2.setSize(new naver.maps.Size($(window).width() - 20, 280));
+                map2.setSize(new naver.maps.Size($("#detail-map").width(), 280));
                 map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude));
             }
         );
