@@ -542,40 +542,40 @@ var registrateUser = function registrateUser(req, res) {
             1. length (5 < && < 25)
          */
 
-var isDisplayNameVaild = function (displayName, oldDisplayName, cb) {
+var isDisplayNameVaild = function (displayName, oldDisplayName, callback) {
 
     // console.log(displayName, oldDisplayName);
     // console.log(typeof displayName, typeof oldDisplayName);
 
     if (typeof oldDisplayName !== 'undefined' && displayName === oldDisplayName) {
         // console.log(displayName, oldDisplayName);
-        return cb(null);
+        return callback(null);
     }
 
     if (acceptTokenRe.test(displayName)) {
-        return cb('닉네임은 한글,영문,숫자만 가능합니다');
+        return callback('닉네임은 한글,영문,숫자만 가능합니다');
     }
 
     //todo: 띄어쓰기 방지, 영문, 숫자
     if (displayName === null || displayName === '' || displayName === 'undefined')
-        return cb('닉네임 입력 칸이 비어있습니다.');
+        return callback('닉네임 입력 칸이 비어있습니다.');
 
     const length = displayName.length;
 
     if (length < 2)
-        return cb('닉네임의 길이가 너무 짧습니다.');
+        return callback('닉네임의 길이가 너무 짧습니다.');
     if (length > 10)
-        return cb('닉네임의 길이가 너무 깁니다.');
+        return callback('닉네임의 길이가 너무 깁니다.');
 
     const sqlDisplayCheck = "SELECT * FROM user WHERE displayName = ? ";
 
     connection.query(sqlDisplayCheck, [displayName], function (err, result) {
-        if (err) return cb('에러 났습니다');
+        if (err) return callback('에러 났습니다');
 
         if (result.length > 0) {
-            return cb('이미 존재하는 닉네임입니다');
+            return callback('이미 존재하는 닉네임입니다');
         } else {
-            return cb(null);
+            return callback(null);
         }
     });
 };
