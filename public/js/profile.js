@@ -26,8 +26,15 @@ var htmlUserInfo = function(profile){
     var content = '';
 
     content += '<li>';
-    content += profile.displayName;
-    content += profile.profileUrl;
+    content += '<a href=\'../displayName=' + profile.displayName + '\'>\n' +
+        '                <img src=\'' + profile.profileUrl + '\'' +
+        '                     alt=\"http://d2w40mi5mo8vk7.cloudfront.net/profile-default.png\"\n' +
+        '                     class=\"img-thumbnail\"\n' +
+        '                     id=\"icon-image\"\n' +
+        '                     style=\"margin:15px;\"\n' +
+        '                >' +
+        '            </a>';
+    content += '<h4 id=\'displayName\'>' + profile.displayName + '</h4>';
     content += '</li>';
 
     return content;
