@@ -26,16 +26,16 @@ var htmlUserInfo = function(profile){
     var content = '';
 
     content += '<li id=\'modal-li\'> <div>';
-    content += '<a href=\'?displayName=' + profile.displayName + '\'>\n' +
+    content += '<a href=\'?displayName=' + profile.displayName + '\'>' +
         '                <img src=\'' + profile.profileUrl + '\'' +
         '                     alt=\"http://d2w40mi5mo8vk7.cloudfront.net/profile-default.png\"\n' +
         '                     class=\"img-thumbnail\"\n' +
         '                     id=\"icon-image\"\n' +
         '                     style=\"margin:15px;\"\n' +
         '                >' +
-        '            </a>';
-    content += '<h4 id=\'displayName\'>' + profile.displayName + '</h4>';
-    content += '</div></li>';
+        '           ';
+    content += '<h4 id=\'modal-displayName\'>' + profile.displayName + '</h4>';
+    content += '</a> </div></li>';
 
     return content;
 };
