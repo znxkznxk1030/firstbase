@@ -59,12 +59,12 @@ var nicknameCheck = function (req, res) {
         })
 };
 
-var isExistDisplayName = function(displayName , cb){
+var isExistDisplayName = function (displayName, cb) {
     const sqlIsExistDisplayName = "SELECT * FROM user WHERE displayName = ?";
 
-    connection.query(sqlIsExistDisplayName, displayName, function(err, result){
+    connection.query(sqlIsExistDisplayName, displayName, function (err, result) {
         if (err || result.length > 0) return cb('이미 존재하는 닉네임 입니다.');
-        else{
+        else {
             return cb();
         }
     });
@@ -197,10 +197,8 @@ var getUserInfoByUserDisplayName = function (req, res) {
     //     return res.status(400).json(util.message(-1, '닉네임 파라미터 오류'));
     // }
     User({
-        user: {
-            user: req.user,
-            displayName: req.query.displayName
-        }
+        user: req.user,
+        displayName: req.query.displayName
     }).getUserInfoByUserDisplayName(function (err, result) {
         if (err) return res.status(400).json(util.message(-1, err));
         else {
@@ -308,11 +306,11 @@ var updateUserInfo = function (req, res) {
                     message: err
                 });
 
-        else{
+        else {
             console.log(userUpdated);
 
             var profile = {
-                id : user.id,
+                id: user.id,
                 displayName: displayName,
                 provider: user.provider
             };
@@ -365,7 +363,7 @@ var updateUserImage = function (req, res) {
 var registrateSocialUser = function registrateSocialLoginUser(data, cb) {
     var sql = 'INSERT INTO user (id, displayName, provider) VALUES (?, ?, ?)';
     connection.query(sql, [data.id, data.displayName, data.provider], function (err, result) {
-        if (err){
+        if (err) {
             console.log(err);
             return cb(true);
         }
@@ -457,7 +455,7 @@ var registrateUser = function registrateUser(req, res) {
         else {
             return res.status(200).json({
                 code: 1,
-                message : "퍼스트베이스에 오신걸 환영합니다! \n 회원가입 성공"
+                message: "퍼스트베이스에 오신걸 환영합니다! \n 회원가입 성공"
             });
         }
     });
@@ -661,8 +659,8 @@ var isUpdateFormVaild = function (req, res, next) {
 
     const task = [
         function (cb) {
-            isDisplayNameVaild(displayName, req.user.displayName, function(err){
-                if(err) return cb(err);
+            isDisplayNameVaild(displayName, req.user.displayName, function (err) {
+                if (err) return cb(err);
                 else return cb();
             })
         }
@@ -699,8 +697,8 @@ var isFormVaild = function (req, res, next) {
 
     const task = [
         function (cb) {
-            isDisplayNameVaild(displayName, null, function(err){
-                if(err) return cb(err);
+            isDisplayNameVaild(displayName, null, function (err) {
+                if (err) return cb(err);
                 else cb();
             })
         },
@@ -728,7 +726,7 @@ module.exports = {
     nicknameCheck: nicknameCheck,
 
     findOne: findOne,
-    findOneWithProvider : findOneWithProvider,
+    findOneWithProvider: findOneWithProvider,
     findPassword: findPassword,
 
     getUserInfoByReqHeader: getUserInfoByReqHeader,
@@ -746,5 +744,5 @@ module.exports = {
     isFormVaild: isFormVaild,
     updateDeviceToken: updateDeviceToken,
     isExistDisplayName: isExistDisplayName,
-    isDisplayNameVaild:isDisplayNameVaild
+    isDisplayNameVaild: isDisplayNameVaild
 };
