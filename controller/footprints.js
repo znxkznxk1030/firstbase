@@ -43,12 +43,23 @@ var getFootprintListByDisplayName = function (req, res) {
     const id = req.author.id
         , displayName = req.query.displayName;
 
+    const sqlRetrieveFootprint =
+        "SELECT footprint.*, count(view.view_id) AS countView, count(comment.comment_id) AS countComments " +
+        "FROM footprint LEFT JOIN view " +
+        "ON footprint.footprint_id = view.footprint_id " +
+        "LEFT JOIN comment " +
+        "ON footprint.footprint_id = comment.footprint_id " +
+        "WHERE footprint.id = ? " +
+        "GROUP BY footprint_id ";
+
     connection.query(sqlRetrieveFootprint, [id],
         function (err, footprintList) {
             if (err)
                 return res.status(400).json(util.message(-1, '게시물 리스트 불러오기 오류'));
 
             var footprintListJSON = JSON.parse(JSON.stringify(footprintList));
+
+            console.log()
 
             async.map(footprintListJSON, function (footprint, cb) {
 
@@ -110,7 +121,7 @@ var getFootprintList = function (req, res) {
                         var displayName;
                         var profileUrl, profileKey;
 
-                        if(footprint.id){
+                        if (footprint.id) {
                             connection.query(sqlFindUser, footprint.id, function (err, profile) {
                                 if (err) return callback(err);
 
@@ -124,9 +135,9 @@ var getFootprintList = function (req, res) {
 
                                 return callback(null, {displayName: displayName, profileUrl: profileUrl});
                             });
-                        }else{
+                        } else {
                             profileUrl = getImageUrl(profileDefaultKey);
-                            return callback(null, {profileUrl:profileUrl});
+                            return callback(null, {profileUrl: profileUrl});
                         }
                     },
                     function (tails, callback) {
@@ -253,7 +264,7 @@ var getFootprintListByLocation = function (req, res) {
                         var displayName;
                         var profileUrl, profileKey;
 
-                        if(footprint.id){
+                        if (footprint.id) {
                             connection.query(sqlFindUser, footprint.id, function (err, profile) {
                                 if (err) return callback(err);
 
@@ -267,9 +278,9 @@ var getFootprintListByLocation = function (req, res) {
 
                                 return callback(null, {displayName: displayName, profileUrl: profileUrl});
                             });
-                        }else{
+                        } else {
                             profileUrl = getImageUrl(profileDefaultKey);
-                            return callback(null, {profileUrl:profileUrl});
+                            return callback(null, {profileUrl: profileUrl});
                         }
                     },
                     function (tails, callback) {
@@ -357,16 +368,16 @@ var createFootprint = function (req, res) {
 
     var task = [
         function (cb) {
-        console.log('1');
+            console.log('1');
             // if (user) {
-                connection.query(sqlCreateFootprintWithAuth, [userId, title, iconKey, content, latitude, longitude, type],
-                    function (err, result) {
-                        if (err || !result) {
-                            console.log(err);
-                            return cb(true);
-                        }
-                        else return cb(null, result.insertId);
-                    });
+            connection.query(sqlCreateFootprintWithAuth, [userId, title, iconKey, content, latitude, longitude, type],
+                function (err, result) {
+                    if (err || !result) {
+                        console.log(err);
+                        return cb(true);
+                    }
+                    else return cb(null, result.insertId);
+                });
             // } else {
             //     connection.query(sqlCreateFootprintWithoutAuth, [title, displayName, footprintPassword, iconKey, content, latitude, longitude, type],
             //         function (err, result) {

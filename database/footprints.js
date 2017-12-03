@@ -196,7 +196,7 @@ var Footprint = function(params){
             });
     };
 
-    var findUser = function(cb){
+    var findAuthor = function(cb){
         connection.query(SQL_FIND_AUTHOR, footprintId, function (err, profile) {
             if (err) return cb(err);
 
@@ -222,8 +222,7 @@ var Footprint = function(params){
     ];
 
     var tasksForGetFootprintByUserDisplayName = [
-        findUser,
-        retrieveFootprintByFootprintId,
+        findAuthor,
         countLike,
         countDislike
     ];
