@@ -547,7 +547,7 @@ var isDisplayNameVaild = function (displayName, oldDisplayName, callback) {
     // console.log(displayName, oldDisplayName);
     // console.log(typeof displayName, typeof oldDisplayName);
 
-    if (typeof oldDisplayName !== 'undefined' && displayName === oldDisplayName) {
+    if (typeof oldDisplayName !== 'undefined' && oldDisplayName !== null && displayName === oldDisplayName) {
         // console.log(displayName, oldDisplayName);
         return callback(null);
     }
