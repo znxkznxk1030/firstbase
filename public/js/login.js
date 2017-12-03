@@ -2,7 +2,7 @@
 
 $(document).ready(function () {
     checkLogin();
-}
+});
 
 $(document).on('click', '#loginSubmit', loginComplete);
 function loginComplete() {

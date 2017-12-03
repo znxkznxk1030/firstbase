@@ -342,7 +342,7 @@
     display: flex;
     flex: 0 1 auto;
     width: 100%;
-    height: 60px;
+    height: 55px;
     background-color: #FFFFFF;
 }
 
@@ -357,16 +357,30 @@
     display: flex;
     flex: 0 1 auto;
     padding: 15px;
-    width: 60px;
-    height: 60px;
+    width: 55px;
+    height: 55px;
+}
+
+#detail-left-icon img{
+    display: flex;
+    flex: 0 1 auto;
+    width: 100%;
+    height: 100%;
 }
 
 #detail-right-icon{
     display: flex;
     flex: 0 1 auto;
     padding: 15px;
-    width: 60px;
-    height: 60px;
+    width: 55px;
+    height: 55px;
+}
+
+#detail-right-icon img{
+    display: flex;
+    flex: 0 1 auto;
+    width: 100%;
+    height: 100%;
 }
 
 #detail-edit-icon{
@@ -374,16 +388,16 @@
     flex: 0 1 auto;
     padding: 15px;
     margin-left: auto;
-    width: 60px;
-    height: 60px;
+    width: 55px;
+    height: 55px;
 }
 
 #detail-delete-icon{
     display: flex;
     flex: 0 1 auto;
     padding: 15px;
-    width: 60px;
-    height: 60px;
+    width: 55px;
+    height: 55px;
 }
 
 #detail-comment-area{
