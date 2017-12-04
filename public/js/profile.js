@@ -46,9 +46,9 @@ var htmlFoorprintInfo = function(footprint){
     console.log(footprint);
 
     content += '<li id=\'modal-li\'> <div>';
-    content += '<a href=../../post?footprintId=' + footprint.footprint_id + '\'>' +
-        '                <img src=\'http://d2w40mi5mo8vk7.cloudfront.net/' + footprint.iconUrl + '\'' +
-        '                     alt=\"http://d2w40mi5mo8vk7.cloudfront.net/profile-default.png\"' +
+    content += '<a href=\'../../post?footprintId=' + footprint.footprint_id + '\'>' +
+        '                <img src=\'http://d2w40mi5mo8vk7.cloudfront.net/' + footprint.icon_key + ' \' ' +
+        '                     alt=\"http://d2w40mi5mo8vk7.cloudfront.net/profile-default.png\" ' +
         '                     class=\"img-thumbnail\"\n' +
         '                     id=\"icon-image\"\n' +
         '                     style=\"margin:15px;\"\n' +
