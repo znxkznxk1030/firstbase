@@ -653,12 +653,13 @@ if( (a>x) && (b>y) ){
 
 function popUp(data) {
 
-    history.pushState(null, null, baseUrl + '/post?id=' + data.footprint_id);
+    history.pushState(null, null, baseUrl2 + '/post?id=' + data.footprint_id);
     console.log("이거 검토");
     console.log(data);
 
     $.getScript( "/js/post.js" )
         .done(function( script, textStatus ) {
+
         })
         .fail(function( jqxhr, settings, exception ) {
             location.href = baseUrl + "/404";
@@ -670,6 +671,7 @@ function popUp(data) {
     });
 
     $("#popUp").modal();
+
     // $("#popUp").css("display", "flex");
     // $("#popUp").data("change", "true");
 
@@ -833,7 +835,13 @@ function hideModal() {
 }
 
 $('#popUp').on('hidden.bs.modal', function (e) {
-    history.pushState(null, null, baseUrl + '/index');
+    history.pushState(null, null, baseUrl2 + '/index');
 });
+
+$('#popUp').on('shown.bs.modal', function (e) {
+    $("#detail-map").css("width", $("#detail-map-area").width());
+});
+
+
 
 
