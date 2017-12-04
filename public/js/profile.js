@@ -44,8 +44,8 @@ var htmlFoorprintInfo = function(footprint){
     var content = '';
 
     content += '<li id=\'modal-li\'> <div>';
-    content += '<a href=../../post\'?footprintId=' + footprint.footprint_id + '\'>' +
-        '                <img src=\'' + footprint.iconUrl + '\'' +
+    content += '<a href=../../post?footprintId=' + footprint.footprint_id + '\'>' +
+        '                <img src=\'http://d2w40mi5mo8vk7.cloudfront.net/' + footprint.iconUrl + '\'' +
         '                     alt=\"http://d2w40mi5mo8vk7.cloudfront.net/profile-default.png\"\n' +
         '                     class=\"img-thumbnail\"\n' +
         '                     id=\"icon-image\"\n' +
