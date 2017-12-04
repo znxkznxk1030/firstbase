@@ -123,10 +123,10 @@ $(document).ready(function () {
         url: baseUrl + '/footprint/history',
         success: function (data) {
             makeMarkers(data);
-            $('#modal-footprint-list').html('');
+            $('#modal-list').html('');
             $('.modal-title').text('게시물 리스트');
             data.forEach(function(footprint){
-                $('#modal-footprint-list').append(htmlFoorprintInfo(footprint));
+                $('#modal-list').append(htmlFoorprintInfo(footprint));
             });
         }
     });
