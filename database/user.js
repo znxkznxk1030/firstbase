@@ -79,8 +79,8 @@ var User = function(params){
         findUser,
         attachProfileUrl,
         sqlGetFollowerCount,
-        sqlGetFollowingCount,
-        sqlIsFollow
+        sqlGetFollowingCount
+        //sqlIsFollow
     ];
 
     var getUserInfoByUserDisplayName = function(callback){

@@ -31,7 +31,6 @@
             crossorigin="anonymous"></script>
     <script type="text/javascript" src="/js/underscore-min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="/js/async.js"></script>
 
 </head>
 <body>
@@ -75,7 +74,7 @@
 
     <div id="main-area">
         <div class="content-title-area">
-            <a>
+            <a href="#">
                 <img src="<%= profileUrl %>"
                      alt="http://d2w40mi5mo8vk7.cloudfront.net/profile-default.png"
                      class="img-thumbnail"
@@ -90,13 +89,13 @@
                 <div>
                     <ul class="profile-activity-list">
                         <li class="activity-col">
-                            <a href="#">게시물 <%= history.length %></a>
+                            <a href="#myModal" data-toggle="modal" id="btn-footprint">게시물 <%= history.length %> </a>
                         </li>
                         <li class="activity-col">
-                            <a href="#">팔로워 <%= countFollower %></a>
+                            <a href="#myModal" data-toggle="modal" id="btn-follower">팔로워 <%= countFollower %></a>
                         </li>
                         <li class="activity-col">
-                            <a href="#">팔로우 <%= countFollowing %></a>
+                            <a href="#myModal" data-toggle="modal" id="btn-following">팔로우 <%= countFollowing %></a>
                         </li>
                     </ul>
                 </div>
@@ -116,20 +115,47 @@
 
         <hr>
 
-        <div class="profile-description">
+        <div class="profile-footprint">
             <div>
-                <h3 id="description-intro"> 발자취 </h3>
+                <h3 id="description-intro"> 발 자 취 </h3>
+            </div>
+            <div id="profile-map">
+
             </div>
         </div>
-
-        <div class="detail-text-area">
-            <h4 id="detail-text"></h4>
-        </div>
     </div>
-
 </div>
 
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+
+            <div class="modal-body">
+                <ul id="modal-list">
+
+                </ul>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript" src="/js/profile.js" defer></script>
+<script>
+
+    $(document).ready(function (){
+        alert(<%= history %>);
+    });
+</script>
 </body>
 </html>
