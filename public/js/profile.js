@@ -117,6 +117,15 @@ $(document).ready(function () {
         }
     });
 
+    $.ajax({
+        type: 'GET',
+        data: 'displayName=' + param,
+        url: baseUrl + '/footprint/history',
+        success: function (data) {
+            makeMarkers(data);
+        }
+    });
+
     $('#btn-footprint').click(function(){
         $.ajax({
             type: 'GET',
