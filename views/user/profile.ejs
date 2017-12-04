@@ -84,12 +84,12 @@
             </a>
             <div class="profile-detail">
                 <div>
-                    <a href="#"><h2 id="displayName"><%= displayName %></h2></a>
+                    <a href="#footprint-Modal"><h2 id="displayName"><%= displayName %></h2></a>
                 </div>
                 <div>
                     <ul class="profile-activity-list">
                         <li class="activity-col">
-                            <a href="#">게시물 <%= history.length %> </a>
+                            <a href="#myModal" data-toggle="modal" id="btn-follower">게시물 <%= history.length %> </a>
                         </li>
                         <li class="activity-col">
                             <a href="#myModal" data-toggle="modal" id="btn-follower">팔로워 <%= countFollower %></a>
@@ -150,6 +150,35 @@
     </div>
 </div>
 
+<div id="footprint-Modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">게시글 리스트</h4>
+            </div>
+
+            <div class="modal-body">
+                <ul id="modal-footprint-list">
+
+                </ul>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript" src="/js/profile.js" defer></script>
+<script>
+
+    $(document).ready(function (){
+        alert(<%= history %>);
+    });
+</script>
 </body>
 </html>

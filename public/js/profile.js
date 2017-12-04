@@ -40,6 +40,24 @@ var htmlUserInfo = function(profile){
     return content;
 };
 
+var htmlFoorprintInfo = function(footprint){
+    var content = '';
+
+    content += '<li id=\'modal-li\'> <div>';
+    content += '<a href=../../post\'?footprintId=' + footprint.footprint_id + '\'>' +
+        '                <img src=\'' + footprint.iconUrl + '\'' +
+        '                     alt=\"http://d2w40mi5mo8vk7.cloudfront.net/profile-default.png\"\n' +
+        '                     class=\"img-thumbnail\"\n' +
+        '                     id=\"icon-image\"\n' +
+        '                     style=\"margin:15px;\"\n' +
+        '                >' +
+        '           ';
+    content += '<h4 id=\'modal-displayName\'>' + footprint.title + '</h4>';
+    content += '</a> </div></li>';
+
+    return content;
+};
+
 $(document).ready(function () {
     var param = window.location.href.split('displayName=')[1];
 
@@ -103,6 +121,10 @@ $(document).ready(function () {
         url: baseUrl + '/footprint/history',
         success: function (data) {
             makeMarkers(data);
+            $('#modal-footprint-list').html('');
+            data.forEach(function(footprint){
+                $('#modal-footprint-list').append(htmlFoorprintInfo(footprint));
+            });
         }
     });
 
