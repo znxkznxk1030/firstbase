@@ -117,18 +117,20 @@ $(document).ready(function () {
         }
     });
 
-    $.ajax({
-        type: 'GET',
-        data: 'displayName=' + param,
-        url: baseUrl + '/footprint/history',
-        success: function (data) {
-            makeMarkers(data);
-            $('#modal-list').html('');
-            $('.modal-title').text('게시물 리스트');
-            data.forEach(function(footprint){
-                $('#modal-list').append(htmlFoorprintInfo(footprint));
-            });
-        }
+    $('#btn-footprint').click(function(){
+        $.ajax({
+            type: 'GET',
+            data: 'displayName=' + param,
+            url: baseUrl + '/footprint/history',
+            success: function (data) {
+                makeMarkers(data);
+                $('#modal-list').html('');
+                $('.modal-title').text('게시물 리스트');
+                data.forEach(function(footprint){
+                    $('#modal-list').append(htmlFoorprintInfo(footprint));
+                });
+            }
+        });
     });
 
 });
