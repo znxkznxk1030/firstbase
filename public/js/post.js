@@ -218,6 +218,7 @@ $.ajax({
             debugger;
             map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude));
         });
+
     }
 });
 
