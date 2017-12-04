@@ -352,6 +352,10 @@ hr {
     padding: 0;
 }
 
+.description-intro{
+    margin-bottom:40px;
+}
+
 #description {
     color : #f1f1f1;
     overflow: auto;
@@ -410,7 +414,7 @@ hr {
     width: 70%;
     margin : 0 auto 15px;
     padding: 10px 20px 0;
-    color : #ffcf15;
+    color : #00bbd2;
 }
 
 .profile-footprint{
@@ -419,7 +423,7 @@ hr {
     width: 90%;
     margin : 0 auto 2px;
     padding: 10px 20px 0;
-    color : #ffcf15;
+    color : #00bbd2;
 }
 
 #myModal{
