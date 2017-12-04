@@ -653,7 +653,7 @@ if( (a>x) && (b>y) ){
 
 function popUp(data) {
 
-    history.pushState(null, null, baseUrl2 + '/post?id=' + data.footprint_id);
+    history.pushState(null, null, baseUrl + '/post?id=' + data.footprint_id);
     console.log("이거 검토");
     console.log(data);
 
@@ -835,7 +835,7 @@ function hideModal() {
 }
 
 $('#popUp').on('hidden.bs.modal', function (e) {
-    history.pushState(null, null, baseUrl2 + '/index');
+    history.pushState(null, null, baseUrl + '/index');
 });
 
 $('#popUp').on('shown.bs.modal', function (e) {
