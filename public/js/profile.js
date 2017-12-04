@@ -46,7 +46,7 @@ var htmlFoorprintInfo = function(footprint){
     console.log(footprint);
 
     content += '<li id=\'modal-li\'> <div>';
-    content += '<a href=\'../../post?footprintId=' + footprint.footprint_id + '\'>' +
+    content += '<a href=\'../../post?id=' + footprint.footprint_id + '\'>' +
         '                <img src=\'http://d2w40mi5mo8vk7.cloudfront.net/' + footprint.icon_key + ' \' ' +
         '                     alt=\"http://d2w40mi5mo8vk7.cloudfront.net/profile-default.png\" ' +
         '                     class=\"img-thumbnail\"\n' +
@@ -124,6 +124,7 @@ $(document).ready(function () {
         success: function (data) {
             makeMarkers(data);
             $('#modal-footprint-list').html('');
+            $('.modal-title').text('게시물 리스트');
             data.forEach(function(footprint){
                 $('#modal-footprint-list').append(htmlFoorprintInfo(footprint));
             });
