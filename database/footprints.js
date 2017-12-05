@@ -13,7 +13,7 @@ const SQL_RETRIEVE_FOOTPRINT_BY_FOOTPRINT_ID =
     "WHERE footprint.footprint_id = ? " +
     "GROUP BY footprint_id "
     , SQL_WATCH = "UPDATE footprint SET view_count = view_count + 1 WHERE footprint_id = ? "
-    , SQL_IMAGE_LOAD = "SELECT * FROM image WHERE footprint_id = ?"
+    , SQL_IMAGE_LOAD = "SELECT * FROM image WHERE footprint_id = ? ORDER BY created_date "
     , SQL_COUNT_LIKE =
     "SELECT count(*) AS countLike " +
     "FROM eval WHERE footprint_id = ? AND state = 1"
