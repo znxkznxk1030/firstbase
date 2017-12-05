@@ -1,7 +1,7 @@
 var async = require("async");
 var xss = require("xss");
 const MAX_TITLE_LENGTH = 70,
-    MAX_CONTENT_LENGTH = 1000;
+    MAX_CONTENT_LENGTH = 100000;
 
 const MSG_TITLE_EMPTY = '제목이 비어있습니다.',
     MSG_TITLE_OVERFLOW = '제목의 최대 길이 초과 (한글 35자, 영문/숫자 70자, 70byte)',

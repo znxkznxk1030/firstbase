@@ -11,16 +11,11 @@ const connection = require('../database/db');
 var signToken = require("./auth").signToken;
 
 passport.serializeUser(function (user, done) {
-    // console.log('serialize');
     done(null, user);
 });
 
 passport.deserializeUser(function (user, done) {
-    // console.log('deserialize');
-    // console.log(userId);
-    //user.findByUsername(userId, function(err, profile){
     done(null, user);
-    //});
 });
 
 passport.use('local-login', new LocalStrategy({
@@ -50,7 +45,6 @@ passport.use('local-login', new LocalStrategy({
                 });
             },
             function (profile, cb) {
-                console.log('#2 : ' + profile);
                 connection.query('SELECT * FROM password WHERE id=?', [id], function (err, result) {
                     if (err) return cb('비밀번호가 없습니다.');
 
@@ -64,7 +58,6 @@ passport.use('local-login', new LocalStrategy({
                 });
             },
             function (profile, retrievedPassword, cb) {
-                console.log('#3 : ', profile, retrievedPassword);
                 passwordUtil.passwordCheck(password, retrievedPassword, function (err, isAuth) {
                     if (isAuth) {
                         return cb(null, profile);
@@ -88,28 +81,6 @@ passport.use('local-login', new LocalStrategy({
             return done(null, profile);
         });
 
-
-        // user.findOne(id, function (err, profile) {
-        //     if (profile) {
-        //         user.findPassword(id, function (err, retrievedPassword) {
-        //             if (err) throw done(err, null);
-        //
-        //             console.log(retrievedPassword);
-        //             passwordUtil.passwordCheck(password, retrievedPassword, function (err, isAuth) {
-        //                 console.log(isAuth);
-        //                 if (isAuth) {
-        //                     // console.log('login success');
-        //                     return done(null, profile);
-        //                 } else {
-        //                     // console.log('login fail');
-        //                     return done(null, false, {message: '패스워드가 틀렸습니다.'});
-        //                 }
-        //             });
-        //         });
-        //     } else {
-        //         return done(null, false, {message: '입력한 아이디가 존재하지 않습니다.'});
-        //     }
-        // });
     }));
 
 passport.use(new facebook({
@@ -142,7 +113,8 @@ passport.use(new google({
         clientSecret: config.google.clientSecret,
         callbackURL: config.host + config.port + config.routes.googleAuthCallback
     }, function (accessToken, refreshToken, profile, done) {
-        console.log(profile);
+        console.log(accessToken);
+        console.log(refreshToken);
         user.findOne(profile.id, function (err, one) {
             if (one) {
                 done(null, profile);
@@ -170,7 +142,6 @@ var routes = function (app) {
             accessToken: token,
             displayName: user.displayName
         });
-
     });
 
     app.get(config.routes.googleAuth, passport.authenticate('google',
@@ -193,6 +164,7 @@ var routes = function (app) {
             displayName: user.displayName
         });
     });
+
 };
 
 exports.passport = passport;
