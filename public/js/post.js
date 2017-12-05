@@ -244,3 +244,11 @@ $(document).on('click', '#detail-profileImg', function(){
 $(window).on('load', function () {
     $('#loading').remove();
 });
+
+$(document).on('click', '#detail-profileImg', function(){
+    location.href = baseUrl3 + "/users/web/detail?displayName="+ currentData.displayName;
+});
+
+$(document).on('click', '#comment-write-nav button', function(){
+
+});
