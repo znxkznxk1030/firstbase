@@ -253,3 +253,12 @@ $(document).on('click', '#detail-profileImg', function(){
 $(document).on('click', '#comment-write-nav button', function(){
 
 });
+
+$(document).on('click', '#comment-write-nav button', function(){
+
+});
+
+if ( $("post-main") > 0 ) {
+    $("body").css("overflow-x", "hidden");
+    $("body").css("overflow-y", "visible");
+}

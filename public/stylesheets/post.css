@@ -134,13 +134,11 @@ body {
     width: 100vw;
     height: auto;
     flex-flow: column nowrap;
-    overflow-x: hidden;
-    overflow-y: visible;
 }
 
-post-main::-webkit-scrollbar { width: 0 !important }
-post-main { -ms-overflow-style: none; }
-post-main { overflow: -moz-scrollbars-none; }
+body::-webkit-scrollbar { width: 0 !important }
+body { -ms-overflow-style: none; }
+body { overflow: -moz-scrollbars-none; }
 
 #nav-area {
     display: flex;
@@ -212,32 +210,6 @@ post-main { overflow: -moz-scrollbars-none; }
     flex-flow: row nowrap;
     margin-left: auto;
     justify-content: flex-end;
-}
-
-#login-register-button{
-    display: flex;
-    flex : 0 1 auto;
-    width: 80px;
-    height: 55px;
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-#login-register-button button{
-    display: flex;
-    flex : 0 1 auto;
-    width: 80px;
-    justify-content: center;
-    height: 45px;
-    color: white;
-    font-size: 14px;
-    background-color: #00bbd2;
-    border: 1px solid #f1f1f1;
-    border-radius: .5rem;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    cursor: pointer;
 }
 
 #detail-area{

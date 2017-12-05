@@ -5,6 +5,9 @@ $(document).ready(function () {
 });
 
 $(document).on('click', '#loginSubmit', loginComplete);
+
+var currentDisplayName;
+
 function loginComplete() {
     var id = $("#loginId input").val();
     var password = $("#loginPw input").val();
@@ -23,6 +26,8 @@ function loginComplete() {
             $('#login-register-button button').attr("data-target", "");
             $('#login-register-button button').attr("onclick", "logOut();");
             $('#detail-follow').css("display", "flex");
+
+            currentDisplayName = data.displayName;
 
             var profileUrl = "<a href = '"+ baseUrl3 + "/users/web/detail?displayName="+ data.displayName + "' id = 'profile-url'><button type='button'>내 프로필</button></a>"
             $(profileUrl).appendTo($("#right-nav-area"));
@@ -64,7 +69,7 @@ function checkLogin() {
         $('#login-register-button button').attr("onclick", "logOut();");
         $('#detail-follow').css("display", "flex");
         $("#right-nav-area a").remove();
-        var profileUrl = "<a href = '"+ baseUrl3 + "/users/web/detail?displayName="+ data.displayName + "' id = 'profile-url'><button type='button'>내 프로필</button></a>"
+        var profileUrl = "<a href = '"+ baseUrl3 + "/users/web/detail?displayName="+ currentDisplayName + "' id = 'profile-url'><button type='button'>내 프로필</button></a>"
         $(profileUrl).appendTo($("#right-nav-area"));
     }
     else {
