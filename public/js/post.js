@@ -165,6 +165,7 @@ function fillDetail(data, index) {
     $("#detail-icon").empty();
     $("#detail-images").empty();
     $("#detail-profileImg").empty();
+    $('#comment-down-nav').empty();
 
     var $icon = '<img src=' + data.iconUrl + '>';
     $($icon).appendTo($("#detail-icon"));
