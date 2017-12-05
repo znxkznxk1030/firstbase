@@ -165,6 +165,7 @@ function fillDetail(data, index) {
     $("#detail-icon").empty();
     $("#detail-images").empty();
     $("#detail-profileImg").empty();
+    $('#comment-down-nav').empty();
 
     var $icon = '<img src=' + data.iconUrl + '>';
     $($icon).appendTo($("#detail-icon"));
@@ -243,4 +244,12 @@ $(document).on('click', '#detail-profileImg', function(){
 
 $(window).on('load', function () {
     $('#loading').remove();
+});
+
+$(document).on('click', '#detail-profileImg', function(){
+    location.href = baseUrl3 + "/users/web/detail?displayName="+ currentData.displayName;
+});
+
+$(document).on('click', '#comment-write-nav button', function(){
+
 });

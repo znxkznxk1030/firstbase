@@ -201,7 +201,7 @@ function writeComplete() {
         $.ajax({
             type: 'POST',
             data: ajaxData,
-            url: baseUrl + '/footprint/create',
+            url: baseUrl3 + '/footprint/create',
             success: function (data) {
                 console.log("쓰기");
                 console.log(imageKey);
