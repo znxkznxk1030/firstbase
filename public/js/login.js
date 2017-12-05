@@ -42,6 +42,7 @@ function logOut() {
         $('#login-register-button button').attr("data-toggle", "modal");
         $('#login-register-button button').attr("data-target", "#myModal");
         $('#detail-follow').css("display", "none");
+        $("#right-nav-area a").remove();
 
         $('#myModal').on('show.bs.modal', function (e) {
             $('#myModal').modal('hide');
@@ -62,6 +63,9 @@ function checkLogin() {
         $('#login-register-button button').attr("data-target", "");
         $('#login-register-button button').attr("onclick", "logOut();");
         $('#detail-follow').css("display", "flex");
+        $("#right-nav-area a").remove();
+        var profileUrl = "<a href = '"+ baseUrl3 + "/users/web/detail?displayName="+ data.displayName + "' id = 'profile-url'><button type='button'>내 프로필</button></a>"
+        $(profileUrl).appendTo($("#right-nav-area"));
     }
     else {
         $('#login-register-button button').text("로그인");
@@ -69,5 +73,6 @@ function checkLogin() {
         $('#login-register-button button').attr("data-target", "#myModal");
         $('#login-register-button button').attr("onclick", "");
         $('#detail-follow').css("display", "none");
+        $("#right-nav-area a").remove();
     }
 }
