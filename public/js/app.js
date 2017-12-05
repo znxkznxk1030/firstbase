@@ -1,5 +1,6 @@
 var baseUrl = "http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:8080";
 var baseUrl2 = "http://localhost:8080";
+var baseUrl3 = "http://www.firstbase.zone:8080";
 
 var mapWidth = $("#map").outerWidth();
 var mapHeight = $("#map").outerHeight();
@@ -42,8 +43,6 @@ var markers = [];
 var contentsData;
 
 $(document).ready(function () {
-
-    $("body").css("overflow-y",  "hidden");
 
     $.ajax({
         type: 'GET',
@@ -196,18 +195,28 @@ function writeComplete() {
         console.log(ajaxData);
         console.log(JSON.stringify(ajaxData));
 
+        console.log("쓰기");
+        console.log(imageKey);
+
         $.ajax({
             type: 'POST',
             data: ajaxData,
             url: baseUrl + '/footprint/create',
             success: function (data) {
+                console.log("쓰기");
+                console.log(imageKey);
                 console.log(data);
                 cancel($('#writePage'));
             },
             error: function (error) {
-                location.href = baseUrl + "/404";
-                console.log(error);
-                debugger;
+                if(error.message == "로그인 토큰이 없습니다"){
+                    alert("로그인해주세요");
+                }
+                else {
+                    location.href = baseUrl + "/404";
+                    console.log(error);
+                    debugger;
+                }
             }
         });
     }
@@ -383,19 +392,19 @@ function makeMarkers(data) {
                     $.each(item, function (key, value) {
                         if (key == 'footprint_id' && value == id) {
 
-                            if ($("#popUp").data("change") == "true") {
-                                if (id == $("#popUp").data("save")) {
-                                    cancel($("#popUp"));
-                                }
-                                else {
+                            // if ($("#popUp").data("change") == "true") {
+                            //     if (id == $("#popUp").data("save")) {
+                            //         cancel($("#popUp"));
+                            //     }
+                            //     else {
                                     popUp(contentsData[index]);
-                                    $("#popUp").data("save", id);
-                                }
-                            }
-                            else {
-                                popUp(contentsData[index]);
-                                $("#popUp").data("save", id);
-                            }
+                            //         $("#popUp").data("save", id);
+                            //     }
+                            // }
+                            // else {
+                            //     popUp(contentsData[index]);
+                            //     $("#popUp").data("save", id);
+                            // }
                         }
                     });
                 });
@@ -430,7 +439,7 @@ function makePage(data) {
                 var o = data[i];
                 var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($list).click(function () {
                     popUp($(this).data('data'));
-                    $("#popUp").data("save", o.id);
+                    // $("#popUp").data("save", o.id);
                 });
                 $content_img = $('<div class="content-img"></div>').appendTo($content);
                 $('<div class="content-title"></div>').text(o.title).appendTo($content);
@@ -485,7 +494,7 @@ function renderPage(data) {
                 var o = data[i];
                 var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($("#content-wrapper")).click(function () {
                     popUp($(this).data('data'));
-                    $("#popUp").data("save", o.id);
+                    // $("#popUp").data("save", o.id);
                 });
                 $content_img = $('<div class="content-img"></div>').appendTo($content);
                 $('<div class="content-title"></div>').text(o.title).appendTo($content);
@@ -568,7 +577,7 @@ function write_button_click() {
         $icon = $('<img src=' + value + '>');
         $icon.appendTo($write_icons);
         tempMax++;
-        if (tempMax == 10) {
+        if (tempMax == 25) {
             return false;
         }
     });
@@ -591,7 +600,7 @@ function write_button_click() {
         }
     });
 
-    $("#writePage").animate({left: "65vw"});
+    $("#writePage").animate({left: "62.5vw"});
 }
 
 // function calCoord(x,y){
@@ -653,7 +662,7 @@ if( (a>x) && (b>y) ){
 
 function popUp(data) {
 
-    history.pushState(null, null, baseUrl2 + '/post?id=' + data.footprint_id);
+    history.pushState(null, null, baseUrl3 + '/post?id=' + data.footprint_id);
     console.log("이거 검토");
     console.log(data);
 
@@ -835,11 +844,21 @@ function hideModal() {
 }
 
 $('#popUp').on('hidden.bs.modal', function (e) {
-    history.pushState(null, null, baseUrl2 + '/index');
+    history.pushState(null, null, baseUrl3 + '/index');
 });
 
 $('#popUp').on('shown.bs.modal', function (e) {
     $("#detail-map").css("width", $("#detail-map-area").width());
+    map2.setSize(new naver.maps.Size($("#detail-map-area").width(), 280));
+    map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude));
+
+    if(Cookies.get('jwt') != null){
+        $('#detail-follow').css("display", "flex");
+    }
+    else {
+        $('#detail-follow').css("display", "none");
+    }
+
 });
 
 

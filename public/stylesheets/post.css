@@ -8,13 +8,7 @@ body {
     margin: 0;
     font-family: "icomoon", "Noto Scans CJK KR", "Open Sans", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
     color : #252525;
-    overflow-x: hidden;
-    overflow-y: visible;
 }
-
-body::-webkit-scrollbar { width: 0 !important }
-body { -ms-overflow-style: none; }
-body { overflow: -moz-scrollbars-none; }
 
 #intro-area{
     display: flex;
@@ -135,12 +129,18 @@ body { overflow: -moz-scrollbars-none; }
     100% { transform: rotate(360deg); }
 }
 
-#main {
+#post-main {
     display: flex;
     width: 100vw;
     height: auto;
     flex-flow: column nowrap;
+    overflow-x: hidden;
+    overflow-y: visible;
 }
+
+post-main::-webkit-scrollbar { width: 0 !important }
+post-main { -ms-overflow-style: none; }
+post-main { overflow: -moz-scrollbars-none; }
 
 #nav-area {
     display: flex;

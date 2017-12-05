@@ -1,8 +1,9 @@
 
 var baseUrl = "http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:8080";
 var baseUrl2 = "http://localhost:8080";
+var baseUrl3 = "http://www.firstbase.zone:8080";
 
-var markers = [];
+var postMarkers = [];
 var linkArrays = [];
 var currentIndex;
 var currentData;
@@ -66,45 +67,6 @@ $.ajax({
             initialMap(data);
         }
 
-        function fillDetail(data, index) {
-
-            currentIndex = index;
-            currentData = linkArrays[index];
-            // map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude)); // 얻은 좌표를 지도의 중심으로 설정합니다.
-            // map2.setZoom(11); // 지도의 줌 레벨을 변경합니다.
-
-            console.log("야호");
-            console.log(data);
-            $("#detail-icon").empty();
-            $("#detail-images").empty();
-            $("#detail-profileImg").empty();
-
-            var $icon = '<img src=' + data.iconUrl + '>';
-            $($icon).appendTo($("#detail-icon"));
-            $("#detail-title").text(data.title);
-            $("#detail-id").text(data.displayName);
-            $detailDate = '' + data.modified_date.substring(2, 10) + ' ' + data.modified_date.substring(11, 16);
-            $("#detail-modified_date").text($detailDate);
-            $("#detail-countView span").html('&nbsp;' + linkArrays[0].countView);
-            $("#detail-countComments span").html('&nbsp;' + linkArrays[0].countComments);
-
-            for (i = 0; i < data.imageUrls.length; i++) {
-                $img = '<img src=' + data.imageUrls[i] + '>';
-                $($img).appendTo($("#detail-images"));
-            }
-
-            $("#detail-content").text(data.content);
-            $("#detail-like-count").text(linkArrays[0].countLike);
-            $("#detail-dislike-count").text(linkArrays[0].countDisLike);
-
-            $profileImg = '<img src=' + data.profileUrl + '>';
-            // $($profileImg).appendTo($("#detail-profileImg"));
-
-            $("#detail-profileImg").css("background-image", 'url(' + linkArrays[0].profileUrl + ')');
-
-            $("#detail-cmt-count").text(linkArrays[0].countComments);
-        }
-
         function initialMap(data) {
             map2 = new naver.maps.Map('detail-map', {
                 size: new naver.maps.Size($("#detail-map-area").width(), 280),
@@ -144,6 +106,8 @@ $.ajax({
                 $(".detail-right-icon").css("display","none");
             }
             else {
+                $(".detail-left-icon").css("display","flex");
+                $(".detail-right-icon").css("display","flex");
 
                 linkArrays.forEach(function (item, index) {
                     var marker = new naver.maps.Marker({
@@ -158,8 +122,8 @@ $.ajax({
                         },
                         title: index
                     });
-                    markers.push(marker);
-                    naver.maps.Event.addListener(markers[index], 'click', getClickHandler(index));
+                    postMarkers.push(marker);
+                    naver.maps.Event.addListener(postMarkers[index], 'click', getClickHandler(index));
 
                     if(index < linkArrays.length-1){
                         var openArrowLine = new naver.maps.Polyline({
@@ -186,41 +150,96 @@ $.ajax({
             setCenter(data);
         }
 
-        function setCenter(data) {
-            map2.setCenter(new naver.maps.LatLng(data.latitude, data.longitude)); // 얻은 좌표를 지도의 중심으로 설정합니다.
-            map2.setZoom(11); // 지도의 줌 레벨을 변경합니다.
-        }
-
-        $(document).on('click', '.detail-left-icon', function(){
-            if(currentIndex -1 < 0){
-                fillDetail(linkArrays[linkArrays.length-1], linkArrays.length-1);
-                setCenter(linkArrays[linkArrays.length-1]);
-            }
-            else {
-                fillDetail(linkArrays[currentIndex-1], currentIndex-1);
-                setCenter(linkArrays[currentIndex-1]);
-            }
-        });
-
-        $(document).on('click', '.detail-right-icon', function(){
-            if(currentIndex + 1 > linkArrays.length-1){
-                fillDetail(linkArrays[0], 0);
-                setCenter(linkArrays[0]);
-            }
-            else {
-                fillDetail(linkArrays[currentIndex+1], currentIndex+1);
-                setCenter(linkArrays[currentIndex+1]);
-            }
-        });
-
-        $(window).resize(function (){
-            map2.setSize(new naver.maps.Size($("#detail-map-area").width(), 280));
-            debugger;
-            map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude));
-        });
-
     }
 });
+
+function fillDetail(data, index) {
+
+    currentIndex = index;
+    currentData = linkArrays[index];
+    // map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude)); // 얻은 좌표를 지도의 중심으로 설정합니다.
+    // map2.setZoom(11); // 지도의 줌 레벨을 변경합니다.
+
+    console.log("야호");
+    console.log(data);
+    $("#detail-icon").empty();
+    $("#detail-images").empty();
+    $("#detail-profileImg").empty();
+
+    var $icon = '<img src=' + data.iconUrl + '>';
+    $($icon).appendTo($("#detail-icon"));
+    $("#detail-title").text(data.title);
+    $("#detail-id").text(data.displayName);
+    $detailDate = '' + data.modified_date.substring(2, 10) + ' ' + data.modified_date.substring(11, 16);
+    $("#detail-modified_date").text($detailDate);
+    $("#detail-countView span").html('&nbsp;' + linkArrays[0].countView);
+    $("#detail-countComments span").html('&nbsp;' + linkArrays[0].countComments);
+
+    for (i = 0; i < data.imageUrls.length; i++) {
+        $img = '<img src=' + data.imageUrls[i] + '>';
+        $($img).appendTo($("#detail-images"));
+    }
+
+    $("#detail-content").text(data.content);
+    $("#detail-like-count").text(linkArrays[0].countLike);
+    $("#detail-dislike-count").text(linkArrays[0].countDisLike);
+
+    // $profileImg = "<a href = '"+ baseUrl + "/users/web/detail?displayName="+ data.displayName +"'><img src=" + data.profileUrl + "></a>";
+    // $($profileImg).appendTo($("#detail-profileImg"));
+
+    $("#detail-profileImg").css("background-image", 'url(' + linkArrays[0].profileUrl + ')');
+
+    $("#detail-cmt-count").text(linkArrays[0].countComments);
+    if(linkArrays[0].countComments > 0){
+        linkArrays[0].comments.forEach(function (item, index){
+            var commentTop = "<div class='commentTop' id='cT"+index+"'><div class='commentName'></div><div class='commentDate'></div></div>";
+            var commentDown = "<div class='commentDown' id='cD"+index+"'></div>";
+            $(commentTop).appendTo($('#comment-down-nav'));
+            $(commentDown).appendTo($('#comment-down-nav'));
+            $("#cT"+index+" .commentName").text(item.displayName);
+            $("#cT"+index+" .commentDate").text(item.date.substring(2, 10));
+            $("#cD"+index).text(item.content);
+        });
+    }
+}
+
+function setCenter(data) {
+    map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude)); // 얻은 좌표를 지도의 중심으로 설정합니다.
+    map2.setZoom(11); // 지도의 줌 레벨을 변경합니다.
+}
+
+$(window).resize(function (){
+    map2.setSize(new naver.maps.Size($("#detail-map-area").width(), 280));
+    debugger;
+    map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude));
+});
+
+$(document).on('click', '.detail-left-icon', function(){
+    if(currentIndex -1 < 0){
+        fillDetail(linkArrays[linkArrays.length-1], linkArrays.length-1);
+        setCenter(linkArrays[linkArrays.length-1]);
+    }
+    else {
+        fillDetail(linkArrays[currentIndex-1], currentIndex-1);
+        setCenter(linkArrays[currentIndex-1]);
+    }
+});
+
+$(document).on('click', '.detail-right-icon', function(){
+    if(currentIndex + 1 > linkArrays.length-1){
+        fillDetail(linkArrays[0], 0);
+        setCenter(linkArrays[0]);
+    }
+    else {
+        fillDetail(linkArrays[currentIndex+1], currentIndex+1);
+        setCenter(linkArrays[currentIndex+1]);
+    }
+});
+
+$(document).on('click', '#detail-profileImg', function(){
+    location.href = baseUrl3 + "/users/web/detail?displayName="+ currentData.displayName;
+});
+
 
 $(window).on('load', function () {
     $('#loading').remove();

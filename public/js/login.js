@@ -15,19 +15,21 @@ function loginComplete() {
     $.ajax({
         type: 'POST',
         data: ajaxData,
-        url: baseUrl + '/users/login',
+        url: baseUrl3 + '/users/login',
         success: function (data) {
             $('#myModal').modal('hide');
-        },
-        error: function (error) {
-            alert(error);
-            debugger;
-        },
-        complete: function () {
             $('#login-register-button button').text("로그아웃");
             $('#login-register-button button').attr("data-toggle", "");
             $('#login-register-button button').attr("data-target", "");
             $('#login-register-button button').attr("onclick", "logOut();");
+            $('#detail-follow').css("display", "flex");
+
+            var profileUrl = "<a href = '"+ baseUrl3 + "/users/web/detail?displayName="+ data.displayName + "' id = 'profile-url'><button type='button'>내 프로필</button></a>"
+            $(profileUrl).appendTo($("#right-nav-area"));
+        },
+        error: function (error) {
+            alert(error);
+            debugger;
         }
     });
 }
@@ -39,7 +41,12 @@ function logOut() {
         $('#login-register-button button').text("로그인");
         $('#login-register-button button').attr("data-toggle", "modal");
         $('#login-register-button button').attr("data-target", "#myModal");
-        $('#myModal').modal('hide');
+        $('#detail-follow').css("display", "none");
+
+        $('#myModal').on('show.bs.modal', function (e) {
+            $('#myModal').modal('hide');
+        });
+
         $('#login-register-button button').attr("onclick", "");
     }
     else if(checkOut == false){
@@ -54,11 +61,13 @@ function checkLogin() {
         $('#login-register-button button').attr("data-toggle", "");
         $('#login-register-button button').attr("data-target", "");
         $('#login-register-button button').attr("onclick", "logOut();");
+        $('#detail-follow').css("display", "flex");
     }
     else {
         $('#login-register-button button').text("로그인");
         $('#login-register-button button').attr("data-toggle", "modal");
         $('#login-register-button button').attr("data-target", "#myModal");
         $('#login-register-button button').attr("onclick", "");
+        $('#detail-follow').css("display", "none");
     }
 }
