@@ -15,7 +15,7 @@ function loginComplete() {
     $.ajax({
         type: 'POST',
         data: ajaxData,
-        url: baseUrl + '/users/login',
+        url: baseUrl3 + '/users/login',
         success: function (data) {
             $('#myModal').modal('hide');
             $('#login-register-button button').text("로그아웃");

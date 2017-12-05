@@ -195,18 +195,28 @@ function writeComplete() {
         console.log(ajaxData);
         console.log(JSON.stringify(ajaxData));
 
+        console.log("쓰기");
+        console.log(imageKey);
+
         $.ajax({
             type: 'POST',
             data: ajaxData,
             url: baseUrl + '/footprint/create',
             success: function (data) {
+                console.log("쓰기");
+                console.log(imageKey);
                 console.log(data);
                 cancel($('#writePage'));
             },
             error: function (error) {
-                location.href = baseUrl + "/404";
-                console.log(error);
-                debugger;
+                if(error.message == "로그인 토큰이 없습니다"){
+                    alert("로그인해주세요");
+                }
+                else {
+                    location.href = baseUrl + "/404";
+                    console.log(error);
+                    debugger;
+                }
             }
         });
     }
