@@ -65,6 +65,11 @@ $.ajax({
 
             fillDetail(data, 0);
             initialMap(data);
+
+            if ( $("#post-main") > 0 ) {
+                $("body").css("overflow-x", "hidden");
+                $("body").css("overflow-y", "visible");
+            }
         }
 
         function initialMap(data) {
@@ -257,8 +262,3 @@ $(document).on('click', '#comment-write-nav button', function(){
 $(document).on('click', '#comment-write-nav button', function(){
 
 });
-
-if ( $("post-main") > 0 ) {
-    $("body").css("overflow-x", "hidden");
-    $("body").css("overflow-y", "visible");
-}

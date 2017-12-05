@@ -212,6 +212,34 @@ body { overflow: -moz-scrollbars-none; }
     justify-content: flex-end;
 }
 
+
+#login-register-button{
+    display: flex;
+    flex : 0 1 auto;
+    width: 80px;
+    height: 40px;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 0px;
+}
+
+#login-register-button button{
+    display: flex;
+    flex : 0 1 auto;
+    width: 80px;
+    justify-content: center;
+    height: 40px;
+    color: white;
+    font-size: 14px;
+    background-color: #00bbd2;
+    border: 1px solid #f1f1f1;
+    border-radius: .5rem;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
 #detail-area{
     display: flex;
     flex: 0 1 auto;
