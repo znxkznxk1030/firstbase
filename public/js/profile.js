@@ -197,13 +197,7 @@ function makeMarkers(links) {
     function getClickHandler(seq) {
         return function (e) {
             var id = markers[seq].getTitle();
-            $.each(contentsData, function (index, item) {
-                $.each(item, function (key, value) {
-                    if (key == 'footprint_id' && value == id) {
-
-                    }
-                });
-            });
+            window.location.replace(baseUrl + '/post?id=' + id);
         }
     }
 
