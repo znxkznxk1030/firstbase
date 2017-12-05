@@ -22,8 +22,9 @@ function loginComplete() {
             $('#login-register-button button').attr("data-toggle", "");
             $('#login-register-button button').attr("data-target", "");
             $('#login-register-button button').attr("onclick", "logOut();");
+            $('#detail-follow').css("display", "flex");
 
-            var profileUrl = "<a href = '"+ baseUrl + "/users/web/detail?displayName="+ data.displayName + "' id = 'profile-url'><button type='button'>내 프로필</button></a>"
+            var profileUrl = "<a href = '"+ baseUrl3 + "/users/web/detail?displayName="+ data.displayName + "' id = 'profile-url'><button type='button'>내 프로필</button></a>"
             $(profileUrl).appendTo($("#right-nav-area"));
         },
         error: function (error) {
@@ -40,7 +41,7 @@ function logOut() {
         $('#login-register-button button').text("로그인");
         $('#login-register-button button').attr("data-toggle", "modal");
         $('#login-register-button button').attr("data-target", "#myModal");
-
+        $('#detail-follow').css("display", "none");
 
         $('#myModal').on('show.bs.modal', function (e) {
             $('#myModal').modal('hide');
@@ -60,11 +61,13 @@ function checkLogin() {
         $('#login-register-button button').attr("data-toggle", "");
         $('#login-register-button button').attr("data-target", "");
         $('#login-register-button button').attr("onclick", "logOut();");
+        $('#detail-follow').css("display", "flex");
     }
     else {
         $('#login-register-button button').text("로그인");
         $('#login-register-button button').attr("data-toggle", "modal");
         $('#login-register-button button').attr("data-target", "#myModal");
         $('#login-register-button button').attr("onclick", "");
+        $('#detail-follow').css("display", "none");
     }
 }

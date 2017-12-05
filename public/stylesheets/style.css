@@ -1144,6 +1144,7 @@ body {
     left : 100vw;
     background-color: white;
     justify-content: center;
+    z-index: 200;
 }
 
 #write-change, #chat-change {

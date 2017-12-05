@@ -237,7 +237,7 @@ $(document).on('click', '.detail-right-icon', function(){
 });
 
 $(document).on('click', '#detail-profileImg', function(){
-    location.href = baseUrl + "/users/web/detail?displayName="+ currentData.displayName;
+    location.href = baseUrl3 + "/users/web/detail?displayName="+ currentData.displayName;
 });
 
 

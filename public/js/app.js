@@ -47,7 +47,7 @@ $(document).ready(function () {
     $.ajax({
         type: 'GET',
         data: "",
-        url: baseUrl2 + '/files/retrieveIconAll',
+        url: baseUrl + '/files/retrieveIconAll',
         success: function (data) {
             saveIcons(data);
         },
@@ -841,6 +841,14 @@ $('#popUp').on('shown.bs.modal', function (e) {
     $("#detail-map").css("width", $("#detail-map-area").width());
     map2.setSize(new naver.maps.Size($("#detail-map-area").width(), 280));
     map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude));
+
+    if(Cookies.get('jwt') != null){
+        $('#detail-follow').css("display", "flex");
+    }
+    else {
+        $('#detail-follow').css("display", "none");
+    }
+
 });
 
 
