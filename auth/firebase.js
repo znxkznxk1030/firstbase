@@ -123,7 +123,6 @@ var route = function (app) {
                             const token = signToken(profile);
 
                             user.updateDeviceToken(profile.id, deviceToken);
-                            one = JSON.parse(JSON.stringify(one))[0];
 
                             return res.cookie('jwt', token).json({
                                 code: 1,
