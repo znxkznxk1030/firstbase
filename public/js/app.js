@@ -1,5 +1,6 @@
 var baseUrl = "http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:8080";
 var baseUrl2 = "http://localhost:8080";
+var baseUrl3 = "http://www.firstbase.zone:8080";
 
 var mapWidth = $("#map").outerWidth();
 var mapHeight = $("#map").outerHeight();
