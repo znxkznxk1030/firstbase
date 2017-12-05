@@ -35,43 +35,28 @@
 <body>
 <div id="loading"><div id="loader"></div></div>
 <div id = "main">
-    <div id = "nav-area">
-        <div id = "top-left-area">
+    <div id = "left-area">
+        <div id = "left-nav-area">
             <div id = "logo-img">
                 <a href="/"><img src="/img/layout/logo.png"></a>
             </div>
             <div id = "logo-img-letter">
-            <a id="brand" href="#"><img src="/img/layout/logo-letter.png"></a>
+                <a id="brand" href="#"><img src="/img/layout/logo-letter.png"></a>
             </div>
-            <div id="navbar-nav">
-                <div id="nav-item">
-                    <a class="nav-link" href="#">서비스 소개</a>
-                </div>
-                <div id="nav-item">
-                    <a class="nav-link" href="#">사용법</a>
-                </div>
-                <div id = "top-search">
-                    <input type="search" class="form-control" name="search" id="search" placeholder="Search"/>
-                    <div class="search-button">
-                        <button class="btn" type="button">
-                            <img src="/img/layout/search.png">
-                        </button>
-                    </div>
+            <div id="down-link">
+                <a href="https://play.google.com/store/apps/details?id=com.yogiwara.firstbase" style="width: 140px; height: auto;">
+                    <img src="/img/layout/download.png" style="width: 140px; height: auto;">
+                </a>
+            </div>
+            <div id = "map-search">
+                <input type="search" class="form-control" name="search" id="search" placeholder="지도 검색"/>
+                <div class="search-button">
+                    <button class="btn" type="button">
+                        <img src="/img/layout/search.png">
+                    </button>
                 </div>
             </div>
         </div>
-        <div id = "top-right-area">
-            <div id = "chat-button">
-                <div id = "chat-img">
-                    <img src="/img/layout/chat.png">
-                </div>
-            </div>
-            <div id = "login-register-button">
-                <button type="button" class="btn" data-toggle="modal" data-target="#myModal">로그인</button>
-            </div>
-        </div>
-    </div>
-    <div id = "main-area">
         <div id = "map-area">
             <div id = "map">
             </div>
@@ -82,19 +67,26 @@
                 <img src="/img/layout/radar.png">
             </div>
         </div>
+    </div>
+    <div id="right-area">
+        <div id = "right-nav-area">
+            <div id = "login-register-button">
+                <button type="button" class="btn" data-toggle="modal" data-target="#myModal">로그인</button>
+            </div>
+        </div>
         <div id = "contents-area">
             <div id = "contents">
             </div>
             <div id = "down-menu">
-                <div id = "down-search">
-                    <input type="search" class="form-control" name="search" id="search" placeholder="Search"/>
+                <div id = "posts-search">
+                    <input type="search" class="form-control" name="search" id="search" placeholder="게시글 검색"/>
                     <div class="search-button">
                         <button class="btn" type="button">
                             <img src="/img/layout/search.png">
                         </button>
                     </div>
                 </div>
-                <div id = "down-filter"><img src="/img/layout/filter.png"></div>
+                <div id = "down-filter" style="display: none"><img src="/img/layout/filter.png"></div>
             </div>
         </div>
     </div>
@@ -112,17 +104,17 @@
             <div class="modal-body" style="padding:40px 50px;">
                 <div id = "login-form">
                     <!--<form action="http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:8080/users/login" method="post" enctype="application/json">-->
-                        <div class="form-group" id = "loginId">
-                            <label for="id">Email</label>
-                            <input type="text" class="form-control" name="id" id="id" placeholder="Enter Email"/>
-                        </div>
-                        <div class="form-group" id = "loginPw">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password"/>
-                        </div>
-                        <div class="form-submit">
-                            <button type="submit" class="btn btn-success btn-block" id="loginSubmit">Login</button>
-                        </div>
+                    <div class="form-group" id = "loginId">
+                        <label for="id">Email</label>
+                        <input type="text" class="form-control" name="id" id="id" placeholder="Enter Email"/>
+                    </div>
+                    <div class="form-group" id = "loginPw">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password"/>
+                    </div>
+                    <div class="form-submit">
+                        <button type="submit" class="btn btn-success btn-block" id="loginSubmit">Login</button>
+                    </div>
                     <!--</form>-->
                 </div>
                 <div class="social-login">
@@ -145,33 +137,33 @@
 </div>
 
 <!--<div id = "popUp">-->
-    <!--<div id="detail-cancel" class="page-cancel">-->
-        <!--<button type="button" class="close" onclick="cancel($('#popUp'));">&times;</button>-->
-    <!--</div>-->
-    <!--<div id ="detail-plus-menu">  </div>-->
-    <!--<div id="detail-post">-->
-        <!--<div id = "detail-top">-->
-            <!--<div id = "detail-icon" class="change"></div>-->
-            <!--<div id = "detail-top-right">-->
-                <!--<div id = "detail-title" class="change"></div>-->
-                <!--<div id = "detail-title-plus">-->
-                    <!--<div id = "detail-title-plus-left">-->
-                        <!--<div id = "detail-title-plus-left-top">-->
-                            <!--<div id = "detail-id" class="change"></div>-->
-                            <!--<div id = "detail-modified_date" class="change"></div>-->
-                        <!--</div>-->
-                        <!--<div id = "detail-title-plus-left-bot">-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <!--<div id = "detail-title-plus-right">-->
-                        <!--<button type="submit" class="btn" id = "detail-follow">팔로우</button>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div id = "detail-images" class="change"></div>-->
-        <!--<div id = "detail-content" class="change"></div>-->
-    <!--</div>-->
+<!--<div id="detail-cancel" class="page-cancel">-->
+<!--<button type="button" class="close" onclick="cancel($('#popUp'));">&times;</button>-->
+<!--</div>-->
+<!--<div id ="detail-plus-menu">  </div>-->
+<!--<div id="detail-post">-->
+<!--<div id = "detail-top">-->
+<!--<div id = "detail-icon" class="change"></div>-->
+<!--<div id = "detail-top-right">-->
+<!--<div id = "detail-title" class="change"></div>-->
+<!--<div id = "detail-title-plus">-->
+<!--<div id = "detail-title-plus-left">-->
+<!--<div id = "detail-title-plus-left-top">-->
+<!--<div id = "detail-id" class="change"></div>-->
+<!--<div id = "detail-modified_date" class="change"></div>-->
+<!--</div>-->
+<!--<div id = "detail-title-plus-left-bot">-->
+<!--</div>-->
+<!--</div>-->
+<!--<div id = "detail-title-plus-right">-->
+<!--<button type="submit" class="btn" id = "detail-follow">팔로우</button>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div id = "detail-images" class="change"></div>-->
+<!--<div id = "detail-content" class="change"></div>-->
+<!--</div>-->
 <!--</div>-->
 
 <div id = "writePage">
@@ -203,36 +195,42 @@
         <!-- Modal content-->
         <div class="modal-content modal-fullsize">
             <div id="detail-cancel" class="page-cancel">
+                <div class="detail-left-icon">
+                    <img src="/img/layout/left.png">
+                </div>
+                <div class="detail-right-icon">
+                    <img src="/img/layout/right.png">
+                </div>
                 <button type="button" class="close" onclick="hideModal();">&times;</button>
             </div>
             <div id="detail-area">
             </div>
             <!--<div id ="detail-plus-menu">-->
-                <!--<div id = "sideMap">-->
-                <!--</div>-->
+            <!--<div id = "sideMap">-->
+            <!--</div>-->
             <!--</div>-->
             <!--<div id="detail-post">-->
-                <!--<div id = "detail-top">-->
-                    <!--<div id = "detail-icon" class="change"></div>-->
-                    <!--<div id = "detail-top-right">-->
-                        <!--<div id = "detail-title" class="change"></div>-->
-                        <!--<div id = "detail-title-plus">-->
-                            <!--<div id = "detail-title-plus-left">-->
-                                <!--<div id = "detail-title-plus-left-top">-->
-                                    <!--<div id = "detail-id" class="change"></div>-->
-                                    <!--<div id = "detail-modified_date" class="change"></div>-->
-                                <!--</div>-->
-                                <!--<div id = "detail-title-plus-left-bot">-->
-                                <!--</div>-->
-                            <!--</div>-->
-                            <!--<div id = "detail-title-plus-right">-->
-                                <!--<button type="submit" class="btn" id = "detail-follow">팔로우</button>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div id = "detail-images" class="change"></div>-->
-                <!--<div id = "detail-content" class="change"></div>-->
+            <!--<div id = "detail-top">-->
+            <!--<div id = "detail-icon" class="change"></div>-->
+            <!--<div id = "detail-top-right">-->
+            <!--<div id = "detail-title" class="change"></div>-->
+            <!--<div id = "detail-title-plus">-->
+            <!--<div id = "detail-title-plus-left">-->
+            <!--<div id = "detail-title-plus-left-top">-->
+            <!--<div id = "detail-id" class="change"></div>-->
+            <!--<div id = "detail-modified_date" class="change"></div>-->
+            <!--</div>-->
+            <!--<div id = "detail-title-plus-left-bot">-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div id = "detail-title-plus-right">-->
+            <!--<button type="submit" class="btn" id = "detail-follow">팔로우</button>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div id = "detail-images" class="change"></div>-->
+            <!--<div id = "detail-content" class="change"></div>-->
             <!--</div>-->
         </div>
     </div>

@@ -43,12 +43,10 @@ var contentsData;
 
 $(document).ready(function () {
 
-    $("body").css("overflow-y",  "hidden");
-
     $.ajax({
         type: 'GET',
         data: "",
-        url: baseUrl + '/files/retrieveIconAll',
+        url: baseUrl2 + '/files/retrieveIconAll',
         success: function (data) {
             saveIcons(data);
         },
@@ -383,19 +381,19 @@ function makeMarkers(data) {
                     $.each(item, function (key, value) {
                         if (key == 'footprint_id' && value == id) {
 
-                            if ($("#popUp").data("change") == "true") {
-                                if (id == $("#popUp").data("save")) {
-                                    cancel($("#popUp"));
-                                }
-                                else {
+                            // if ($("#popUp").data("change") == "true") {
+                            //     if (id == $("#popUp").data("save")) {
+                            //         cancel($("#popUp"));
+                            //     }
+                            //     else {
                                     popUp(contentsData[index]);
-                                    $("#popUp").data("save", id);
-                                }
-                            }
-                            else {
-                                popUp(contentsData[index]);
-                                $("#popUp").data("save", id);
-                            }
+                            //         $("#popUp").data("save", id);
+                            //     }
+                            // }
+                            // else {
+                            //     popUp(contentsData[index]);
+                            //     $("#popUp").data("save", id);
+                            // }
                         }
                     });
                 });
@@ -430,7 +428,7 @@ function makePage(data) {
                 var o = data[i];
                 var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($list).click(function () {
                     popUp($(this).data('data'));
-                    $("#popUp").data("save", o.id);
+                    // $("#popUp").data("save", o.id);
                 });
                 $content_img = $('<div class="content-img"></div>').appendTo($content);
                 $('<div class="content-title"></div>').text(o.title).appendTo($content);
@@ -485,7 +483,7 @@ function renderPage(data) {
                 var o = data[i];
                 var $content = $('<div class="content list-group-item list-group-item-action"></div>').data('data', o).appendTo($("#content-wrapper")).click(function () {
                     popUp($(this).data('data'));
-                    $("#popUp").data("save", o.id);
+                    // $("#popUp").data("save", o.id);
                 });
                 $content_img = $('<div class="content-img"></div>').appendTo($content);
                 $('<div class="content-title"></div>').text(o.title).appendTo($content);
@@ -653,7 +651,7 @@ if( (a>x) && (b>y) ){
 
 function popUp(data) {
 
-    history.pushState(null, null, baseUrl + '/post?id=' + data.footprint_id);
+    history.pushState(null, null, baseUrl3 + '/post?id=' + data.footprint_id);
     console.log("이거 검토");
     console.log(data);
 
@@ -835,11 +833,13 @@ function hideModal() {
 }
 
 $('#popUp').on('hidden.bs.modal', function (e) {
-    history.pushState(null, null, baseUrl + '/index');
+    history.pushState(null, null, baseUrl3 + '/index');
 });
 
 $('#popUp').on('shown.bs.modal', function (e) {
     $("#detail-map").css("width", $("#detail-map-area").width());
+    map2.setSize(new naver.maps.Size($("#detail-map-area").width(), 280));
+    map2.setCenter(new naver.maps.LatLng(currentData.latitude, currentData.longitude));
 });
 
 
