@@ -62,16 +62,21 @@ var User = function(params){
     };
 
     var sqlIsFollow = function (profile, cb) {
-        connection.query(SQL_IS_FOLLOW, [user.id, profile.id], function (err, Follow) {
-            if (err) return cb(err, null);
+        if(typeof user !== 'undefined'){
+            connection.query(SQL_IS_FOLLOW, [user.id, profile.id], function (err, Follow) {
+                if (err) return cb(err, null);
 
-            var isFollow = false;
-            if (JSON.parse(JSON.stringify(Follow))[0]) {
-                isFollow = true;
-            }
+                var isFollow = false;
+                if (JSON.parse(JSON.stringify(Follow))[0]) {
+                    isFollow = true;
+                }
 
-            return cb(null, _.extend(profile, {isFollow: isFollow}));
-        });
+                return cb(null, _.extend(profile, {isFollow: isFollow}));
+            });
+        }
+        else{
+            return cb(null, profile);
+        }
     };
 
 
@@ -79,8 +84,8 @@ var User = function(params){
         findUser,
         attachProfileUrl,
         sqlGetFollowerCount,
-        sqlGetFollowingCount
-        //sqlIsFollow
+        sqlGetFollowingCount,
+        sqlIsFollow
     ];
 
     var getUserInfoByUserDisplayName = function(callback){

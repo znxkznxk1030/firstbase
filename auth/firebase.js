@@ -129,7 +129,7 @@ var route = function (app) {
                                 message: '로그인 성공',
                                 isMember: true,
                                 accessToken: token,
-                                displayName: profile.displayName
+                                displayName: one.displayName
                             });
                         } else {
                             return res.status(400).json({
