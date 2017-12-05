@@ -329,8 +329,8 @@ var createFootprint = function (req, res) {
         "INSERT INTO footprint (title, displayName, password, content, latitude, longitude, type) " +
         "VALUES (?, ?, ?, ?, ?, ?, ?)";
     const sqlInsertImage =
-        "INSERT INTO image (footprint_id, image_key) " +
-        "VALUES (?, ?) ";
+        "INSERT INTO image (footprint_id, image_key, rank) " +
+        "VALUES (?, ?, ?) ";
     const sqlCreateLink =
         "INSERT INTO link (link_footprint_id, linked_footprint_id, rank) " +
         "VALUES (?, ?, ?)";
@@ -352,7 +352,7 @@ var createFootprint = function (req, res) {
             async.times(length, function (i, next) {
                 var imageKey = imageKeys[i];
 
-                connection.query(sqlInsertImage, [footprintId, imageKey], function (err, result) {
+                connection.query(sqlInsertImage, [footprintId, imageKey, i], function (err, result) {
                     if (err) {
                         console.log(err);
                         next(true);
