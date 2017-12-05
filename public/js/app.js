@@ -590,7 +590,7 @@ function write_button_click() {
         }
     });
 
-    $("#writePage").animate({left: "65vw"});
+    $("#writePage").animate({left: "62.5vw"});
 }
 
 // function calCoord(x,y){
