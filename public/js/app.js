@@ -567,7 +567,7 @@ function write_button_click() {
         $icon = $('<img src=' + value + '>');
         $icon.appendTo($write_icons);
         tempMax++;
-        if (tempMax == 10) {
+        if (tempMax == 25) {
             return false;
         }
     });
