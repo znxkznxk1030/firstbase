@@ -123,14 +123,14 @@ var route = function (app) {
                             const token = signToken(profile);
 
                             user.updateDeviceToken(profile.id, deviceToken);
-                            const displayName = JSON.parse(JSON.stringify(one))[0].displayName;
+                            one = JSON.parse(JSON.stringify(one))[0];
 
                             return res.cookie('jwt', token).json({
                                 code: 1,
                                 message: '로그인 성공',
                                 isMember: true,
                                 accessToken: token,
-                                displayName: displayName
+                                displayName: one.displayName
                             });
                         } else {
                             return res.status(400).json({
