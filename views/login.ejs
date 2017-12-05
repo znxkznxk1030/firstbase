@@ -11,7 +11,7 @@
 <div>
     <a class="btn" href="/auth/google">google</a>
 </div>
-<!--<form action="/users/login" method="post">-->
+<form action="/users/login" method="post">
     <div id = "loginId">
         <label>Username:</label>
         <input type="text" name="id"/>
@@ -25,26 +25,8 @@
     <div>
         <input type="submit" value="Login" id="loginSubmit"/>
     </div>
-<!--</form>-->
+</form>
 <script>
-
-    $(document).on('click', '#loginSubmit', loginComplete);
-    function loginComplete() {
-        var id = $("#loginId").val();
-        var password = $("#loginPw").val();
-        var ajaxData = {
-            "id" : id,
-            "password" : password
-        }
-        $.ajax({
-            type: 'POST',
-            data: ajaxData,
-            url: "http://ec2-13-124-219-114.ap-northeast-2.compute.amazonaws.com:8080" + '/users/login',
-            success: function (data) {
-                console.log(data);
-            }
-        });
-    }
 
 </script>
 </body>

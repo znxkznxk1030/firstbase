@@ -9,7 +9,27 @@ var setPosition = function () {
     }
 };
 
-console.log(displayName, profileUrl);
+//console.log(displayName, profileUrl);
+
+// $.ajax({
+//     type: 'POST',
+//     crossDomain: true,
+//     url: "http://map.naver.com/search2/getSiteInfo.nhn",
+//     accept:{
+//         All: '*/*'
+//     },
+//     headers: {
+//         'Access-Control-Allow-Origin': '*',
+//         'Origin': 'http://map.naver.com',
+//         'Referer': 'http://map.naver.com/'
+//
+//     },
+//     data: 'id=PerimeterInfo_s18394397'
+//     ,
+//     success: function(data){
+//         console.log(data);
+//     }
+// });
 
 $("#set").click(function () {
     if (navigator.geolocation) {
