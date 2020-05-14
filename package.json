@@ -28,7 +28,7 @@
     "guid": "0.0.12",
     "jsonwebtoken": "^8.1.0",
     "mern-cli": "^3.0.1",
-    "mongoose": "^4.13.0",
+    "mongoose": "^5.9.14",
     "morgan": "~1.8.1",
     "mpromise": "^0.5.5",
     "mysql": "^2.14.1",
