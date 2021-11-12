@@ -3,18 +3,21 @@
 
 * 서비스 종료
 
+## 소개
+
+![logo](./images/logo.png)
+
 ## 서비스 화면
+
 ### 웹 서비스
 ![main](./images/image3.png)
 
 ### 모바일 서비스
-![phone-1](./images/image4.jpeg)
-
-![phone-2](./images/image5.jpeg)
-
-![phone-3](./images/image6.jpeg)
+![phone-1](./images/mobile.png)
 
 ## 개발 스택
+
+![stack](./images/stacks.png)
 
 - Framework : Express (Node.js), FireBase
 - Database : MySql, MongoDB
